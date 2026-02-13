@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60">
+  <rect width="200" height="60" rx="10" fill="#0d6efd"/>
+  <text x="18" y="38" font-family="Arial" font-size="26" fill="white" font-weight="bold">ACLI BAR</text>
+  <circle cx="170" cy="30" r="12" fill="#ffc107"/>
+</svg>
