@@ -104,7 +104,13 @@ class BarRepository
             $stmt->execute([$month]);
             return $stmt->fetchAll();
         }
-        return $this->pdo->query('SELECT c.*, d.name as day_type_name FROM calendar_days c LEFT JOIN day_types d ON d.id=c.day_type_id ORDER BY c.day_date DESC LIMIT 366')->fetchAll();
+        return $this->pdo->query('SELECT c.*, d.name as day_type_name FROM calendar_days c LEFT JOIN day_types d ON d.id=c.day_type_id ORDER BY c.day_date ASC')->fetchAll();
+    }
+
+    public function updateCalendarDayDetails(int $id, string $recurrenceName, string $santo, int $dayTypeId): void
+    {
+        $this->pdo->prepare('UPDATE calendar_days SET recurrence_name=?, santo=?, day_type_id=? WHERE id=?')
+            ->execute([$recurrenceName, $santo, $dayTypeId > 0 ? $dayTypeId : null, $id]);
     }
 
     public function saveCalendarDay(array $d): void
