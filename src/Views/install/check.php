@@ -9,7 +9,7 @@
           <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
 
-        <p class="text-muted mb-3">Il sistema non riesce ad aprire il database configurato in <code>public/app.php</code>.</p>
+        <p class="text-muted mb-3">Il sistema non riesce ad aprire il database configurato in <code>config/app.php</code>.</p>
         <p class="mb-3">Vuoi passare all'interfaccia di installazione per configurare o creare il database?</p>
 
         <div class="d-flex gap-2">

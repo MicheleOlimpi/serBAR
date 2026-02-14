@@ -19,7 +19,7 @@ Applicazione PHP 8 (PSR-4) con MariaDB per la gestione dei turni bar.
    ```
 3. Aprire `http://localhost:8080`.
 4. Se il DB non è configurato/disponibile, comparirà l'interfaccia di installazione.
-5. La configurazione DB viene salvata in `public/app.php`.
+5. La configurazione DB viene salvata in `config/app.php`.
 
 ## Credenziali seed
 - `admin` / `admin`

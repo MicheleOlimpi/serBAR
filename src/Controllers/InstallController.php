@@ -43,7 +43,7 @@ class InstallController
             } catch (\Throwable $e) {
                 View::render('install/index', [
                     'error' => $e->getMessage(),
-                    'defaults' => $this->loadDefaultsFromConfig(),
+                    'defaults' => $cfg,
                 ]);
                 return;
             }
