@@ -171,7 +171,7 @@ class BarRepository
 
     public function createNotification(int $userId, int $boardDayId, string $msg): void
     {
-        $this->pdo->prepare("INSERT INTO notifications (user_id, board_day_id, message, status) VALUES (?,?,?,'nuova')")
+        $this->pdo->prepare("INSERT INTO notifications (user_id, board_day_id, message, status) VALUES (?,?,?,'inviata')")
             ->execute([$userId, $boardDayId, $msg]);
     }
 
@@ -183,5 +183,53 @@ class BarRepository
     public function boardsForConsultation(): array
     {
         return $this->boards();
+    }
+
+    public function consultationShifts(): array
+    {
+        $sql = 'SELECT 
+                    bd.id,
+                    b.id AS board_id,
+                    b.month,
+                    b.year,
+                    bd.day_date,
+                    bd.weekday_name,
+                    dt.name AS day_type_name,
+                    bd.morning_close,
+                    bd.evening_close,
+                    bd.notes,
+                    GROUP_CONCAT(DISTINCT CONCAT(u.last_name, " ", u.first_name) ORDER BY u.last_name, u.first_name SEPARATOR ", ") AS assigned_users
+                FROM boards b
+                JOIN board_days bd ON bd.board_id = b.id
+                LEFT JOIN day_types dt ON dt.id = bd.day_type_id
+                LEFT JOIN board_day_users bu ON bu.board_day_id = bd.id
+                LEFT JOIN users u ON u.id = bu.user_id
+                WHERE b.id IN (
+                    SELECT id FROM boards ORDER BY year DESC, month DESC LIMIT 3
+                )
+                GROUP BY bd.id, b.id, b.month, b.year, bd.day_date, bd.weekday_name, dt.name, bd.morning_close, bd.evening_close, bd.notes
+                ORDER BY b.year DESC, b.month DESC, bd.day_date';
+
+        return $this->pdo->query($sql)->fetchAll();
+    }
+
+    public function consultationNotifications(): array
+    {
+        $sql = 'SELECT 
+                    n.id,
+                    n.message,
+                    n.status,
+                    n.created_at,
+                    u.username,
+                    bd.day_date,
+                    b.month,
+                    b.year
+                FROM notifications n
+                JOIN users u ON u.id = n.user_id
+                LEFT JOIN board_days bd ON bd.id = n.board_day_id
+                LEFT JOIN boards b ON b.id = bd.board_id
+                ORDER BY n.created_at DESC';
+
+        return $this->pdo->query($sql)->fetchAll();
     }
 }
