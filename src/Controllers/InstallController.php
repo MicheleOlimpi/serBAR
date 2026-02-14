@@ -36,7 +36,13 @@ class InstallController
             try {
                 $this->installer->install($cfg);
                 Config::save($this->configPath, $cfg);
-                View::redirect('/?action=login');
+
+                View::render('install/complete', [
+                    'db' => $cfg['database'],
+                    'host' => $cfg['host'],
+                    'port' => $cfg['port'],
+                ]);
+                return;
             } catch (\Throwable $e) {
                 View::render('install/index', ['error' => $e->getMessage(), 'defaults' => $cfg]);
                 return;

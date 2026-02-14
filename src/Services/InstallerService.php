@@ -41,7 +41,7 @@ class InstallerService
         $adminHash = password_hash('admin', PASSWORD_DEFAULT);
         $userHash = password_hash('user', PASSWORD_DEFAULT);
         $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,status) VALUES ('admin','Admin','Sistema','{$adminHash}','admin','attivo')");
-        $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,status) VALUES ('user','User','Default','{$userHash}','admin','attivo')");
+        $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,status) VALUES ('user','User','Default','{$userHash}','user','attivo')");
         $pdo->exec('INSERT IGNORE INTO daily_shift_config(day_type_id, slots_count) VALUES (1,2),(2,2),(3,2)');
     }
 }
