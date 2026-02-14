@@ -8,10 +8,10 @@
 <table class="table table-striped"><tr><th>Tabellone</th><th>Azioni</th></tr>
 <?php foreach($boards as $b): ?>
 <tr><td><?= sprintf('%02d/%04d',$b['month'],$b['year']) ?></td><td>
-<a class="btn btn-sm btn-primary" href="/?action=board_edit&id=<?= $b['id'] ?>">Edita</a>
-<a class="btn btn-sm btn-secondary" href="/?action=board_edit&id=<?= $b['id'] ?>&print=1" target="_blank">Stampa/PDF</a>
-<a class="btn btn-sm btn-danger" href="/?action=boards&delete=<?= $b['id'] ?>" onclick="return confirm('Eliminare?')">Elimina</a>
+<a class="btn btn-sm btn-primary" href="?action=board_edit&id=<?= $b['id'] ?>">Edita</a>
+<a class="btn btn-sm btn-secondary" href="?action=board_edit&id=<?= $b['id'] ?>&print=1" target="_blank">Stampa/PDF</a>
+<a class="btn btn-sm btn-danger" href="?action=boards&delete=<?= $b['id'] ?>" onclick="return confirm('Eliminare?')">Elimina</a>
 </td></tr>
 <?php endforeach; ?>
 </table>
-<a class="btn btn-outline-dark" href="/">Indietro</a>
+<a class="btn btn-outline-dark" href="./">Indietro</a>

@@ -25,4 +25,4 @@
 <?php endforeach; ?>
 </table>
 <?php if (Auth::isAdmin()): ?><button class="btn btn-success">Salva modifiche</button></form><?php endif; ?>
-<a class="btn btn-outline-dark" href="/">Indietro</a>
+<a class="btn btn-outline-dark" href="./">Indietro</a>

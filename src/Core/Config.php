@@ -18,6 +18,11 @@ class Config
 
     public static function save(string $path, array $config): bool
     {
+        $directory = dirname($path);
+        if (!is_dir($directory) && !mkdir($directory, 0775, true) && !is_dir($directory)) {
+            return false;
+        }
+
         $content = "<?php\n\nreturn " . var_export($config, true) . ";\n";
         return (bool) file_put_contents($path, $content);
     }
