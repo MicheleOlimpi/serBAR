@@ -50,6 +50,7 @@ class InstallerService
             foreach ($this->schema() as $sql) {
                 $pdo->exec($sql);
             }
+            $this->ensureCalendarColumns($pdo);
         } catch (Throwable $e) {
             throw new \RuntimeException('Errore installazione tabelle: ' . $e->getMessage(), 0, $e);
         }
@@ -61,12 +62,20 @@ class InstallerService
             'CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50) UNIQUE, last_name VARCHAR(100), first_name VARCHAR(100), password_hash VARCHAR(255), role VARCHAR(20) NOT NULL DEFAULT "user", status VARCHAR(20) NOT NULL DEFAULT "attivo", created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)',
             'CREATE TABLE IF NOT EXISTS day_types (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(50) NOT NULL, code VARCHAR(50) NOT NULL, is_locked TINYINT(1) NOT NULL DEFAULT 0)',
             'CREATE TABLE IF NOT EXISTS daily_shift_config (id INT AUTO_INCREMENT PRIMARY KEY, day_type_id INT NOT NULL UNIQUE, slots_count INT NOT NULL DEFAULT 1, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE CASCADE)',
-            'CREATE TABLE IF NOT EXISTS calendar_days (id INT AUTO_INCREMENT PRIMARY KEY, day_date DATE NOT NULL UNIQUE, recurrence_name VARCHAR(255) NULL, is_holiday TINYINT(1) NOT NULL DEFAULT 0, is_special TINYINT(1) NOT NULL DEFAULT 0, day_type_id INT NULL, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE SET NULL)',
+            'CREATE TABLE IF NOT EXISTS calendar_days (id INT AUTO_INCREMENT PRIMARY KEY, day_date DATE NOT NULL UNIQUE, recurrence_name VARCHAR(255) NULL, santo VARCHAR(255) NULL, is_holiday TINYINT(1) NOT NULL DEFAULT 0, is_special TINYINT(1) NOT NULL DEFAULT 0, day_type_id INT NULL, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE SET NULL)',
             'CREATE TABLE IF NOT EXISTS boards (id INT AUTO_INCREMENT PRIMARY KEY, month INT NOT NULL, year INT NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, UNIQUE KEY uq_board (month, year))',
             'CREATE TABLE IF NOT EXISTS board_days (id INT AUTO_INCREMENT PRIMARY KEY, board_id INT NOT NULL, day_date DATE NOT NULL, weekday_name VARCHAR(30) NOT NULL, recurrence_name VARCHAR(255) NULL, day_type_id INT NULL, morning_close VARCHAR(255) NULL, evening_close VARCHAR(255) NULL, notes TEXT NULL, FOREIGN KEY (board_id) REFERENCES boards(id) ON DELETE CASCADE, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE SET NULL)',
             'CREATE TABLE IF NOT EXISTS board_day_users (id INT AUTO_INCREMENT PRIMARY KEY, board_day_id INT NOT NULL, user_id INT NOT NULL, FOREIGN KEY (board_day_id) REFERENCES board_days(id) ON DELETE CASCADE, FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE)',
             'CREATE TABLE IF NOT EXISTS notifications (id INT AUTO_INCREMENT PRIMARY KEY, user_id INT NOT NULL, board_day_id INT NOT NULL, message TEXT NOT NULL, status VARCHAR(20) NOT NULL DEFAULT "nuova", created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE, FOREIGN KEY (board_day_id) REFERENCES board_days(id) ON DELETE CASCADE)'
         ];
+    }
+
+    private function ensureCalendarColumns(PDO $pdo): void
+    {
+        $stmt = $pdo->query("SHOW COLUMNS FROM calendar_days LIKE 'santo'");
+        if ($stmt === false || !$stmt->fetch()) {
+            $pdo->exec('ALTER TABLE calendar_days ADD COLUMN santo VARCHAR(255) NULL AFTER recurrence_name');
+        }
     }
 
     private function seed(PDO $pdo): void
@@ -88,9 +97,7 @@ class InstallerService
     {
         $year = (int) date('Y');
 
-        $stmt = $pdo->prepare(
-            'INSERT IGNORE INTO calendar_days (day_date, recurrence_name, is_holiday, is_special, day_type_id) VALUES (?, ?, ?, 0, ?)'
-        );
+        $stmt = $pdo->prepare('INSERT IGNORE INTO calendar_days (day_date, recurrence_name, santo, is_holiday, is_special, day_type_id) VALUES (?, ?, ?, ?, 0, ?)');
 
         $ferialeTypeId = 2;
         $festivoTypeId = 3;
@@ -101,29 +108,31 @@ class InstallerService
         for ($day = $start; $day <= $end; $day = $day->modify('+1 day')) {
             $stmt->execute([
                 $day->format('Y-m-d'),
-                null,
+                '',
+                '',
                 0,
                 $ferialeTypeId,
             ]);
         }
 
         $holidays = [
-            ['date' => sprintf('%04d-01-01', $year), 'recurrence' => 'capodanno'],
-            ['date' => sprintf('%04d-06-02', $year), 'recurrence' => 'Festa delle repubblica'],
-            ['date' => sprintf('%04d-08-15', $year), 'recurrence' => 'ferragosto'],
-            ['date' => sprintf('%04d-12-08', $year), 'recurrence' => 'SS. Madonna'],
-            ['date' => sprintf('%04d-12-25', $year), 'recurrence' => 'Natale'],
-            ['date' => sprintf('%04d-12-26', $year), 'recurrence' => 'Santo Stefano'],
+            ['date' => sprintf('%04d-01-01', $year), 'recurrence' => 'capodanno', 'santo' => 'Maria Santisima madre di Dio'],
+            ['date' => sprintf('%04d-06-02', $year), 'recurrence' => 'Festa delle repubblica', 'santo' => 'Santi martiri Marcellino e Pietro'],
+            ['date' => sprintf('%04d-08-15', $year), 'recurrence' => 'ferragosto', 'santo' => 'Assunzione della B.V. Maria'],
+            ['date' => sprintf('%04d-12-08', $year), 'recurrence' => 'SS. Madonna', 'santo' => 'Immacolata concezione della B.V. Maria'],
+            ['date' => sprintf('%04d-12-25', $year), 'recurrence' => 'Natale', 'santo' => 'Natale del Signore'],
+            ['date' => sprintf('%04d-12-26', $year), 'recurrence' => 'Santo Stefano', 'santo' => 'S. Stefano'],
         ];
 
         $updateHoliday = $pdo->prepare(
-            'UPDATE calendar_days SET day_type_id = ?, is_holiday = 1, recurrence_name = ? WHERE day_date = ?'
+            'UPDATE calendar_days SET day_type_id = ?, is_holiday = 1, recurrence_name = ?, santo = ? WHERE day_date = ?'
         );
 
         foreach ($holidays as $holiday) {
             $updateHoliday->execute([
                 $festivoTypeId,
                 $holiday['recurrence'],
+                $holiday['santo'],
                 $holiday['date'],
             ]);
         }

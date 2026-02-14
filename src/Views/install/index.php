@@ -10,8 +10,10 @@
 
         <p class="text-muted mb-2">Procedura guidata: autenticazione DB, verifica server, creazione schema e popolamento dati iniziali.</p>
         <ul class="text-muted small ps-3 mb-3">
-          <li>Inizializzazione tabella calendario con tutti i giorni dell'anno come <strong>feriale</strong>.</li>
-          <li>Festività iniziali preconfigurate: 01/01, 02/06, 15/08, 08/12, 25/12, 26/12.</li>
+          <li>Tabella <strong>day_types</strong>: speciale, feriale, festivo.</li>
+          <li>Tabella <strong>users</strong>: admin/admin (admin attivo) e user/user (user attivo).</li>
+          <li>Tabella <strong>calendar_days</strong>: tutti i giorni dell'anno come feriale con ricorrenza e santo vuoti.</li>
+          <li>Festività iniziali preconfigurate: 01/01, 02/06, 15/08, 08/12, 25/12, 26/12 con ricorrenza e santo.</li>
         </ul>
 
         <form method="post">

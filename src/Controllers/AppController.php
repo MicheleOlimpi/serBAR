@@ -169,6 +169,7 @@ class AppController
                 'id' => $_POST['id'] ?? null,
                 'day_date' => $_POST['day_date'],
                 'recurrence_name' => $_POST['recurrence_name'],
+                'santo' => $_POST['santo'] ?? '',
                 'is_holiday' => ($_POST['calendar_kind'] ?? '') === 'festivo' ? 1 : 0,
                 'is_special' => ($_POST['calendar_kind'] ?? '') === 'speciale' ? 1 : 0,
                 'day_type_id' => $dayTypeId,

@@ -6,6 +6,8 @@
         <p class="mb-1">Il database <strong><?= htmlspecialchars($db) ?></strong> è stato inizializzato correttamente.</p>
         <p class="mb-3 text-muted">Connessione configurata su <?= htmlspecialchars($host) ?>:<?= (int) $port ?>.</p>
 
+        <p class="mb-2">Dati iniziali caricati: tipi giorno (speciale/feriale/festivo) e calendario annuale con festività nazionali configurate con ricorrenza e santo.</p>
+
         <h6>Credenziali iniziali</h6>
         <ul>
           <li><code>admin</code> / <code>admin</code> (ruolo admin)</li>
