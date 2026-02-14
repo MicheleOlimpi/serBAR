@@ -2,6 +2,8 @@
 
 Applicazione PHP 8 (PSR-4) con MariaDB per la gestione dei turni bar.
 
+Applicazione totalmente generata con codex
+
 ## Stack
 - PHP 8+
 - MariaDB/MySQL
@@ -22,10 +24,10 @@ Applicazione PHP 8 (PSR-4) con MariaDB per la gestione dei turni bar.
 
 ## Credenziali seed
 - `admin` / `admin`
-- `user` / `user`
+- `user` / `user` (ruolo user)
 
 ## Funzioni principali
-- Installazione guidata DB e creazione schema
+- Installazione guidata DB, creazione schema e pagina di riepilogo finale
 - Login/logout con ruoli
 - Dashboard amministratore
 - CRUD utenti (password hash), tipo giorno, numero turni, calendario annuale
