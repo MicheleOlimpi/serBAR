@@ -14,7 +14,7 @@ use App\Services\InstallerService;
 require __DIR__ . '/../vendor/autoload.php';
 session_start();
 
-$configPath = __DIR__ . '/../config/app.php';
+$configPath = __DIR__ . '/app.php';
 $config = Config::load($configPath);
 $action = $_GET['action'] ?? '';
 
