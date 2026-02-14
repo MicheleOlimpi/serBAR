@@ -110,13 +110,13 @@ class BarRepository
     public function saveCalendarDay(array $d): void
     {
         if (!empty($d['id'])) {
-            $this->pdo->prepare('UPDATE calendar_days SET day_date=?, recurrence_name=?, is_holiday=?, is_special=?, day_type_id=? WHERE id=?')
-                ->execute([$d['day_date'], $d['recurrence_name'], $d['is_holiday'], $d['is_special'], $d['day_type_id'] ?: null, (int) $d['id']]);
+            $this->pdo->prepare('UPDATE calendar_days SET day_date=?, recurrence_name=?, santo=?, is_holiday=?, is_special=?, day_type_id=? WHERE id=?')
+                ->execute([$d['day_date'], $d['recurrence_name'], $d['santo'], $d['is_holiday'], $d['is_special'], $d['day_type_id'] ?: null, (int) $d['id']]);
             return;
         }
 
-        $this->pdo->prepare('INSERT INTO calendar_days (day_date, recurrence_name, is_holiday, is_special, day_type_id) VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE recurrence_name=VALUES(recurrence_name), is_holiday=VALUES(is_holiday), is_special=VALUES(is_special), day_type_id=VALUES(day_type_id)')
-            ->execute([$d['day_date'], $d['recurrence_name'], $d['is_holiday'], $d['is_special'], $d['day_type_id'] ?: null]);
+        $this->pdo->prepare('INSERT INTO calendar_days (day_date, recurrence_name, santo, is_holiday, is_special, day_type_id) VALUES (?,?,?,?,?,?) ON DUPLICATE KEY UPDATE recurrence_name=VALUES(recurrence_name), santo=VALUES(santo), is_holiday=VALUES(is_holiday), is_special=VALUES(is_special), day_type_id=VALUES(day_type_id)')
+            ->execute([$d['day_date'], $d['recurrence_name'], $d['santo'], $d['is_holiday'], $d['is_special'], $d['day_type_id'] ?: null]);
     }
 
     public function boards(): array

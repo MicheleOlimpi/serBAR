@@ -32,9 +32,14 @@ if ($isEditing) {
         <input type="date" name="day_date" class="form-control" required value="<?= htmlspecialchars((string) ($editingRow['day_date'] ?? '')) ?>">
       </div>
 
-      <div class="col-md-4">
+      <div class="col-md-3">
         <label class="form-label">Ricorrenza</label>
         <input name="recurrence_name" class="form-control" placeholder="Es. Ferragosto" value="<?= htmlspecialchars((string) ($editingRow['recurrence_name'] ?? '')) ?>">
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Santo</label>
+        <input name="santo" class="form-control" placeholder="Es. S. Stefano" value="<?= htmlspecialchars((string) ($editingRow['santo'] ?? '')) ?>">
       </div>
 
       <div class="col-md-2">
@@ -82,6 +87,7 @@ if ($isEditing) {
         <th>Data</th>
         <th>Ricorrenza</th>
         <th>Tipo giornata</th>
+        <th>Santo</th>
         <th>Tipo giorno collegato</th>
         <th>Azioni</th>
       </tr>
@@ -100,6 +106,7 @@ if ($isEditing) {
           <td><?= htmlspecialchars($d['day_date']) ?></td>
           <td><?= htmlspecialchars((string) $d['recurrence_name']) ?></td>
           <td><?= htmlspecialchars($kindLabels[$kind] ?? $kind) ?></td>
+          <td><?= htmlspecialchars((string) ($d['santo'] ?? '')) ?></td>
           <td><?= htmlspecialchars((string) $d['day_type_name']) ?></td>
           <td>
             <a class="btn btn-sm btn-outline-primary" href="?action=calendar&edit=<?= (int) $d['id'] ?>">Modifica</a>
