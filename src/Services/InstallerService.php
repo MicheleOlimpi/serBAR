@@ -6,19 +6,39 @@ namespace App\Services;
 
 use App\Core\Database;
 use PDO;
+use Throwable;
 
 class InstallerService
 {
     public function install(array $cfg): void
     {
-        $pdo = Database::createServerConnection($cfg);
-        $dbName = $cfg['database'];
-        $pdo->exec("CREATE DATABASE IF NOT EXISTS `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-        $pdo->exec("USE `{$dbName}`");
-        foreach ($this->schema() as $sql) {
-            $pdo->exec($sql);
-        }
+        $pdo = $this->verifyServerAndCreateDatabase($cfg);
+        $this->installSchema($pdo);
         $this->seed($pdo);
+    }
+
+    private function verifyServerAndCreateDatabase(array $cfg): PDO
+    {
+        try {
+            $pdo = Database::createServerConnection($cfg);
+            $dbName = $cfg['database'];
+            $pdo->exec("CREATE DATABASE IF NOT EXISTS `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+            $pdo->exec("USE `{$dbName}`");
+            return $pdo;
+        } catch (Throwable $e) {
+            throw new \RuntimeException('Errore verifica server/creazione database: ' . $e->getMessage(), 0, $e);
+        }
+    }
+
+    private function installSchema(PDO $pdo): void
+    {
+        try {
+            foreach ($this->schema() as $sql) {
+                $pdo->exec($sql);
+            }
+        } catch (Throwable $e) {
+            throw new \RuntimeException('Errore installazione tabelle: ' . $e->getMessage(), 0, $e);
+        }
     }
 
     private function schema(): array
@@ -37,11 +57,15 @@ class InstallerService
 
     private function seed(PDO $pdo): void
     {
-        $pdo->exec("INSERT IGNORE INTO day_types (id, name, code, is_locked) VALUES (1,'speciale','speciale',1),(2,'feriale','feriale',1),(3,'festivo','festivo',1)");
-        $adminHash = password_hash('admin', PASSWORD_DEFAULT);
-        $userHash = password_hash('user', PASSWORD_DEFAULT);
-        $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,status) VALUES ('admin','Admin','Sistema','{$adminHash}','admin','attivo')");
-        $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,status) VALUES ('user','User','Default','{$userHash}','user','attivo')");
-        $pdo->exec('INSERT IGNORE INTO daily_shift_config(day_type_id, slots_count) VALUES (1,2),(2,2),(3,2)');
+        try {
+            $pdo->exec("INSERT IGNORE INTO day_types (id, name, code, is_locked) VALUES (1,'speciale','speciale',1),(2,'feriale','feriale',1),(3,'festivo','festivo',1)");
+            $adminHash = password_hash('admin', PASSWORD_DEFAULT);
+            $userHash = password_hash('user', PASSWORD_DEFAULT);
+            $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,status) VALUES ('admin','Admin','Sistema','{$adminHash}','admin','attivo')");
+            $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,status) VALUES ('user','User','Default','{$userHash}','admin','attivo')");
+            $pdo->exec('INSERT IGNORE INTO daily_shift_config(day_type_id, slots_count) VALUES (1,2),(2,2),(3,2)');
+        } catch (Throwable $e) {
+            throw new \RuntimeException('Errore popolamento dati iniziali: ' . $e->getMessage(), 0, $e);
+        }
     }
 }

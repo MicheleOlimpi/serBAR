@@ -16,13 +16,7 @@ class InstallController
 
     public function handle(): void
     {
-        $defaults = [
-            'host' => '127.0.0.1',
-            'database' => 'servizioBAR',
-            'username' => 'root',
-            'password' => '',
-            'port' => 3307,
-        ];
+        $defaults = $this->loadDefaultsFromConfig();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $cfg = [
@@ -35,7 +29,10 @@ class InstallController
 
             try {
                 $this->installer->install($cfg);
-                Config::save($this->configPath, $cfg);
+                $storedConfig = Config::load($this->configPath);
+                if ($storedConfig !== $cfg) {
+                    Config::save($this->configPath, $cfg);
+                }
 
                 View::render('install/complete', [
                     'db' => $cfg['database'],
@@ -44,11 +41,32 @@ class InstallController
                 ]);
                 return;
             } catch (\Throwable $e) {
-                View::render('install/index', ['error' => $e->getMessage(), 'defaults' => $cfg]);
+                View::render('install/index', [
+                    'error' => $e->getMessage(),
+                    'defaults' => $this->loadDefaultsFromConfig(),
+                ]);
                 return;
             }
         }
 
         View::render('install/index', ['defaults' => $defaults]);
+    }
+
+    private function loadDefaultsFromConfig(): array
+    {
+        $defaults = [
+            'host' => '127.0.0.1',
+            'database' => 'servizioBAR',
+            'username' => 'root',
+            'password' => '',
+            'port' => 3307,
+        ];
+
+        $configured = Config::load($this->configPath);
+        if (is_array($configured)) {
+            $defaults = array_merge($defaults, $configured);
+        }
+
+        return $defaults;
     }
 }
