@@ -11,6 +11,12 @@ use App\Services\BoardService;
 
 class AppController
 {
+    private const CALENDAR_KIND_TO_CODE = [
+        'feriale' => 'feriale',
+        'festivo' => 'festivo',
+        'speciale' => 'speciale',
+    ];
+
     public function __construct(private BarRepository $repo, private BoardService $boardService)
     {
     }
@@ -151,19 +157,76 @@ class AppController
     public function calendar(): void
     {
         $this->guardAdmin();
+
+        if (isset($_GET['delete'])) {
+            $this->repo->deleteCalendarDay((int) $_GET['delete']);
+            View::redirect('?action=calendar');
+        }
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $dayTypeId = $this->resolveDayTypeId($_POST['calendar_kind'] ?? 'feriale', $_POST['day_type_id'] ?? null);
             $this->repo->saveCalendarDay([
+                'id' => $_POST['id'] ?? null,
                 'day_date' => $_POST['day_date'],
                 'recurrence_name' => $_POST['recurrence_name'],
-                'is_holiday' => isset($_POST['is_holiday']) ? 1 : 0,
-                'is_special' => isset($_POST['is_special']) ? 1 : 0,
-                'day_type_id' => $_POST['day_type_id'] ?? null,
+                'is_holiday' => ($_POST['calendar_kind'] ?? '') === 'festivo' ? 1 : 0,
+                'is_special' => ($_POST['calendar_kind'] ?? '') === 'speciale' ? 1 : 0,
+                'day_type_id' => $dayTypeId,
             ]);
+            View::redirect('?action=calendar');
         }
+
+        $editingId = isset($_GET['edit']) ? (int) $_GET['edit'] : 0;
+        $editing = $editingId > 0 ? $this->repo->calendarDayById($editingId) : null;
+
         View::render('admin/calendar', [
             'days' => $this->repo->calendarDays($_GET['month'] ?? null),
             'types' => $this->repo->dayTypes(),
+            'editing' => $editing,
+            'calendarKinds' => array_keys(self::CALENDAR_KIND_TO_CODE),
         ]);
+    }
+
+    public function notifications(): void
+    {
+        $this->guardAdmin();
+
+        if (isset($_GET['delete'])) {
+            $this->repo->deleteNotification((int) $_GET['delete']);
+            View::redirect('?action=notifications');
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (isset($_POST['quick_status_id'], $_POST['quick_status'])) {
+                $this->repo->updateNotificationStatus((int) $_POST['quick_status_id'], (string) $_POST['quick_status']);
+            } else {
+                $this->repo->saveNotification($_POST);
+            }
+            View::redirect('?action=notifications');
+        }
+
+        $editingId = isset($_GET['edit']) ? (int) $_GET['edit'] : 0;
+        $editing = $editingId > 0 ? $this->repo->notificationById($editingId) : null;
+
+        View::render('admin/notifications', [
+            'notifications' => $this->repo->notifications(),
+            'users' => $this->repo->activeUsers(),
+            'boardDays' => $this->repo->boardDaysForSelect(),
+            'editing' => $editing,
+            'statuses' => ['inviata', 'letto', 'in_corso', 'chiuso'],
+        ]);
+    }
+
+    private function resolveDayTypeId(string $calendarKind, mixed $selectedDayTypeId): ?int
+    {
+        $dayTypeId = (int) $selectedDayTypeId;
+        if ($dayTypeId > 0) {
+            return $dayTypeId;
+        }
+
+        $code = self::CALENDAR_KIND_TO_CODE[$calendarKind] ?? 'feriale';
+        $dayType = $this->repo->dayTypeByCode($code);
+        return $dayType ? (int) $dayType['id'] : null;
     }
 
     private function guard(): void
