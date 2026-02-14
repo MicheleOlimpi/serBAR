@@ -21,7 +21,7 @@ class AppController
             $user = $this->repo->findUserByUsername(trim($_POST['username'] ?? ''));
             if ($user && $user['status'] === 'attivo' && password_verify($_POST['password'] ?? '', $user['password_hash'])) {
                 Auth::login($user);
-                View::redirect('/');
+                View::redirect('./');
             }
             View::render('auth/login', ['error' => 'Credenziali non valide']);
             return;
@@ -32,7 +32,7 @@ class AppController
     public function logout(): void
     {
         Auth::logout();
-        View::redirect('/?action=login');
+        View::redirect('?action=login');
     }
 
     public function dashboard(): void
@@ -61,7 +61,7 @@ class AppController
         }
         if (isset($_GET['delete'])) {
             $this->repo->deleteBoard((int) $_GET['delete']);
-            View::redirect('/?action=boards');
+            View::redirect('?action=boards');
         }
         View::render('admin/boards', ['boards' => $this->repo->boards()]);
     }
@@ -71,7 +71,7 @@ class AppController
         $this->guard();
         $boardId = (int) ($_GET['id'] ?? 0);
         if ($boardId < 1) {
-            View::redirect('/');
+            View::redirect('./');
         }
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::isAdmin()) {
             foreach ($_POST['day'] ?? [] as $dayId => $dayData) {
@@ -107,7 +107,7 @@ class AppController
         }
         if (isset($_GET['delete'])) {
             $this->repo->deleteUser((int) $_GET['delete']);
-            View::redirect('/?action=users');
+            View::redirect('?action=users');
         }
         View::render('admin/users', ['users' => $this->repo->allUsers()]);
     }
@@ -120,7 +120,7 @@ class AppController
         }
         if (isset($_GET['delete'])) {
             $this->repo->deleteDayType((int) $_GET['delete']);
-            View::redirect('/?action=day_types');
+            View::redirect('?action=day_types');
         }
         View::render('admin/day_types', ['types' => $this->repo->dayTypes()]);
     }
@@ -157,7 +157,7 @@ class AppController
     private function guard(): void
     {
         if (!Auth::check()) {
-            View::redirect('/?action=login');
+            View::redirect('?action=login');
         }
     }
 
@@ -165,7 +165,7 @@ class AppController
     {
         $this->guard();
         if (!Auth::isAdmin()) {
-            View::redirect('/');
+            View::redirect('./');
         }
     }
 }

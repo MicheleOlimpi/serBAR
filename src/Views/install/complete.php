@@ -12,7 +12,7 @@
           <li><code>user</code> / <code>user</code> (ruolo user)</li>
         </ul>
 
-        <a class="btn btn-primary" href="/?action=login">Vai al login</a>
+        <a class="btn btn-primary" href="?action=login">Vai al login</a>
       </div>
     </div>
   </div>

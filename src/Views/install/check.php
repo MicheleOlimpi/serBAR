@@ -13,8 +13,8 @@
         <p class="mb-3">Vuoi passare all'interfaccia di installazione per configurare o creare il database?</p>
 
         <div class="d-flex gap-2">
-          <a class="btn btn-primary" href="/?action=install">Sì, apri installazione</a>
-          <a class="btn btn-outline-secondary" href="/?action=login">No, torna al login</a>
+          <a class="btn btn-primary" href="?action=install">Sì, apri installazione</a>
+          <a class="btn btn-outline-secondary" href="?action=login">No, torna al login</a>
         </div>
       </div>
     </div>

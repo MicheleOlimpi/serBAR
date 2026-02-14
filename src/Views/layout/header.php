@@ -12,7 +12,7 @@
 <body class="bg-light">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/"><img src="/logo.svg" class="logo me-2">ACLI servizio BAR</a>
+    <a class="navbar-brand" href="./"><img src="logo.svg" class="logo me-2">ACLI servizio BAR</a>
     <?php if ($u): ?><span class="text-white"><?= htmlspecialchars($u['username']) ?></span><?php endif; ?>
   </div>
 </nav>

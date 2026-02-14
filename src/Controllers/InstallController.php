@@ -31,7 +31,9 @@ class InstallController
                 $this->installer->install($cfg);
                 $storedConfig = Config::load($this->configPath);
                 if ($storedConfig !== $cfg) {
-                    Config::save($this->configPath, $cfg);
+                    if (!Config::save($this->configPath, $cfg)) {
+                        throw new \RuntimeException('Impossibile salvare la configurazione in config/app.php.');
+                    }
                 }
 
                 View::render('install/complete', [
