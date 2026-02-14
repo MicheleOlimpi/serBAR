@@ -8,6 +8,8 @@ use PDO;
 
 class BarRepository
 {
+    private const NOTIFICATION_STATUSES = ['inviata', 'letto', 'in_corso', 'chiuso'];
+
     public function __construct(private PDO $pdo)
     {
     }
@@ -107,6 +109,12 @@ class BarRepository
 
     public function saveCalendarDay(array $d): void
     {
+        if (!empty($d['id'])) {
+            $this->pdo->prepare('UPDATE calendar_days SET day_date=?, recurrence_name=?, is_holiday=?, is_special=?, day_type_id=? WHERE id=?')
+                ->execute([$d['day_date'], $d['recurrence_name'], $d['is_holiday'], $d['is_special'], $d['day_type_id'] ?: null, (int) $d['id']]);
+            return;
+        }
+
         $this->pdo->prepare('INSERT INTO calendar_days (day_date, recurrence_name, is_holiday, is_special, day_type_id) VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE recurrence_name=VALUES(recurrence_name), is_holiday=VALUES(is_holiday), is_special=VALUES(is_special), day_type_id=VALUES(day_type_id)')
             ->execute([$d['day_date'], $d['recurrence_name'], $d['is_holiday'], $d['is_special'], $d['day_type_id'] ?: null]);
     }
@@ -175,6 +183,48 @@ class BarRepository
             ->execute([$userId, $boardDayId, $msg]);
     }
 
+    public function notificationById(int $id): ?array
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM notifications WHERE id=? LIMIT 1');
+        $stmt->execute([$id]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+
+    public function saveNotification(array $data): void
+    {
+        $status = in_array($data['status'] ?? '', self::NOTIFICATION_STATUSES, true) ? $data['status'] : 'inviata';
+        $userId = (int) ($data['user_id'] ?? 0);
+        $boardDayId = (int) ($data['board_day_id'] ?? 0);
+        $message = trim((string) ($data['message'] ?? ''));
+
+        if ($userId < 1 || $boardDayId < 1 || $message === '') {
+            return;
+        }
+
+        if (!empty($data['id'])) {
+            $this->pdo->prepare('UPDATE notifications SET user_id=?, board_day_id=?, message=?, status=? WHERE id=?')
+                ->execute([$userId, $boardDayId, $message, $status, (int) $data['id']]);
+            return;
+        }
+
+        $this->pdo->prepare('INSERT INTO notifications (user_id, board_day_id, message, status) VALUES (?,?,?,?)')
+            ->execute([$userId, $boardDayId, $message, $status]);
+    }
+
+    public function updateNotificationStatus(int $id, string $status): void
+    {
+        if (!in_array($status, self::NOTIFICATION_STATUSES, true)) {
+            return;
+        }
+        $this->pdo->prepare('UPDATE notifications SET status=? WHERE id=?')->execute([$status, $id]);
+    }
+
+    public function deleteNotification(int $id): void
+    {
+        $this->pdo->prepare('DELETE FROM notifications WHERE id=?')->execute([$id]);
+    }
+
     public function notifications(): array
     {
         return $this->pdo->query('SELECT n.*, u.username, bd.day_date FROM notifications n JOIN users u ON u.id=n.user_id JOIN board_days bd ON bd.id=n.board_day_id ORDER BY n.created_at DESC')->fetchAll();
@@ -231,5 +281,35 @@ class BarRepository
                 ORDER BY n.created_at DESC';
 
         return $this->pdo->query($sql)->fetchAll();
+    }
+
+    public function boardDaysForSelect(): array
+    {
+        $sql = 'SELECT bd.id, bd.day_date, b.month, b.year
+                FROM board_days bd
+                JOIN boards b ON b.id=bd.board_id
+                ORDER BY b.year DESC, b.month DESC, bd.day_date DESC';
+        return $this->pdo->query($sql)->fetchAll();
+    }
+
+    public function calendarDayById(int $id): ?array
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM calendar_days WHERE id=? LIMIT 1');
+        $stmt->execute([$id]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+
+    public function deleteCalendarDay(int $id): void
+    {
+        $this->pdo->prepare('DELETE FROM calendar_days WHERE id=?')->execute([$id]);
+    }
+
+    public function dayTypeByCode(string $code): ?array
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM day_types WHERE code=? LIMIT 1');
+        $stmt->execute([$code]);
+        $row = $stmt->fetch();
+        return $row ?: null;
     }
 }
