@@ -24,12 +24,12 @@ if ($action === 'install') {
 }
 
 if ($config === null) {
-    View::render('install/index', ['error' => 'Database non configurato. Avviare installazione.', 'defaults' => ['host' => '127.0.0.1', 'database' => 'servizioBAR', 'username' => 'root', 'password' => '', 'port' => 3307]]);
+    View::render('install/check', ['error' => 'Database non configurato in public/app.php.']);
     exit;
 }
 
 if (!Database::canConnect($config)) {
-    View::render('install/index', ['error' => 'Database non raggiungibile o non esistente. Procedere con installazione.', 'defaults' => $config]);
+    View::render('install/check', ['error' => 'Database non raggiungibile o non esistente con le impostazioni attuali.']);
     exit;
 }
 
