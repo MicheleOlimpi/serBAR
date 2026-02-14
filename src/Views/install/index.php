@@ -8,7 +8,11 @@
           <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
 
-        <p class="text-muted mb-3">Procedura guidata: autenticazione DB, verifica server, creazione schema e popolamento dati iniziali.</p>
+        <p class="text-muted mb-2">Procedura guidata: autenticazione DB, verifica server, creazione schema e popolamento dati iniziali.</p>
+        <ul class="text-muted small ps-3 mb-3">
+          <li>Inizializzazione tabella calendario con tutti i giorni dell'anno come <strong>feriale</strong>.</li>
+          <li>Festività iniziali preconfigurate: 01/01, 02/06, 15/08, 08/12, 25/12, 26/12.</li>
+        </ul>
 
         <form method="post">
           <h6 class="mt-2">1) Autenticazione server database</h6>
