@@ -12,22 +12,36 @@ class InstallerService
 {
     public function install(array $cfg): void
     {
-        $pdo = $this->verifyServerAndCreateDatabase($cfg);
+        $pdo = $this->verifyServerConnection($cfg);
+        $this->createDatabaseIfMissing($pdo, $cfg['database']);
+        $this->selectDatabase($pdo, $cfg['database']);
         $this->installSchema($pdo);
         $this->seed($pdo);
     }
 
-    private function verifyServerAndCreateDatabase(array $cfg): PDO
+    private function verifyServerConnection(array $cfg): PDO
     {
         try {
-            $pdo = Database::createServerConnection($cfg);
-            $dbName = $cfg['database'];
-            $pdo->exec("CREATE DATABASE IF NOT EXISTS `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-            $pdo->exec("USE `{$dbName}`");
-            return $pdo;
+            return Database::createServerConnection($cfg);
         } catch (Throwable $e) {
-            throw new \RuntimeException('Errore verifica server/creazione database: ' . $e->getMessage(), 0, $e);
+            throw new \RuntimeException('Errore verifica server database: ' . $e->getMessage(), 0, $e);
         }
+    }
+
+    private function createDatabaseIfMissing(PDO $pdo, string $databaseName): void
+    {
+        try {
+            $safeName = str_replace('`', '``', $databaseName);
+            $pdo->exec("CREATE DATABASE IF NOT EXISTS `{$safeName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+        } catch (Throwable $e) {
+            throw new \RuntimeException('Errore creazione database: ' . $e->getMessage(), 0, $e);
+        }
+    }
+
+    private function selectDatabase(PDO $pdo, string $databaseName): void
+    {
+        $safeName = str_replace('`', '``', $databaseName);
+        $pdo->exec("USE `{$safeName}`");
     }
 
     private function installSchema(PDO $pdo): void

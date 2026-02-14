@@ -9,7 +9,7 @@
         <h6>Credenziali iniziali</h6>
         <ul>
           <li><code>admin</code> / <code>admin</code> (ruolo admin)</li>
-          <li><code>user</code> / <code>user</code> (ruolo admin)</li>
+          <li><code>user</code> / <code>user</code> (ruolo user)</li>
         </ul>
 
         <a class="btn btn-primary" href="/?action=login">Vai al login</a>
