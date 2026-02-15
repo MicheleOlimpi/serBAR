@@ -2,7 +2,7 @@
   <a class="btn btn-primary" href="?action=boards">Tabelloni</a>
   <a class="btn btn-outline-primary" href="?action=users">Utenti</a>
   <a class="btn btn-outline-primary" href="?action=day_types">Tipo giorno</a>
-  <a class="btn btn-outline-primary" href="?action=shift_config">Numero turni</a>
+  <a class="btn btn-outline-primary" href="?action=shift_config">Turni giornalieri</a>
   <a class="btn btn-outline-primary" href="?action=calendar">Calendario</a>
   <a class="btn btn-outline-primary" href="?action=notifications">Segnalazioni</a>
   <a class="btn btn-danger" href="?action=logout">Logout</a>

@@ -130,23 +130,43 @@ class AppController
         $this->guardAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->repo->saveDayType($_POST);
+            View::redirect('?action=day_types');
         }
         if (isset($_GET['delete'])) {
             $this->repo->deleteDayType((int) $_GET['delete']);
             View::redirect('?action=day_types');
         }
-        View::render('admin/day_types', ['types' => $this->repo->dayTypes()]);
+
+        $editingId = isset($_GET['edit']) ? (int) $_GET['edit'] : 0;
+        $editing = $editingId > 0 ? $this->repo->dayTypeById($editingId) : null;
+
+        View::render('admin/day_types', [
+            'types' => $this->repo->dayTypes(),
+            'editing' => $editing,
+        ]);
     }
 
     public function shiftConfig(): void
     {
         $this->guardAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            foreach ($_POST['slots'] ?? [] as $dayTypeId => $slots) {
-                $this->repo->saveShiftConfig((int) $dayTypeId, (int) $slots);
-            }
+            $this->repo->saveDailyShift($_POST);
+            View::redirect('?action=shift_config');
         }
-        View::render('admin/shift_config', ['cfg' => $this->repo->shiftConfigs()]);
+
+        if (isset($_GET['delete'])) {
+            $this->repo->deleteDailyShift((int) $_GET['delete']);
+            View::redirect('?action=shift_config');
+        }
+
+        $editingId = isset($_GET['edit']) ? (int) $_GET['edit'] : 0;
+        $editing = $editingId > 0 ? $this->repo->dailyShiftById($editingId) : null;
+
+        View::render('admin/shift_config', [
+            'shifts' => $this->repo->shiftConfigs(),
+            'dayTypes' => $this->repo->dayTypes(),
+            'editing' => $editing,
+        ]);
     }
 
     public function calendar(): void
