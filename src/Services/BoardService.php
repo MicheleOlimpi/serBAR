@@ -25,7 +25,7 @@ class BoardService
         $speciale = $this->idByCode('speciale');
 
         $stmtCal = $this->pdo->prepare('SELECT * FROM calendar_days WHERE day_date=?');
-        $ins = $this->pdo->prepare('INSERT INTO board_days (board_id, day_date, weekday_name, recurrence_name, day_type_id) VALUES (?,?,?,?,?)');
+        $days = [];
 
         for ($d = $start; $d <= $end; $d = $d->modify('+1 day')) {
             $iso = $d->format('Y-m-d');
@@ -51,13 +51,34 @@ class BoardService
                 }
             }
 
+            $days[] = [
+                'day_date' => $iso,
+                'weekday_name' => $this->weekday[$d->format('l')] ?? $d->format('l'),
+                'recurrence_name' => $cal['recurrence_name'] ?? null,
+                'day_type_id' => $type,
+            ];
+        }
+
+        for ($i = 1, $count = count($days); $i < $count; $i++) {
+            if ((int) $days[$i]['day_type_id'] === $festivo && $prefestivo > 0) {
+                $days[$i - 1]['day_type_id'] = $prefestivo;
+            }
+        }
+
+        $ins = $this->pdo->prepare('INSERT INTO board_days (board_id, day_date, weekday_name, recurrence_name, day_type_id) VALUES (?,?,?,?,?)');
+        $insShift = $this->pdo->prepare('INSERT INTO board_day_shifts (board_day_id, daily_shift_config_id, start_time, end_time, closes_bar, priority, volunteers) SELECT ?, id, start_time, end_time, closes_bar, priority, NULL FROM daily_shift_config WHERE day_type_id=? ORDER BY priority ASC, start_time ASC');
+
+        foreach ($days as $day) {
             $ins->execute([
                 $boardId,
-                $iso,
-                $this->weekday[$d->format('l')] ?? $d->format('l'),
-                $cal['recurrence_name'] ?? null,
-                $type,
+                $day['day_date'],
+                $day['weekday_name'],
+                $day['recurrence_name'],
+                $day['day_type_id'],
             ]);
+
+            $boardDayId = (int) $this->pdo->lastInsertId();
+            $insShift->execute([$boardDayId, (int) $day['day_type_id']]);
         }
     }
 

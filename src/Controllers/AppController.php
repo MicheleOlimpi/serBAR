@@ -88,14 +88,22 @@ class AppController
         }
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::isAdmin()) {
             foreach ($_POST['day'] ?? [] as $dayId => $dayData) {
+                $dayId = (int) $dayId;
+                $dayTypeId = (int) ($dayData['day_type_id'] ?? 0);
+
                 $this->repo->saveBoardDay([
-                    'id' => (int) $dayId,
-                    'day_type_id' => (int) ($dayData['day_type_id'] ?? 0),
+                    'id' => $dayId,
+                    'day_type_id' => $dayTypeId,
                     'morning_close' => $dayData['morning_close'] ?? null,
                     'evening_close' => $dayData['evening_close'] ?? null,
                     'notes' => $dayData['notes'] ?? null,
                 ]);
-                $this->repo->setBoardDayUsers((int) $dayId, $dayData['users'] ?? []);
+                $this->repo->setBoardDayUsers($dayId, $dayData['users'] ?? []);
+                $this->repo->syncBoardDayShifts($dayId, $dayTypeId);
+
+                foreach ($dayData['shifts'] ?? [] as $shiftId => $shiftData) {
+                    $this->repo->updateBoardDayShiftVolunteers((int) $shiftId, trim((string) ($shiftData['volunteers'] ?? '')));
+                }
             }
         }
 
@@ -103,12 +111,18 @@ class AppController
             $this->repo->createNotification((int) Auth::user()['id'], (int) $_POST['report_day'], trim($_POST['message']));
         }
 
+        $days = $this->repo->boardDays($boardId);
+        foreach ($days as $day) {
+            $this->repo->syncBoardDayShifts((int) $day['id'], (int) $day['day_type_id']);
+        }
+
         View::render('admin/board_edit', [
             'board' => $this->repo->board($boardId),
-            'days' => $this->repo->boardDays($boardId),
+            'days' => $days,
             'dayTypes' => $this->repo->dayTypes(),
             'users' => $this->repo->activeUsers(),
             'dayUsers' => $this->repo->boardDayUsersMap($boardId),
+            'dayShifts' => $this->repo->boardDayShiftsMap($boardId),
         ]);
     }
 

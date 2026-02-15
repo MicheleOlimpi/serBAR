@@ -227,10 +227,78 @@ class BarRepository
         return $stmt->fetchAll();
     }
 
+    public function boardDayShiftsMap(int $boardId): array
+    {
+        $stmt = $this->pdo->prepare('SELECT s.* FROM board_day_shifts s JOIN board_days bd ON bd.id=s.board_day_id WHERE bd.board_id=? ORDER BY bd.day_date ASC, s.priority ASC, s.start_time ASC');
+        $stmt->execute([$boardId]);
+
+        $map = [];
+        foreach ($stmt->fetchAll() as $row) {
+            $map[$row['board_day_id']][] = $row;
+        }
+
+        return $map;
+    }
+
     public function saveBoardDay(array $d): void
     {
         $this->pdo->prepare('UPDATE board_days SET day_type_id=?, morning_close=?, evening_close=?, notes=? WHERE id=?')
             ->execute([$d['day_type_id'], $d['morning_close'], $d['evening_close'], $d['notes'], $d['id']]);
+    }
+
+    public function syncBoardDayShifts(int $boardDayId, int $dayTypeId): void
+    {
+        if ($dayTypeId < 1) {
+            $this->pdo->prepare('DELETE FROM board_day_shifts WHERE board_day_id=?')->execute([$boardDayId]);
+            return;
+        }
+
+        $stmtConfig = $this->pdo->prepare('SELECT * FROM daily_shift_config WHERE day_type_id=? ORDER BY priority ASC, start_time ASC');
+        $stmtConfig->execute([$dayTypeId]);
+        $configs = $stmtConfig->fetchAll();
+
+        $stmtCurrent = $this->pdo->prepare('SELECT id, priority, volunteers FROM board_day_shifts WHERE board_day_id=?');
+        $stmtCurrent->execute([$boardDayId]);
+        $currentRows = $stmtCurrent->fetchAll();
+
+        $currentByPriority = [];
+        foreach ($currentRows as $row) {
+            $currentByPriority[(int) $row['priority']] = $row;
+        }
+
+        $upsert = $this->pdo->prepare('INSERT INTO board_day_shifts (board_day_id, daily_shift_config_id, start_time, end_time, closes_bar, priority, volunteers) VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE daily_shift_config_id=VALUES(daily_shift_config_id), start_time=VALUES(start_time), end_time=VALUES(end_time), closes_bar=VALUES(closes_bar), volunteers=VALUES(volunteers)');
+        $priorities = [];
+
+        foreach ($configs as $config) {
+            $priority = (int) $config['priority'];
+            $priorities[] = $priority;
+            $volunteers = $currentByPriority[$priority]['volunteers'] ?? null;
+            $upsert->execute([
+                $boardDayId,
+                (int) $config['id'],
+                $config['start_time'],
+                $config['end_time'],
+                (int) $config['closes_bar'],
+                $priority,
+                $volunteers,
+            ]);
+        }
+
+        $allPriorityStmt = $this->pdo->prepare('SELECT priority FROM board_day_shifts WHERE board_day_id=?');
+        $allPriorityStmt->execute([$boardDayId]);
+        $allPriorities = array_map(static fn ($value): int => (int) $value, $allPriorityStmt->fetchAll(PDO::FETCH_COLUMN));
+        $toDelete = array_diff($allPriorities, $priorities);
+
+        if ($toDelete !== []) {
+            $placeholders = implode(',', array_fill(0, count($toDelete), '?'));
+            $params = array_merge([$boardDayId], array_values($toDelete));
+            $this->pdo->prepare("DELETE FROM board_day_shifts WHERE board_day_id=? AND priority IN ({$placeholders})")->execute($params);
+        }
+    }
+
+    public function updateBoardDayShiftVolunteers(int $shiftId, string $volunteers): void
+    {
+        $this->pdo->prepare('UPDATE board_day_shifts SET volunteers=? WHERE id=?')->execute([$volunteers, $shiftId]);
     }
 
     public function setBoardDayUsers(int $boardDayId, array $userIds): void
