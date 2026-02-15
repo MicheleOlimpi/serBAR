@@ -242,8 +242,8 @@ class BarRepository
 
     public function saveBoardDay(array $d): void
     {
-        $this->pdo->prepare('UPDATE board_days SET day_type_id=?, morning_close=?, evening_close=?, notes=? WHERE id=?')
-            ->execute([$d['day_type_id'], $d['morning_close'], $d['evening_close'], $d['notes'], $d['id']]);
+        $this->pdo->prepare('UPDATE board_days SET day_type_id=?, notes=? WHERE id=?')
+            ->execute([$d['day_type_id'], $d['notes'], $d['id']]);
     }
 
     public function syncBoardDayShifts(int $boardDayId, int $dayTypeId): void
@@ -299,27 +299,6 @@ class BarRepository
     public function updateBoardDayShiftVolunteers(int $shiftId, string $volunteers): void
     {
         $this->pdo->prepare('UPDATE board_day_shifts SET volunteers=? WHERE id=?')->execute([$volunteers, $shiftId]);
-    }
-
-    public function setBoardDayUsers(int $boardDayId, array $userIds): void
-    {
-        $this->pdo->prepare('DELETE FROM board_day_users WHERE board_day_id=?')->execute([$boardDayId]);
-        $stmt = $this->pdo->prepare('INSERT INTO board_day_users (board_day_id, user_id) VALUES (?,?)');
-        foreach ($userIds as $uid) {
-            $stmt->execute([$boardDayId, (int) $uid]);
-        }
-    }
-
-    public function boardDayUsersMap(int $boardId): array
-    {
-        $stmt = $this->pdo->prepare('SELECT u.id,u.first_name,u.last_name,bu.board_day_id FROM board_day_users bu JOIN users u ON u.id=bu.user_id JOIN board_days bd ON bd.id=bu.board_day_id WHERE bd.board_id=?');
-        $stmt->execute([$boardId]);
-        $rows = $stmt->fetchAll();
-        $map = [];
-        foreach ($rows as $r) {
-            $map[$r['board_day_id']][] = $r;
-        }
-        return $map;
     }
 
     public function createNotification(int $userId, int $boardDayId, string $msg): void
@@ -390,22 +369,16 @@ class BarRepository
                     bd.day_date,
                     bd.weekday_name,
                     dt.name AS day_type_name,
-                    bd.morning_close,
-                    bd.evening_close,
-                    bd.notes,
-                    GROUP_CONCAT(DISTINCT CONCAT(u.last_name, \' \', u.first_name) ORDER BY u.last_name, u.first_name SEPARATOR \', \') AS assigned_users
+                    bd.notes
                 FROM boards b
                 JOIN board_days bd ON bd.board_id = b.id
                 LEFT JOIN day_types dt ON dt.id = bd.day_type_id
-                LEFT JOIN board_day_users bu ON bu.board_day_id = bd.id
-                LEFT JOIN users u ON u.id = bu.user_id
                 JOIN (
                     SELECT id
                     FROM boards
                     ORDER BY year DESC, month DESC
                     LIMIT 3
                 ) recent_boards ON recent_boards.id = b.id
-                GROUP BY bd.id, b.id, b.month, b.year, bd.day_date, bd.weekday_name, dt.name, bd.morning_close, bd.evening_close, bd.notes
                 ORDER BY b.year DESC, b.month DESC, bd.day_date';
 
         return $this->pdo->query($sql)->fetchAll();

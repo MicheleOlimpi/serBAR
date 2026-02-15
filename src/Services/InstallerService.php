@@ -53,7 +53,9 @@ class InstallerService
             $this->ensureCalendarColumns($pdo);
             $this->ensureUsersColumns($pdo);
             $this->ensureDailyShiftConfigSchema($pdo);
+            $this->ensureBoardDaysSchema($pdo);
             $this->ensureBoardDayShiftsSchema($pdo);
+            $this->removeBoardDayUsersTable($pdo);
         } catch (Throwable $e) {
             throw new \RuntimeException('Errore installazione tabelle: ' . $e->getMessage(), 0, $e);
         }
@@ -67,8 +69,7 @@ class InstallerService
             'CREATE TABLE IF NOT EXISTS daily_shift_config (id INT AUTO_INCREMENT PRIMARY KEY, day_type_id INT NOT NULL, start_time TIME NOT NULL, end_time TIME NOT NULL, closes_bar TINYINT(1) NOT NULL DEFAULT 0, priority INT NOT NULL DEFAULT 1, UNIQUE KEY uq_daily_shift_day_type_priority (day_type_id, priority), FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE CASCADE)',
             'CREATE TABLE IF NOT EXISTS calendar_days (id INT AUTO_INCREMENT PRIMARY KEY, day_date DATE NOT NULL UNIQUE, recurrence_name VARCHAR(255) NULL, santo VARCHAR(255) NULL, is_holiday TINYINT(1) NOT NULL DEFAULT 0, is_special TINYINT(1) NOT NULL DEFAULT 0, day_type_id INT NULL, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE SET NULL)',
             'CREATE TABLE IF NOT EXISTS boards (id INT AUTO_INCREMENT PRIMARY KEY, month INT NOT NULL, year INT NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, UNIQUE KEY uq_board (month, year))',
-            'CREATE TABLE IF NOT EXISTS board_days (id INT AUTO_INCREMENT PRIMARY KEY, board_id INT NOT NULL, day_date DATE NOT NULL, weekday_name VARCHAR(30) NOT NULL, recurrence_name VARCHAR(255) NULL, day_type_id INT NULL, morning_close VARCHAR(255) NULL, evening_close VARCHAR(255) NULL, notes TEXT NULL, FOREIGN KEY (board_id) REFERENCES boards(id) ON DELETE CASCADE, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE SET NULL)',
-            'CREATE TABLE IF NOT EXISTS board_day_users (id INT AUTO_INCREMENT PRIMARY KEY, board_day_id INT NOT NULL, user_id INT NOT NULL, FOREIGN KEY (board_day_id) REFERENCES board_days(id) ON DELETE CASCADE, FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE)',
+            'CREATE TABLE IF NOT EXISTS board_days (id INT AUTO_INCREMENT PRIMARY KEY, board_id INT NOT NULL, day_date DATE NOT NULL, weekday_name VARCHAR(30) NOT NULL, recurrence_name VARCHAR(255) NULL, day_type_id INT NULL, notes TEXT NULL, FOREIGN KEY (board_id) REFERENCES boards(id) ON DELETE CASCADE, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE SET NULL)',
             'CREATE TABLE IF NOT EXISTS board_day_shifts (id INT AUTO_INCREMENT PRIMARY KEY, board_day_id INT NOT NULL, daily_shift_config_id INT NULL, start_time TIME NOT NULL, end_time TIME NOT NULL, closes_bar TINYINT(1) NOT NULL DEFAULT 0, priority INT NOT NULL DEFAULT 1, volunteers TEXT NULL, UNIQUE KEY uq_board_day_shift_priority (board_day_id, priority), FOREIGN KEY (board_day_id) REFERENCES board_days(id) ON DELETE CASCADE, FOREIGN KEY (daily_shift_config_id) REFERENCES daily_shift_config(id) ON DELETE SET NULL)',
             "CREATE TABLE IF NOT EXISTS notifications (id INT AUTO_INCREMENT PRIMARY KEY, user_id INT NOT NULL, board_day_id INT NOT NULL, message TEXT NOT NULL, status VARCHAR(20) NOT NULL DEFAULT 'nuova', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE, FOREIGN KEY (board_day_id) REFERENCES board_days(id) ON DELETE CASCADE)"
         ];
@@ -124,6 +125,21 @@ class InstallerService
         }
     }
 
+
+    private function ensureBoardDaysSchema(PDO $pdo): void
+    {
+        $columns = $pdo->query('SHOW COLUMNS FROM board_days')->fetchAll(PDO::FETCH_ASSOC);
+        $columnNames = array_map(static fn (array $column): string => (string) $column['Field'], $columns);
+
+        if (in_array('morning_close', $columnNames, true)) {
+            $pdo->exec('ALTER TABLE board_days DROP COLUMN morning_close');
+        }
+
+        if (in_array('evening_close', $columnNames, true)) {
+            $pdo->exec('ALTER TABLE board_days DROP COLUMN evening_close');
+        }
+    }
+
     private function ensureBoardDayShiftsSchema(PDO $pdo): void
     {
         $pdo->exec('CREATE TABLE IF NOT EXISTS board_day_shifts (id INT AUTO_INCREMENT PRIMARY KEY, board_day_id INT NOT NULL, daily_shift_config_id INT NULL, start_time TIME NOT NULL, end_time TIME NOT NULL, closes_bar TINYINT(1) NOT NULL DEFAULT 0, priority INT NOT NULL DEFAULT 1, volunteers TEXT NULL, UNIQUE KEY uq_board_day_shift_priority (board_day_id, priority), FOREIGN KEY (board_day_id) REFERENCES board_days(id) ON DELETE CASCADE, FOREIGN KEY (daily_shift_config_id) REFERENCES daily_shift_config(id) ON DELETE SET NULL)');
@@ -140,6 +156,12 @@ class InstallerService
         }
     }
 
+
+
+    private function removeBoardDayUsersTable(PDO $pdo): void
+    {
+        $pdo->exec('DROP TABLE IF EXISTS board_day_users');
+    }
 
     private function normalizeDailyShiftPriorities(PDO $pdo): void
     {

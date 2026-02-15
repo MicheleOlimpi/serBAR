@@ -99,9 +99,6 @@ $statusLabels = [
                       <th>Data</th>
                       <th>Giorno</th>
                       <th>Tipo</th>
-                      <th>Assegnati</th>
-                      <th>Chiusura mattina</th>
-                      <th>Chiusura sera</th>
                       <th>Note</th>
                     </tr>
                   </thead>
@@ -111,9 +108,6 @@ $statusLabels = [
                         <td><?= htmlspecialchars($s['day_date']) ?></td>
                         <td><?= htmlspecialchars($s['weekday_name']) ?></td>
                         <td><?= htmlspecialchars((string) $s['day_type_name']) ?></td>
-                        <td><?= htmlspecialchars((string) ($s['assigned_users'] ?: '-')) ?></td>
-                        <td><?= htmlspecialchars((string) $s['morning_close']) ?></td>
-                        <td><?= htmlspecialchars((string) $s['evening_close']) ?></td>
                         <td><?= htmlspecialchars((string) $s['notes']) ?></td>
                       </tr>
                     <?php endforeach; ?>

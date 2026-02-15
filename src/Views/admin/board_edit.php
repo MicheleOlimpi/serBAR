@@ -17,8 +17,8 @@
 </style>
 <?php if (Auth::isAdmin()): ?><form method="post"><?php endif; ?>
 <table class="table table-sm table-bordered bg-white">
-<tr><th>Giorno</th><th>Tipo giorno</th><th>Utenti turno</th><th>Turni giornalieri</th><th>Chiusura mattina</th><th>Chiusura sera</th><th>Annotazioni</th><?php if(!Auth::isAdmin()):?><th>Segnala</th><?php endif; ?></tr>
-<?php foreach($days as $d): $assigned=$dayUsers[$d['id']]??[]; $shifts = $dayShifts[$d['id']] ?? []; ?>
+<tr><th>Giorno</th><th>Tipo giorno</th><th>Turni giornalieri</th><th>Annotazioni</th><?php if(!Auth::isAdmin()):?><th>Segnala</th><?php endif; ?></tr>
+<?php foreach($days as $d): $shifts = $dayShifts[$d['id']] ?? []; ?>
 <tr>
 <td class="day-cell">
   <div class="day-number"><?= (int) date('j', strtotime($d['day_date'])) ?></div>
@@ -29,13 +29,6 @@
 <td>
 <?php if (Auth::isAdmin()): ?><select class="form-select form-select-sm" name="day[<?= $d['id'] ?>][day_type_id]"><?php foreach($dayTypes as $t): ?><option value="<?= $t['id'] ?>" <?= $d['day_type_id']==$t['id']?'selected':'' ?>><?= htmlspecialchars($t['name']) ?></option><?php endforeach; ?></select>
 <?php else: ?><?= htmlspecialchars((string)$d['day_type_name']) ?><?php endif; ?>
-</td>
-<td>
-<?php if (Auth::isAdmin()): ?>
-<select multiple class="form-select form-select-sm" name="day[<?= $d['id'] ?>][users][]">
-<?php $ids=array_column($assigned,'id'); foreach($users as $u): ?><option value="<?= $u['id'] ?>" <?= in_array($u['id'],$ids)?'selected':'' ?>><?= htmlspecialchars($u['last_name'].' '.$u['first_name']) ?></option><?php endforeach; ?>
-</select>
-<?php else: foreach($assigned as $a){echo htmlspecialchars($a['last_name'].' '.$a['first_name']).'<br>';} endif; ?>
 </td>
 <td>
   <?php if ($shifts === []): ?>
@@ -56,8 +49,6 @@
     <?php endforeach; ?>
   <?php endif; ?>
 </td>
-<td><?php if(Auth::isAdmin()): ?><input class="form-control form-control-sm" name="day[<?= $d['id'] ?>][morning_close]" value="<?= htmlspecialchars((string)$d['morning_close']) ?>"><?php else: ?><?= htmlspecialchars((string)$d['morning_close']) ?><?php endif; ?></td>
-<td><?php if(Auth::isAdmin()): ?><input class="form-control form-control-sm" name="day[<?= $d['id'] ?>][evening_close]" value="<?= htmlspecialchars((string)$d['evening_close']) ?>"><?php else: ?><?= htmlspecialchars((string)$d['evening_close']) ?><?php endif; ?></td>
 <td><?php if(Auth::isAdmin()): ?><input class="form-control form-control-sm" name="day[<?= $d['id'] ?>][notes]" value="<?= htmlspecialchars((string)$d['notes']) ?>"><?php else: ?><?= htmlspecialchars((string)$d['notes']) ?><?php endif; ?></td>
 <?php if(!Auth::isAdmin()): ?><td><form method="post"><input type="hidden" name="report_day" value="<?= $d['id'] ?>"><input name="message" class="form-control form-control-sm" placeholder="Segnalazione"><button class="btn btn-sm btn-warning mt-1">Invia</button></form></td><?php endif; ?>
 </tr>
