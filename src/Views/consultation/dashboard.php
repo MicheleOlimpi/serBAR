@@ -6,10 +6,17 @@ foreach ($shifts as $shift) {
 }
 
 $statusClassMap = [
-    'inviata' => 'text-bg-primary',
+    'inviata' => 'text-bg-secondary',
     'letto' => 'text-bg-info',
-    'in_corso' => 'text-bg-warning',
+    'in_corso' => 'text-bg-warning text-dark',
     'chiuso' => 'text-bg-success',
+];
+
+$statusLabels = [
+    'inviata' => 'Inviato',
+    'letto' => 'Letto',
+    'in_corso' => 'In corso',
+    'chiuso' => 'Chiuso',
 ];
 ?>
 
@@ -141,7 +148,7 @@ $statusClassMap = [
           </div>
 
           <div class="d-flex justify-content-between align-items-center gap-2">
-            <small class="text-muted">All'invio, la segnalazione sarà registrata con stato <strong>inviata</strong>.</small>
+            <small class="text-muted">All'invio, la segnalazione sarà registrata con stato <strong>inviato</strong>.</small>
             <button class="btn btn-warning" type="submit">Invia</button>
           </div>
         </form>
@@ -173,7 +180,7 @@ $statusClassMap = [
                     <td><?= htmlspecialchars($n['username']) ?></td>
                     <td><?= htmlspecialchars((string) ($n['day_date'] ? $n['day_date'] . ' - ' . sprintf('%02d/%04d', $n['month'], $n['year']) : '-')) ?></td>
                     <td><?= htmlspecialchars($n['message']) ?></td>
-                    <td><span class="badge <?= $statusClass ?>"><?= htmlspecialchars($n['status']) ?></span></td>
+                    <td><span class="badge <?= $statusClass ?>"><?= htmlspecialchars($statusLabels[$n['status']] ?? $n['status']) ?></span></td>
                   </tr>
                 <?php endforeach; ?>
               </tbody>

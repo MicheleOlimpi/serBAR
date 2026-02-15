@@ -3,10 +3,17 @@ $editingRow = $editing ?? null;
 $isEditing = $editingRow !== null;
 
 $statusLabels = [
-    'inviata' => 'Inviata',
+    'inviata' => 'Inviato',
     'letto' => 'Letto',
     'in_corso' => 'In corso',
     'chiuso' => 'Chiuso',
+];
+
+$statusBadgeMap = [
+    'inviata' => 'text-bg-secondary',
+    'letto' => 'text-bg-info',
+    'in_corso' => 'text-bg-warning text-dark',
+    'chiuso' => 'text-bg-success',
 ];
 ?>
 
@@ -92,14 +99,18 @@ $statusLabels = [
           <td><?= htmlspecialchars($turno) ?></td>
           <td><?= htmlspecialchars((string) $n['message']) ?></td>
           <td>
-            <form method="post" class="d-flex gap-1">
-              <input type="hidden" name="quick_status_id" value="<?= (int) $n['id'] ?>">
-              <select name="quick_status" class="form-select form-select-sm" onchange="this.form.submit()">
-                <?php foreach ($statuses as $status): ?>
-                  <option value="<?= $status ?>" <?= $n['status'] === $status ? 'selected' : '' ?>><?= htmlspecialchars($statusLabels[$status] ?? $status) ?></option>
-                <?php endforeach; ?>
-              </select>
-            </form>
+            <div class="d-flex align-items-center gap-2">
+              <?php $statusClass = $statusBadgeMap[$n['status']] ?? 'text-bg-secondary'; ?>
+              <span class="badge <?= $statusClass ?>"><?= htmlspecialchars($statusLabels[$n['status']] ?? $n['status']) ?></span>
+              <form method="post" class="d-flex gap-1">
+                <input type="hidden" name="quick_status_id" value="<?= (int) $n['id'] ?>">
+                <select name="quick_status" class="form-select form-select-sm" onchange="this.form.submit()">
+                  <?php foreach ($statuses as $status): ?>
+                    <option value="<?= $status ?>" <?= $n['status'] === $status ? 'selected' : '' ?>><?= htmlspecialchars($statusLabels[$status] ?? $status) ?></option>
+                  <?php endforeach; ?>
+                </select>
+              </form>
+            </div>
           </td>
           <td>
             <a class="btn btn-sm btn-outline-primary" href="?action=notifications&edit=<?= (int) $n['id'] ?>">Modifica</a>
