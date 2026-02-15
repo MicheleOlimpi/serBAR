@@ -271,9 +271,12 @@ class BarRepository
                 LEFT JOIN day_types dt ON dt.id = bd.day_type_id
                 LEFT JOIN board_day_users bu ON bu.board_day_id = bd.id
                 LEFT JOIN users u ON u.id = bu.user_id
-                WHERE b.id IN (
-                    SELECT id FROM boards ORDER BY year DESC, month DESC LIMIT 3
-                )
+                JOIN (
+                    SELECT id
+                    FROM boards
+                    ORDER BY year DESC, month DESC
+                    LIMIT 3
+                ) recent_boards ON recent_boards.id = b.id
                 GROUP BY bd.id, b.id, b.month, b.year, bd.day_date, bd.weekday_name, dt.name, bd.morning_close, bd.evening_close, bd.notes
                 ORDER BY b.year DESC, b.month DESC, bd.day_date';
 
