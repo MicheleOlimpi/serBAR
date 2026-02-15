@@ -118,6 +118,7 @@ class AppController
             'days' => $days,
             'dayTypes' => $this->repo->dayTypes(),
             'dayShifts' => $this->repo->boardDayShiftsMap($boardId),
+            'activeUsers' => $this->repo->userDisplayNames(),
         ]);
     }
 
@@ -204,6 +205,21 @@ class AppController
         View::render('admin/calendar', [
             'days' => $this->repo->calendarDays($_GET['month'] ?? null),
             'types' => $this->repo->dayTypes(),
+        ]);
+    }
+
+    public function setup(): void
+    {
+        $this->guardAdmin();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->repo->saveSetupSettings($_POST);
+            View::redirect('?action=setup&saved=1');
+        }
+
+        View::render('admin/setup', [
+            'settings' => $this->repo->setupSettings(),
+            'saved' => isset($_GET['saved']),
         ]);
     }
 

@@ -48,6 +48,7 @@ $routes = [
     'shift_config' => 'shiftConfig',
     'calendar' => 'calendar',
     'notifications' => 'notifications',
+    'setup' => 'setup',
 ];
 
 $method = $routes[$action] ?? 'dashboard';

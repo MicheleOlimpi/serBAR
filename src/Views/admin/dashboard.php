@@ -19,6 +19,7 @@ $statusLabels = [
   <a class="btn btn-outline-primary" href="?action=shift_config">Turni giornalieri</a>
   <a class="btn btn-outline-primary" href="?action=calendar">Calendario</a>
   <a class="btn btn-outline-primary" href="?action=notifications">Segnalazioni</a>
+  <a class="btn btn-outline-primary" href="?action=setup">Setup</a>
   <a class="btn btn-danger" href="?action=logout">Logout</a>
 </div>
 <div class="row">

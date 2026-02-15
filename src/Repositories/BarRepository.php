@@ -10,6 +10,7 @@ use PDOException;
 class BarRepository
 {
     private const NOTIFICATION_STATUSES = ['inviata', 'letto', 'in_corso', 'chiuso'];
+    private const SETUP_KEYS = ['consultation_notifications_enabled', 'consultation_directory_enabled'];
 
     public function __construct(private PDO $pdo)
     {
@@ -41,6 +42,16 @@ class BarRepository
     public function allUsers(): array
     {
         return $this->pdo->query('SELECT * FROM users ORDER BY username')->fetchAll();
+    }
+
+    public function userDisplayNames(): array
+    {
+        $sql = "SELECT id, first_name, last_name
+                FROM users
+                WHERE status='attivo'
+                ORDER BY last_name ASC, first_name ASC";
+
+        return $this->pdo->query($sql)->fetchAll();
     }
 
     public function saveUser(array $data): void
@@ -168,14 +179,46 @@ class BarRepository
         $this->pdo->prepare('DELETE FROM daily_shift_config WHERE id=?')->execute([$id]);
     }
 
+    public function setupSettings(): array
+    {
+        $defaults = [
+            'consultation_notifications_enabled' => '1',
+            'consultation_directory_enabled' => '1',
+        ];
+
+        $stmt = $this->pdo->query('SELECT setting_key, setting_value FROM app_settings');
+        if ($stmt === false) {
+            return $defaults;
+        }
+
+        foreach ($stmt->fetchAll() as $row) {
+            $key = (string) ($row['setting_key'] ?? '');
+            if (in_array($key, self::SETUP_KEYS, true)) {
+                $defaults[$key] = (string) ($row['setting_value'] ?? '1');
+            }
+        }
+
+        return $defaults;
+    }
+
+    public function saveSetupSettings(array $data): void
+    {
+        $upsert = $this->pdo->prepare('INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value=VALUES(setting_value)');
+
+        foreach (self::SETUP_KEYS as $settingKey) {
+            $value = !empty($data[$settingKey]) ? '1' : '0';
+            $upsert->execute([$settingKey, $value]);
+        }
+    }
+
     public function calendarDays(?string $month = null): array
     {
         if ($month) {
-            $stmt = $this->pdo->prepare("SELECT c.*, d.name as day_type_name FROM calendar_days c LEFT JOIN day_types d ON d.id=c.day_type_id WHERE DATE_FORMAT(c.day_date, '%Y-%m')=? ORDER BY c.day_date");
+            $stmt = $this->pdo->prepare("SELECT c.*, DAYNAME(c.day_date) AS weekday_name, d.name as day_type_name FROM calendar_days c LEFT JOIN day_types d ON d.id=c.day_type_id WHERE DATE_FORMAT(c.day_date, '%Y-%m')=? ORDER BY c.day_date");
             $stmt->execute([$month]);
             return $stmt->fetchAll();
         }
-        return $this->pdo->query('SELECT c.*, d.name as day_type_name FROM calendar_days c LEFT JOIN day_types d ON d.id=c.day_type_id ORDER BY c.day_date ASC')->fetchAll();
+        return $this->pdo->query('SELECT c.*, DAYNAME(c.day_date) AS weekday_name, d.name as day_type_name FROM calendar_days c LEFT JOIN day_types d ON d.id=c.day_type_id ORDER BY c.day_date ASC')->fetchAll();
     }
 
     public function updateCalendarDayDetails(int $id, string $recurrenceName, string $santo, int $dayTypeId): void
