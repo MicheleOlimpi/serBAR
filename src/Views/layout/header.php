@@ -13,7 +13,12 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
   <div class="container-fluid">
     <a class="navbar-brand" href="./"><img src="logo.svg" class="logo me-2">ACLI servizio BAR</a>
-    <?php if ($u): ?><span class="text-white"><?= htmlspecialchars($u['username']) ?></span><?php endif; ?>
+    <?php if ($u): ?>
+      <div class="d-flex align-items-center gap-2">
+        <span class="text-white"><?= htmlspecialchars($u['username']) ?></span>
+        <a class="btn btn-sm btn-outline-light" href="?action=logout">Logout</a>
+      </div>
+    <?php endif; ?>
   </div>
 </nav>
 <div class="container pb-5">

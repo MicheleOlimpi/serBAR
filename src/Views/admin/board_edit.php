@@ -1,34 +1,29 @@
 <?php use App\Core\Auth; $print = isset($_GET['print']); if($print): ?><script>window.onload=()=>window.print()</script><?php endif; ?>
 <h4>Tabellone <?= sprintf('%02d/%04d',$board['month'],$board['year']) ?></h4>
 <style>
-  .day-cell {
-    min-width: 120px;
-  }
-  .day-number {
-    font-size: 1.1rem;
-    font-weight: 700;
-    line-height: 1.1;
-  }
-  .day-meta {
-    font-size: 0.8rem;
-    color: #6c757d;
-    line-height: 1.2;
-  }
+  .day-cell { min-width: 170px; }
+  .day-number { font-size: 1.2rem; font-weight: 700; line-height: 1.1; }
+  .day-meta { font-size: 0.82rem; color: #6c757d; line-height: 1.3; }
 </style>
 <?php if (Auth::isAdmin()): ?><form method="post"><?php endif; ?>
 <table class="table table-sm table-bordered bg-white">
-<tr><th>Giorno</th><th>Tipo giorno</th><th>Turni giornalieri</th><th>Annotazioni</th><?php if(!Auth::isAdmin()):?><th>Segnala</th><?php endif; ?></tr>
+<tr><th>Giorno</th><th>Turni giornalieri</th><th>Annotazioni</th><?php if(!Auth::isAdmin()):?><th>Segnala</th><?php endif; ?></tr>
 <?php foreach($days as $d): $shifts = $dayShifts[$d['id']] ?? []; ?>
 <tr>
 <td class="day-cell">
   <div class="day-number"><?= (int) date('j', strtotime($d['day_date'])) ?></div>
-  <div class="day-meta"><?= htmlspecialchars($d['weekday_name']) ?></div>
+  <div class="day-meta mt-1"><?= htmlspecialchars($d['weekday_name']) ?></div>
   <?php if (!empty($d['recurrence_name'])): ?><div class="day-meta"><?= htmlspecialchars((string) $d['recurrence_name']) ?></div><?php endif; ?>
-  <div class="day-meta"><strong><?= htmlspecialchars((string) ($d['day_type_name'] ?? '-')) ?></strong></div>
-</td>
-<td>
-<?php if (Auth::isAdmin()): ?><select class="form-select form-select-sm" name="day[<?= $d['id'] ?>][day_type_id]"><?php foreach($dayTypes as $t): ?><option value="<?= $t['id'] ?>" <?= $d['day_type_id']==$t['id']?'selected':'' ?>><?= htmlspecialchars($t['name']) ?></option><?php endforeach; ?></select>
-<?php else: ?><?= htmlspecialchars((string)$d['day_type_name']) ?><?php endif; ?>
+  <div class="day-meta mt-1">
+    <?php if (Auth::isAdmin()): ?>
+      <label class="form-label mb-1 small">Tipo giorno</label>
+      <select class="form-select form-select-sm" name="day[<?= $d['id'] ?>][day_type_id]">
+        <?php foreach($dayTypes as $t): ?><option value="<?= $t['id'] ?>" <?= $d['day_type_id']==$t['id']?'selected':'' ?>><?= htmlspecialchars($t['name']) ?></option><?php endforeach; ?>
+      </select>
+    <?php else: ?>
+      <strong><?= htmlspecialchars((string) ($d['day_type_name'] ?? '-')) ?></strong>
+    <?php endif; ?>
+  </div>
 </td>
 <td>
   <?php if ($shifts === []): ?>
@@ -41,7 +36,11 @@
           <?php if (!empty($shift['closes_bar'])): ?> · Chiusura bar<?php endif; ?>
         </div>
         <?php if (Auth::isAdmin()): ?>
-          <textarea class="form-control form-control-sm" rows="2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][volunteers]" placeholder="Volontari"><?= htmlspecialchars((string) ($shift['volunteers'] ?? '')) ?></textarea>
+          <textarea id="volunteers-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" rows="2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][volunteers]" placeholder="Volontari (Nome Cognome)"><?= htmlspecialchars((string) ($shift['volunteers'] ?? '')) ?></textarea>
+          <div class="input-group input-group-sm volunteer-picker" data-target="volunteers-<?= (int) $shift['id'] ?>">
+            <input type="text" class="form-control" list="users-list" placeholder="Seleziona utente">
+            <button class="btn btn-outline-secondary" type="button">Aggiungi</button>
+          </div>
         <?php else: ?>
           <div><?= nl2br(htmlspecialchars((string) ($shift['volunteers'] ?: '-'))) ?></div>
         <?php endif; ?>
@@ -54,5 +53,33 @@
 </tr>
 <?php endforeach; ?>
 </table>
-<?php if (Auth::isAdmin()): ?><button class="btn btn-success">Salva modifiche</button></form><?php endif; ?>
+
+<?php if (Auth::isAdmin()): ?>
+  <datalist id="users-list">
+    <?php foreach ($activeUsers as $activeUser): ?>
+      <option value="<?= htmlspecialchars(trim($activeUser['first_name'] . ' ' . $activeUser['last_name'])) ?>"></option>
+    <?php endforeach; ?>
+  </datalist>
+
+  <script>
+    document.querySelectorAll('.volunteer-picker').forEach(function (picker) {
+      const input = picker.querySelector('input');
+      const button = picker.querySelector('button');
+      const target = document.getElementById(picker.dataset.target);
+
+      button.addEventListener('click', function () {
+        const value = input.value.trim();
+        if (!value || !target) {
+          return;
+        }
+
+        target.value = target.value.trim() ? target.value.trim() + "\n" + value : value;
+        input.value = '';
+      });
+    });
+  </script>
+
+  <button class="btn btn-success">Salva modifiche</button>
+</form>
+<?php endif; ?>
 <a class="btn btn-outline-dark" href="./">Indietro</a>
