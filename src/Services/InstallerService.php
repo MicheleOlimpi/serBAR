@@ -51,6 +51,7 @@ class InstallerService
                 $pdo->exec($sql);
             }
             $this->ensureCalendarColumns($pdo);
+            $this->ensureUsersColumns($pdo);
         } catch (Throwable $e) {
             throw new \RuntimeException('Errore installazione tabelle: ' . $e->getMessage(), 0, $e);
         }
@@ -59,7 +60,7 @@ class InstallerService
     private function schema(): array
     {
         return [
-            "CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50) UNIQUE, last_name VARCHAR(100), first_name VARCHAR(100), password_hash VARCHAR(255), role VARCHAR(20) NOT NULL DEFAULT 'user', status VARCHAR(20) NOT NULL DEFAULT 'attivo', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)",
+            "CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50) UNIQUE, last_name VARCHAR(100), first_name VARCHAR(100), password_hash VARCHAR(255), role VARCHAR(20) NOT NULL DEFAULT 'user', phone VARCHAR(30) NOT NULL DEFAULT '', status VARCHAR(20) NOT NULL DEFAULT 'attivo', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)",
             'CREATE TABLE IF NOT EXISTS day_types (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(50) NOT NULL, code VARCHAR(50) NOT NULL, is_locked TINYINT(1) NOT NULL DEFAULT 0)',
             'CREATE TABLE IF NOT EXISTS daily_shift_config (id INT AUTO_INCREMENT PRIMARY KEY, day_type_id INT NOT NULL UNIQUE, slots_count INT NOT NULL DEFAULT 1, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE CASCADE)',
             'CREATE TABLE IF NOT EXISTS calendar_days (id INT AUTO_INCREMENT PRIMARY KEY, day_date DATE NOT NULL UNIQUE, recurrence_name VARCHAR(255) NULL, santo VARCHAR(255) NULL, is_holiday TINYINT(1) NOT NULL DEFAULT 0, is_special TINYINT(1) NOT NULL DEFAULT 0, day_type_id INT NULL, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE SET NULL)',
@@ -78,15 +79,23 @@ class InstallerService
         }
     }
 
+    private function ensureUsersColumns(PDO $pdo): void
+    {
+        $stmt = $pdo->query("SHOW COLUMNS FROM users LIKE 'phone'");
+        if ($stmt === false || !$stmt->fetch()) {
+            $pdo->exec("ALTER TABLE users ADD COLUMN phone VARCHAR(30) NOT NULL DEFAULT '' AFTER role");
+        }
+    }
+
     private function seed(PDO $pdo): void
     {
         try {
-            $pdo->exec("INSERT IGNORE INTO day_types (id, name, code, is_locked) VALUES (1,'speciale','speciale',1),(2,'feriale','feriale',1),(3,'festivo','festivo',1)");
+            $pdo->exec("INSERT IGNORE INTO day_types (id, name, code, is_locked) VALUES (1,'speciale','speciale',1),(2,'feriale','feriale',1),(3,'prefestivo','prefestivo',1),(4,'festivo','festivo',1)");
             $adminHash = password_hash('admin', PASSWORD_DEFAULT);
             $userHash = password_hash('user', PASSWORD_DEFAULT);
-            $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,status) VALUES ('admin','Admin','Sistema','{$adminHash}','admin','attivo')");
-            $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,status) VALUES ('user','User','Default','{$userHash}','user','attivo')");
-            $pdo->exec('INSERT IGNORE INTO daily_shift_config(day_type_id, slots_count) VALUES (1,2),(2,2),(3,2)');
+            $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES ('admin','Admin','Sistema','{$adminHash}','admin','','attivo')");
+            $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES ('user','User','Default','{$userHash}','user','','attivo')");
+            $pdo->exec('INSERT IGNORE INTO daily_shift_config(day_type_id, slots_count) VALUES (1,2),(2,2),(3,2),(4,2)');
             $this->seedCalendarDays($pdo);
         } catch (Throwable $e) {
             throw new \RuntimeException('Errore popolamento dati iniziali: ' . $e->getMessage(), 0, $e);
@@ -100,7 +109,7 @@ class InstallerService
         $stmt = $pdo->prepare('INSERT IGNORE INTO calendar_days (day_date, recurrence_name, santo, is_holiday, is_special, day_type_id) VALUES (?, ?, ?, ?, 0, ?)');
 
         $ferialeTypeId = 2;
-        $festivoTypeId = 3;
+        $festivoTypeId = 4;
 
         $start = new \DateTimeImmutable(sprintf('%04d-01-01', $year));
         $end = new \DateTimeImmutable(sprintf('%04d-12-31', $year));
@@ -119,6 +128,7 @@ class InstallerService
             ['date' => sprintf('%04d-01-01', $year), 'recurrence' => 'capodanno', 'santo' => 'Maria Santisima madre di Dio'],
             ['date' => sprintf('%04d-06-02', $year), 'recurrence' => 'Festa delle repubblica', 'santo' => 'Santi martiri Marcellino e Pietro'],
             ['date' => sprintf('%04d-08-15', $year), 'recurrence' => 'ferragosto', 'santo' => 'Assunzione della B.V. Maria'],
+            ['date' => sprintf('%04d-11-01', $year), 'recurrence' => 'Tutti i santi', 'santo' => 'Tutti i santi'],
             ['date' => sprintf('%04d-12-08', $year), 'recurrence' => 'SS. Madonna', 'santo' => 'Immacolata concezione della B.V. Maria'],
             ['date' => sprintf('%04d-12-25', $year), 'recurrence' => 'Natale', 'santo' => 'Natale del Signore'],
             ['date' => sprintf('%04d-12-26', $year), 'recurrence' => 'Santo Stefano', 'santo' => 'S. Stefano'],
