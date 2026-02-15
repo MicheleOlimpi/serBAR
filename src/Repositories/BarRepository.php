@@ -27,6 +27,16 @@ class BarRepository
         return $this->pdo->query("SELECT * FROM users WHERE status='attivo' ORDER BY last_name, first_name")->fetchAll();
     }
 
+    public function consultationDirectory(): array
+    {
+        $sql = "SELECT last_name, first_name, phone
+                FROM users
+                WHERE status='attivo'
+                ORDER BY last_name ASC, first_name ASC";
+
+        return $this->pdo->query($sql)->fetchAll();
+    }
+
     public function allUsers(): array
     {
         return $this->pdo->query('SELECT * FROM users ORDER BY username')->fetchAll();
@@ -35,23 +45,24 @@ class BarRepository
     public function saveUser(array $data): void
     {
         if (!empty($data['id'])) {
-            $params = [$data['username'], $data['last_name'], $data['first_name'], $data['role'], $data['status'], (int) $data['id']];
-            $sql = 'UPDATE users SET username=?, last_name=?, first_name=?, role=?, status=? WHERE id=?';
+            $params = [$data['username'], $data['last_name'], $data['first_name'], $data['role'], (string) ($data['phone'] ?? ''), $data['status'], (int) $data['id']];
+            $sql = 'UPDATE users SET username=?, last_name=?, first_name=?, role=?, phone=?, status=? WHERE id=?';
             if (!empty($data['password'])) {
-                $sql = 'UPDATE users SET username=?, last_name=?, first_name=?, role=?, status=?, password_hash=? WHERE id=?';
-                $params = [$data['username'], $data['last_name'], $data['first_name'], $data['role'], $data['status'], password_hash($data['password'], PASSWORD_DEFAULT), (int) $data['id']];
+                $sql = 'UPDATE users SET username=?, last_name=?, first_name=?, role=?, phone=?, status=?, password_hash=? WHERE id=?';
+                $params = [$data['username'], $data['last_name'], $data['first_name'], $data['role'], (string) ($data['phone'] ?? ''), $data['status'], password_hash($data['password'], PASSWORD_DEFAULT), (int) $data['id']];
             }
             $this->pdo->prepare($sql)->execute($params);
             return;
         }
 
-        $this->pdo->prepare('INSERT INTO users (username,last_name,first_name,password_hash,role,status) VALUES (?,?,?,?,?,?)')
+        $this->pdo->prepare('INSERT INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES (?,?,?,?,?,?,?)')
             ->execute([
                 $data['username'],
                 $data['last_name'],
                 $data['first_name'],
                 password_hash($data['password'], PASSWORD_DEFAULT),
                 $data['role'],
+                (string) ($data['phone'] ?? ''),
                 $data['status'],
             ]);
     }
