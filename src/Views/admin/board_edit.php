@@ -1,11 +1,30 @@
 <?php use App\Core\Auth; $print = isset($_GET['print']); if($print): ?><script>window.onload=()=>window.print()</script><?php endif; ?>
 <h4>Tabellone <?= sprintf('%02d/%04d',$board['month'],$board['year']) ?></h4>
+<style>
+  .day-cell {
+    min-width: 100px;
+  }
+  .day-number {
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+  .day-meta {
+    font-size: 0.8rem;
+    color: #6c757d;
+    line-height: 1.2;
+  }
+</style>
 <?php if (Auth::isAdmin()): ?><form method="post"><?php endif; ?>
 <table class="table table-sm table-bordered bg-white">
-<tr><th>Data</th><th>Giorno</th><th>Ricorrenza</th><th>Tipo giorno</th><th>Utenti turno</th><th>Chiusura mattina</th><th>Chiusura sera</th><th>Annotazioni</th><?php if(!Auth::isAdmin()):?><th>Segnala</th><?php endif; ?></tr>
+<tr><th>Giorno</th><th>Tipo giorno</th><th>Utenti turno</th><th>Chiusura mattina</th><th>Chiusura sera</th><th>Annotazioni</th><?php if(!Auth::isAdmin()):?><th>Segnala</th><?php endif; ?></tr>
 <?php foreach($days as $d): $assigned=$dayUsers[$d['id']]??[]; ?>
 <tr>
-<td><?= htmlspecialchars($d['day_date']) ?></td><td><?= htmlspecialchars($d['weekday_name']) ?></td><td><?= htmlspecialchars((string)$d['recurrence_name']) ?></td>
+<td class="day-cell">
+  <div class="day-number"><?= (int) date('j', strtotime($d['day_date'])) ?></div>
+  <div class="day-meta"><?= htmlspecialchars($d['weekday_name']) ?></div>
+  <?php if (!empty($d['recurrence_name'])): ?><div class="day-meta"><?= htmlspecialchars((string) $d['recurrence_name']) ?></div><?php endif; ?>
+</td>
 <td>
 <?php if (Auth::isAdmin()): ?><select class="form-select form-select-sm" name="day[<?= $d['id'] ?>][day_type_id]"><?php foreach($dayTypes as $t): ?><option value="<?= $t['id'] ?>" <?= $d['day_type_id']==$t['id']?'selected':'' ?>><?= htmlspecialchars($t['name']) ?></option><?php endforeach; ?></select>
 <?php else: ?><?= htmlspecialchars((string)$d['day_type_name']) ?><?php endif; ?>
