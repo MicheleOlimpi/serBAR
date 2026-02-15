@@ -63,7 +63,7 @@ class InstallerService
         return [
             "CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50) UNIQUE, last_name VARCHAR(100), first_name VARCHAR(100), password_hash VARCHAR(255), role VARCHAR(20) NOT NULL DEFAULT 'user', phone VARCHAR(30) NOT NULL DEFAULT '', status VARCHAR(20) NOT NULL DEFAULT 'attivo', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)",
             'CREATE TABLE IF NOT EXISTS day_types (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(50) NOT NULL, code VARCHAR(50) NOT NULL, is_locked TINYINT(1) NOT NULL DEFAULT 0)',
-            'CREATE TABLE IF NOT EXISTS daily_shift_config (id INT AUTO_INCREMENT PRIMARY KEY, day_type_id INT NOT NULL, start_time TIME NOT NULL, end_time TIME NOT NULL, priority INT NOT NULL DEFAULT 1, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE CASCADE)',
+            'CREATE TABLE IF NOT EXISTS daily_shift_config (id INT AUTO_INCREMENT PRIMARY KEY, day_type_id INT NOT NULL, start_time TIME NOT NULL, end_time TIME NOT NULL, closes_bar TINYINT(1) NOT NULL DEFAULT 0, priority INT NOT NULL DEFAULT 1, UNIQUE KEY uq_daily_shift_day_type_priority (day_type_id, priority), FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE CASCADE)',
             'CREATE TABLE IF NOT EXISTS calendar_days (id INT AUTO_INCREMENT PRIMARY KEY, day_date DATE NOT NULL UNIQUE, recurrence_name VARCHAR(255) NULL, santo VARCHAR(255) NULL, is_holiday TINYINT(1) NOT NULL DEFAULT 0, is_special TINYINT(1) NOT NULL DEFAULT 0, day_type_id INT NULL, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE SET NULL)',
             'CREATE TABLE IF NOT EXISTS boards (id INT AUTO_INCREMENT PRIMARY KEY, month INT NOT NULL, year INT NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, UNIQUE KEY uq_board (month, year))',
             'CREATE TABLE IF NOT EXISTS board_days (id INT AUTO_INCREMENT PRIMARY KEY, board_id INT NOT NULL, day_date DATE NOT NULL, weekday_name VARCHAR(30) NOT NULL, recurrence_name VARCHAR(255) NULL, day_type_id INT NULL, morning_close VARCHAR(255) NULL, evening_close VARCHAR(255) NULL, notes TEXT NULL, FOREIGN KEY (board_id) REFERENCES boards(id) ON DELETE CASCADE, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE SET NULL)',
@@ -95,7 +95,7 @@ class InstallerService
 
         if (in_array('slots_count', $columnNames, true)) {
             $pdo->exec('DROP TABLE IF EXISTS daily_shift_config');
-            $pdo->exec('CREATE TABLE daily_shift_config (id INT AUTO_INCREMENT PRIMARY KEY, day_type_id INT NOT NULL, start_time TIME NOT NULL, end_time TIME NOT NULL, priority INT NOT NULL DEFAULT 1, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE CASCADE)');
+            $pdo->exec('CREATE TABLE daily_shift_config (id INT AUTO_INCREMENT PRIMARY KEY, day_type_id INT NOT NULL, start_time TIME NOT NULL, end_time TIME NOT NULL, closes_bar TINYINT(1) NOT NULL DEFAULT 0, priority INT NOT NULL DEFAULT 1, UNIQUE KEY uq_daily_shift_day_type_priority (day_type_id, priority), FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE CASCADE)');
             return;
         }
 
@@ -107,8 +107,38 @@ class InstallerService
             $pdo->exec("ALTER TABLE daily_shift_config ADD COLUMN end_time TIME NOT NULL DEFAULT '00:00:00' AFTER start_time");
         }
 
+        if (!in_array('closes_bar', $columnNames, true)) {
+            $pdo->exec('ALTER TABLE daily_shift_config ADD COLUMN closes_bar TINYINT(1) NOT NULL DEFAULT 0 AFTER end_time');
+        }
+
         if (!in_array('priority', $columnNames, true)) {
-            $pdo->exec('ALTER TABLE daily_shift_config ADD COLUMN priority INT NOT NULL DEFAULT 1 AFTER end_time');
+            $pdo->exec('ALTER TABLE daily_shift_config ADD COLUMN priority INT NOT NULL DEFAULT 1 AFTER closes_bar');
+        }
+
+        $indexRows = $pdo->query("SHOW INDEX FROM daily_shift_config WHERE Key_name='uq_daily_shift_day_type_priority'")->fetchAll(PDO::FETCH_ASSOC);
+        if ($indexRows === []) {
+            $this->normalizeDailyShiftPriorities($pdo);
+            $pdo->exec('CREATE UNIQUE INDEX uq_daily_shift_day_type_priority ON daily_shift_config (day_type_id, priority)');
+        }
+    }
+
+
+    private function normalizeDailyShiftPriorities(PDO $pdo): void
+    {
+        $rows = $pdo->query('SELECT id, day_type_id FROM daily_shift_config ORDER BY day_type_id ASC, priority ASC, id ASC')->fetchAll(PDO::FETCH_ASSOC);
+        $currentDayTypeId = null;
+        $priority = 0;
+        $stmt = $pdo->prepare('UPDATE daily_shift_config SET priority=? WHERE id=?');
+
+        foreach ($rows as $row) {
+            $dayTypeId = (int) $row['day_type_id'];
+            if ($currentDayTypeId !== $dayTypeId) {
+                $currentDayTypeId = $dayTypeId;
+                $priority = 1;
+            } else {
+                $priority++;
+            }
+            $stmt->execute([$priority, (int) $row['id']]);
         }
     }
 
@@ -120,7 +150,7 @@ class InstallerService
             $userHash = password_hash('user', PASSWORD_DEFAULT);
             $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES ('admin','Admin','Sistema','{$adminHash}','admin','','attivo')");
             $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES ('user','User','Default','{$userHash}','user','','attivo')");
-            $pdo->exec("INSERT IGNORE INTO daily_shift_config(day_type_id, start_time, end_time, priority) VALUES (1,'08:00:00','14:00:00',1),(1,'14:00:00','20:00:00',2),(2,'08:00:00','14:00:00',1),(2,'14:00:00','20:00:00',2),(3,'08:00:00','14:00:00',1),(3,'14:00:00','20:00:00',2),(4,'08:00:00','14:00:00',1),(4,'14:00:00','20:00:00',2)");
+            $pdo->exec("INSERT IGNORE INTO daily_shift_config(day_type_id, start_time, end_time, closes_bar, priority) VALUES (1,'08:00:00','14:00:00',0,1),(1,'14:00:00','20:00:00',1,2),(2,'08:00:00','14:00:00',0,1),(2,'14:00:00','20:00:00',1,2),(3,'08:00:00','14:00:00',0,1),(3,'14:00:00','20:00:00',1,2),(4,'08:00:00','14:00:00',0,1),(4,'14:00:00','20:00:00',1,2)");
             $this->seedCalendarDays($pdo);
         } catch (Throwable $e) {
             throw new \RuntimeException('Errore popolamento dati iniziali: ' . $e->getMessage(), 0, $e);

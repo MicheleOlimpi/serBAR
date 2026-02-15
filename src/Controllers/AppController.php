@@ -150,8 +150,11 @@ class AppController
     {
         $this->guardAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->repo->saveDailyShift($_POST);
-            View::redirect('?action=shift_config');
+            $error = $this->repo->saveDailyShift($_POST);
+            if ($error !== null) {
+                View::redirect('?action=shift_config&error=' . urlencode($error));
+            }
+            View::redirect('?action=shift_config&saved=1');
         }
 
         if (isset($_GET['delete'])) {
@@ -166,6 +169,8 @@ class AppController
             'shifts' => $this->repo->shiftConfigs(),
             'dayTypes' => $this->repo->dayTypes(),
             'editing' => $editing,
+            'error' => isset($_GET['error']) ? (string) $_GET['error'] : '',
+            'saved' => isset($_GET['saved']),
         ]);
     }
 
