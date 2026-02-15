@@ -31,6 +31,6 @@ Applicazione PHP 8 (PSR-4) con MariaDB per la gestione dei turni bar.
 - Dashboard amministratore
 - CRUD utenti (password hash), tipo giorno, numero turni, calendario annuale
 - Creazione/modifica/eliminazione tabelloni mensili
-- Gestione utenti turno, chiusura mattina/sera, annotazioni
+- Gestione turni giornalieri e annotazioni
 - Interfaccia consultazione e segnalazioni
 - Vista stampabile/esportabile PDF via stampa browser

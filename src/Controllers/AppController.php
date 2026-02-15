@@ -94,11 +94,8 @@ class AppController
                 $this->repo->saveBoardDay([
                     'id' => $dayId,
                     'day_type_id' => $dayTypeId,
-                    'morning_close' => $dayData['morning_close'] ?? null,
-                    'evening_close' => $dayData['evening_close'] ?? null,
                     'notes' => $dayData['notes'] ?? null,
                 ]);
-                $this->repo->setBoardDayUsers($dayId, $dayData['users'] ?? []);
                 $this->repo->syncBoardDayShifts($dayId, $dayTypeId);
 
                 foreach ($dayData['shifts'] ?? [] as $shiftId => $shiftData) {
@@ -120,8 +117,6 @@ class AppController
             'board' => $this->repo->board($boardId),
             'days' => $days,
             'dayTypes' => $this->repo->dayTypes(),
-            'users' => $this->repo->activeUsers(),
-            'dayUsers' => $this->repo->boardDayUsersMap($boardId),
             'dayShifts' => $this->repo->boardDayShiftsMap($boardId),
         ]);
     }
