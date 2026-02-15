@@ -51,6 +51,7 @@ class InstallerService
                 $pdo->exec($sql);
             }
             $this->ensureCalendarColumns($pdo);
+            $this->ensureUserPhoneColumn($pdo);
         } catch (Throwable $e) {
             throw new \RuntimeException('Errore installazione tabelle: ' . $e->getMessage(), 0, $e);
         }
@@ -59,7 +60,7 @@ class InstallerService
     private function schema(): array
     {
         return [
-            "CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50) UNIQUE, last_name VARCHAR(100), first_name VARCHAR(100), password_hash VARCHAR(255), role VARCHAR(20) NOT NULL DEFAULT 'user', status VARCHAR(20) NOT NULL DEFAULT 'attivo', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)",
+            "CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50) UNIQUE, last_name VARCHAR(100), first_name VARCHAR(100), phone_number VARCHAR(30) NULL, password_hash VARCHAR(255), role VARCHAR(20) NOT NULL DEFAULT 'user', status VARCHAR(20) NOT NULL DEFAULT 'attivo', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)",
             'CREATE TABLE IF NOT EXISTS day_types (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(50) NOT NULL, code VARCHAR(50) NOT NULL, is_locked TINYINT(1) NOT NULL DEFAULT 0)',
             'CREATE TABLE IF NOT EXISTS daily_shift_config (id INT AUTO_INCREMENT PRIMARY KEY, day_type_id INT NOT NULL UNIQUE, slots_count INT NOT NULL DEFAULT 1, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE CASCADE)',
             'CREATE TABLE IF NOT EXISTS calendar_days (id INT AUTO_INCREMENT PRIMARY KEY, day_date DATE NOT NULL UNIQUE, recurrence_name VARCHAR(255) NULL, santo VARCHAR(255) NULL, is_holiday TINYINT(1) NOT NULL DEFAULT 0, is_special TINYINT(1) NOT NULL DEFAULT 0, day_type_id INT NULL, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE SET NULL)',
@@ -75,6 +76,14 @@ class InstallerService
         $stmt = $pdo->query("SHOW COLUMNS FROM calendar_days LIKE 'santo'");
         if ($stmt === false || !$stmt->fetch()) {
             $pdo->exec('ALTER TABLE calendar_days ADD COLUMN santo VARCHAR(255) NULL AFTER recurrence_name');
+        }
+    }
+
+    private function ensureUserPhoneColumn(PDO $pdo): void
+    {
+        $stmt = $pdo->query("SHOW COLUMNS FROM users LIKE 'phone_number'");
+        if ($stmt === false || !$stmt->fetch()) {
+            $pdo->exec('ALTER TABLE users ADD COLUMN phone_number VARCHAR(30) NULL AFTER first_name');
         }
     }
 

@@ -59,6 +59,7 @@ class AppController
             'boards' => $this->repo->boardsForConsultation(),
             'shifts' => $this->repo->consultationShifts(),
             'notifications' => $this->repo->consultationNotifications(),
+            'phonebook' => $this->repo->consultationPhonebook(),
         ]);
     }
 
