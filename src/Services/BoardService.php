@@ -20,6 +20,7 @@ class BoardService
         $end = $start->modify('last day of this month');
 
         $feriale = $this->idByCode('feriale');
+        $prefestivo = $this->idByCode('prefestivo');
         $festivo = $this->idByCode('festivo');
         $speciale = $this->idByCode('speciale');
 
@@ -32,6 +33,14 @@ class BoardService
             $cal = $stmtCal->fetch(PDO::FETCH_ASSOC) ?: null;
 
             $type = $feriale;
+            $weekdayNumber = $d->format('N');
+            if ($weekdayNumber === '6' && $prefestivo > 0) {
+                $type = $prefestivo;
+            }
+            if ($weekdayNumber === '7' && $festivo > 0) {
+                $type = $festivo;
+            }
+
             if ($cal) {
                 if (!empty($cal['day_type_id'])) {
                     $type = (int) $cal['day_type_id'];

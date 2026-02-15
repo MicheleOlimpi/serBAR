@@ -77,6 +77,14 @@ class BarRepository
         return $this->pdo->query('SELECT * FROM day_types ORDER BY id')->fetchAll();
     }
 
+    public function dayTypeById(int $id): ?array
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM day_types WHERE id=? LIMIT 1');
+        $stmt->execute([$id]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+
     public function saveDayType(array $data): void
     {
         if (!empty($data['id'])) {
@@ -100,12 +108,48 @@ class BarRepository
 
     public function shiftConfigs(): array
     {
-        return $this->pdo->query('SELECT c.*, d.name as day_type_name FROM daily_shift_config c JOIN day_types d ON d.id=c.day_type_id')->fetchAll();
+        $sql = 'SELECT c.*, d.name as day_type_name
+                FROM daily_shift_config c
+                JOIN day_types d ON d.id=c.day_type_id
+                ORDER BY d.id, c.priority, c.start_time';
+        return $this->pdo->query($sql)->fetchAll();
     }
 
-    public function saveShiftConfig(int $dayTypeId, int $slots): void
+    public function dailyShiftById(int $id): ?array
     {
-        $this->pdo->prepare('INSERT INTO daily_shift_config (day_type_id, slots_count) VALUES (?,?) ON DUPLICATE KEY UPDATE slots_count=VALUES(slots_count)')->execute([$dayTypeId, $slots]);
+        $stmt = $this->pdo->prepare('SELECT * FROM daily_shift_config WHERE id=? LIMIT 1');
+        $stmt->execute([$id]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+
+    public function saveDailyShift(array $data): void
+    {
+        $dayTypeId = (int) ($data['day_type_id'] ?? 0);
+        $startTime = (string) ($data['start_time'] ?? '');
+        $endTime = (string) ($data['end_time'] ?? '');
+        $priority = max(1, (int) ($data['priority'] ?? 1));
+
+        if ($dayTypeId < 1 || !$this->isValidTime($startTime) || !$this->isValidTime($endTime)) {
+            return;
+        }
+
+        $startTime .= ':00';
+        $endTime .= ':00';
+
+        if (!empty($data['id'])) {
+            $this->pdo->prepare('UPDATE daily_shift_config SET day_type_id=?, start_time=?, end_time=?, priority=? WHERE id=?')
+                ->execute([$dayTypeId, $startTime, $endTime, $priority, (int) $data['id']]);
+            return;
+        }
+
+        $this->pdo->prepare('INSERT INTO daily_shift_config (day_type_id, start_time, end_time, priority) VALUES (?,?,?,?)')
+            ->execute([$dayTypeId, $startTime, $endTime, $priority]);
+    }
+
+    public function deleteDailyShift(int $id): void
+    {
+        $this->pdo->prepare('DELETE FROM daily_shift_config WHERE id=?')->execute([$id]);
     }
 
     public function calendarDays(?string $month = null): array
@@ -332,4 +376,11 @@ class BarRepository
         $row = $stmt->fetch();
         return $row ?: null;
     }
+
+
+    private function isValidTime(string $time): bool
+    {
+        return (bool) preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $time);
+    }
 }
+
