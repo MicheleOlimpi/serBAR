@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use PDO;
+use PDOException;
 
 class BarRepository
 {
@@ -111,7 +112,7 @@ class BarRepository
         $sql = 'SELECT c.*, d.name as day_type_name
                 FROM daily_shift_config c
                 JOIN day_types d ON d.id=c.day_type_id
-                ORDER BY d.id, c.priority, c.start_time';
+                ORDER BY d.name ASC, c.priority ASC, c.start_time ASC';
         return $this->pdo->query($sql)->fetchAll();
     }
 
@@ -123,28 +124,43 @@ class BarRepository
         return $row ?: null;
     }
 
-    public function saveDailyShift(array $data): void
+    public function saveDailyShift(array $data): ?string
     {
         $dayTypeId = (int) ($data['day_type_id'] ?? 0);
         $startTime = (string) ($data['start_time'] ?? '');
         $endTime = (string) ($data['end_time'] ?? '');
         $priority = max(1, (int) ($data['priority'] ?? 1));
+        $closesBar = !empty($data['closes_bar']) ? 1 : 0;
+        $id = (int) ($data['id'] ?? 0);
 
         if ($dayTypeId < 1 || !$this->isValidTime($startTime) || !$this->isValidTime($endTime)) {
-            return;
+            return 'Dati turno non validi.';
+        }
+
+        if ($this->hasPriorityConflict($dayTypeId, $priority, $id > 0 ? $id : null)) {
+            return 'Per lo stesso tipo giorno la priorità deve essere univoca.';
         }
 
         $startTime .= ':00';
         $endTime .= ':00';
 
-        if (!empty($data['id'])) {
-            $this->pdo->prepare('UPDATE daily_shift_config SET day_type_id=?, start_time=?, end_time=?, priority=? WHERE id=?')
-                ->execute([$dayTypeId, $startTime, $endTime, $priority, (int) $data['id']]);
-            return;
+        try {
+            if ($id > 0) {
+                $this->pdo->prepare('UPDATE daily_shift_config SET day_type_id=?, start_time=?, end_time=?, closes_bar=?, priority=? WHERE id=?')
+                    ->execute([$dayTypeId, $startTime, $endTime, $closesBar, $priority, $id]);
+                return null;
+            }
+
+            $this->pdo->prepare('INSERT INTO daily_shift_config (day_type_id, start_time, end_time, closes_bar, priority) VALUES (?,?,?,?,?)')
+                ->execute([$dayTypeId, $startTime, $endTime, $closesBar, $priority]);
+        } catch (PDOException $e) {
+            if ((string) $e->getCode() === '23000') {
+                return 'Per lo stesso tipo giorno la priorità deve essere univoca.';
+            }
+            throw $e;
         }
 
-        $this->pdo->prepare('INSERT INTO daily_shift_config (day_type_id, start_time, end_time, priority) VALUES (?,?,?,?)')
-            ->execute([$dayTypeId, $startTime, $endTime, $priority]);
+        return null;
     }
 
     public function deleteDailyShift(int $id): void
@@ -382,5 +398,20 @@ class BarRepository
     {
         return (bool) preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $time);
     }
-}
 
+    private function hasPriorityConflict(int $dayTypeId, int $priority, ?int $excludeId = null): bool
+    {
+        $sql = 'SELECT COUNT(*) FROM daily_shift_config WHERE day_type_id = ? AND priority = ?';
+        $params = [$dayTypeId, $priority];
+
+        if ($excludeId !== null && $excludeId > 0) {
+            $sql .= ' AND id <> ?';
+            $params[] = $excludeId;
+        }
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($params);
+
+        return (int) $stmt->fetchColumn() > 0;
+    }
+}
