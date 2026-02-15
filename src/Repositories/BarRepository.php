@@ -254,7 +254,7 @@ class BarRepository
                     bd.morning_close,
                     bd.evening_close,
                     bd.notes,
-                    GROUP_CONCAT(DISTINCT CONCAT(u.last_name, " ", u.first_name) ORDER BY u.last_name, u.first_name SEPARATOR ", ") AS assigned_users
+                    GROUP_CONCAT(DISTINCT CONCAT(u.last_name, \' \', u.first_name) ORDER BY u.last_name, u.first_name SEPARATOR \', \') AS assigned_users
                 FROM boards b
                 JOIN board_days bd ON bd.board_id = b.id
                 LEFT JOIN day_types dt ON dt.id = bd.day_type_id
