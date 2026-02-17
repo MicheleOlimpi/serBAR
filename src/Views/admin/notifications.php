@@ -92,9 +92,19 @@ $statusBadgeMap = [
     <tbody>
       <?php foreach ($notifications as $n): ?>
         <?php $turno = $n['day_date'] ? $n['day_date'] : '-'; ?>
+        <?php
+          $createdAtFormatted = (string) $n['created_at'];
+          if (!empty($n['created_at'])) {
+              try {
+                  $createdAtFormatted = (new DateTimeImmutable((string) $n['created_at']))->format('d/m/Y H:i');
+              } catch (Exception) {
+                  $createdAtFormatted = (string) $n['created_at'];
+              }
+          }
+        ?>
         <tr>
           <td><?= (int) $n['id'] ?></td>
-          <td><?= htmlspecialchars((string) $n['created_at']) ?></td>
+          <td><?= htmlspecialchars($createdAtFormatted) ?></td>
           <td><?= htmlspecialchars((string) $n['username']) ?></td>
           <td><?= htmlspecialchars($turno) ?></td>
           <td><?= htmlspecialchars((string) $n['message']) ?></td>
