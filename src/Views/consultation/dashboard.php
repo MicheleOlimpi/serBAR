@@ -169,8 +169,18 @@ $statusLabels = [
               <tbody>
                 <?php foreach ($notifications as $n): ?>
                   <?php $statusClass = $statusClassMap[$n['status']] ?? 'text-bg-secondary'; ?>
+                  <?php
+                    $createdAtFormatted = (string) $n['created_at'];
+                    if (!empty($n['created_at'])) {
+                        try {
+                            $createdAtFormatted = (new DateTimeImmutable((string) $n['created_at']))->format('d/m/Y H:i');
+                        } catch (Exception) {
+                            $createdAtFormatted = (string) $n['created_at'];
+                        }
+                    }
+                  ?>
                   <tr>
-                    <td><?= htmlspecialchars($n['created_at']) ?></td>
+                    <td><?= htmlspecialchars($createdAtFormatted) ?></td>
                     <td><?= htmlspecialchars($n['username']) ?></td>
                     <td><?= htmlspecialchars((string) ($n['day_date'] ? $n['day_date'] . ' - ' . sprintf('%02d/%04d', $n['month'], $n['year']) : '-')) ?></td>
                     <td><?= htmlspecialchars($n['message']) ?></td>
