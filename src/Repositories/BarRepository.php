@@ -81,7 +81,25 @@ class BarRepository
 
     public function deleteUser(int $id): void
     {
+        $stmt = $this->pdo->prepare('SELECT username FROM users WHERE id=? LIMIT 1');
+        $stmt->execute([$id]);
+        $user = $stmt->fetch();
+        if ($user && strtolower((string) $user['username']) === 'admin') {
+            return;
+        }
+
         $this->pdo->prepare('DELETE FROM users WHERE id=?')->execute([$id]);
+    }
+
+    public function changeUserPassword(int $id, string $newPassword): void
+    {
+        $newPassword = trim($newPassword);
+        if ($id < 1 || $newPassword === '') {
+            return;
+        }
+
+        $this->pdo->prepare('UPDATE users SET password_hash=? WHERE id=?')
+            ->execute([password_hash($newPassword, PASSWORD_DEFAULT), $id]);
     }
 
     public function dayTypes(): array

@@ -126,7 +126,11 @@ class AppController
     {
         $this->guardAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->repo->saveUser($_POST);
+            if (isset($_POST['change_password_user_id'])) {
+                $this->repo->changeUserPassword((int) $_POST['change_password_user_id'], (string) ($_POST['new_password'] ?? ''));
+            } else {
+                $this->repo->saveUser($_POST);
+            }
         }
         if (isset($_GET['delete'])) {
             $this->repo->deleteUser((int) $_GET['delete']);
