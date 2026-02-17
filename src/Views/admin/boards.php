@@ -1,7 +1,8 @@
 <?php
 $currentMonth = (int) date('n');
 $currentYear = (int) date('Y');
-$defaultMonth = $currentMonth < 12 ? $currentMonth + 1 : 12;
+$defaultMonth = $currentMonth < 12 ? $currentMonth + 1 : 1;
+$defaultYear = $currentMonth < 12 ? $currentYear : $currentYear + 1;
 $monthNames = [
     1 => 'Gennaio',
     2 => 'Febbraio',
@@ -21,13 +22,15 @@ $monthNames = [
 <h4>Creazione tabellone turni</h4>
 <form method="post" class="row g-2 mb-3">
   <input type="hidden" name="create_board" value="1">
-  <input type="hidden" name="year" value="<?= $currentYear ?>">
-  <div class="col-md-2">
+  <div class="col-md-3">
     <select name="month" class="form-select" required>
       <?php for ($month = 1; $month <= 12; $month++): ?>
-        <option value="<?= $month ?>" <?= $month === $defaultMonth ? 'selected' : '' ?>><?= $monthNames[$month] . ' ' . $currentYear ?></option>
+        <option value="<?= $month ?>" <?= $month === $defaultMonth ? 'selected' : '' ?>><?= $monthNames[$month] ?></option>
       <?php endfor; ?>
     </select>
+  </div>
+  <div class="col-md-2">
+    <input type="text" name="year" class="form-control" inputmode="numeric" pattern="\d{4}" maxlength="4" value="<?= $defaultYear ?>" required>
   </div>
   <div class="col-md-2"><button class="btn btn-success">Crea</button></div>
 </form>
