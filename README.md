@@ -1,8 +1,8 @@
 # ACLI servizio BAR
 
 Applicazione PHP 8 (PSR-4) con MariaDB per la gestione dei turni di servizio BAR in un circolo di volontari.
-Viene gestita anche la cominicazione di eventuali messaggi sullo stile di un software di ticketing.
-Il sistema dispone di due interfacce web, una amministrativa dedicata ai gestori e una di consultazione/comunicazione dedicta ai volontari.
+Viene gestita anche la comunicazione di eventuali messaggi sullo stile di un software di ticketing.<br>
+Il sistema dispone di due interfacce web, una amministrativa dedicata ai gestori e una di consultazione/comunicazione dedicata ai volontari.
 
 ## Stack
 - PHP 8+
