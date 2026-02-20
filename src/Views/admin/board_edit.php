@@ -36,7 +36,7 @@
           <?php if (!empty($shift['closes_bar'])): ?> · Chiusura bar<?php endif; ?>
         </div>
         <?php if (Auth::isAdmin()): ?>
-          <textarea id="volunteers-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" rows="2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][volunteers]" placeholder="Volontari (Nome Cognome)"><?= htmlspecialchars((string) ($shift['volunteers'] ?? '')) ?></textarea>
+          <textarea id="volunteers-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" rows="2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][volunteers]" placeholder="Volontari (es. M. Rossi)"><?= htmlspecialchars((string) ($shift['volunteers'] ?? '')) ?></textarea>
           <div class="input-group input-group-sm volunteer-picker" data-target="volunteers-<?= (int) $shift['id'] ?>">
             <input type="text" class="form-control" list="users-list" placeholder="Seleziona utente">
             <button class="btn btn-outline-secondary" type="button">Aggiungi</button>
@@ -62,18 +62,31 @@
   </datalist>
 
   <script>
+    const userAbbreviations = {
+      <?php foreach ($activeUsers as $index => $activeUser):
+        $fullName = trim($activeUser['first_name'] . ' ' . $activeUser['last_name']);
+        $firstInitial = strtoupper(substr(trim((string) $activeUser['first_name']), 0, 1));
+        $lastName = trim((string) $activeUser['last_name']);
+        $abbreviation = trim(($firstInitial ? $firstInitial . '. ' : '') . $lastName);
+      ?><?= $index > 0 ? ',' : '' ?>
+      <?= json_encode($fullName) ?>: <?= json_encode($abbreviation) ?>
+      <?php endforeach; ?>
+    };
+
     document.querySelectorAll('.volunteer-picker').forEach(function (picker) {
       const input = picker.querySelector('input');
       const button = picker.querySelector('button');
       const target = document.getElementById(picker.dataset.target);
 
       button.addEventListener('click', function () {
-        const value = input.value.trim();
-        if (!value || !target) {
+        const selectedUser = input.value.trim();
+        if (!selectedUser || !target) {
           return;
         }
 
-        target.value = target.value.trim() ? target.value.trim() + "\n" + value : value;
+        const value = userAbbreviations[selectedUser] || selectedUser;
+
+        target.value = target.value.trim() ? target.value.trim() + ' ' + value : value;
         input.value = '';
       });
     });
