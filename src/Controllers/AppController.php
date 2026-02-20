@@ -46,11 +46,10 @@ class AppController
             return;
         }
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['report_day'], $_POST['message'])) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'])) {
             $message = trim((string) $_POST['message']);
-            $dayId = (int) $_POST['report_day'];
-            if ($dayId > 0 && $message !== '') {
-                $this->repo->createNotification((int) Auth::user()['id'], $dayId, $message);
+            if ($message !== '') {
+                $this->repo->createNotification((int) Auth::user()['id'], null, $message);
             }
             View::redirect('./');
         }

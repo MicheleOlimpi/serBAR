@@ -362,7 +362,7 @@ class BarRepository
         $this->pdo->prepare('UPDATE board_day_shifts SET volunteers=? WHERE id=?')->execute([$volunteers, $shiftId]);
     }
 
-    public function createNotification(int $userId, int $boardDayId, string $msg): void
+    public function createNotification(int $userId, ?int $boardDayId, string $msg): void
     {
         $this->pdo->prepare("INSERT INTO notifications (user_id, board_day_id, message, status) VALUES (?,?,?,'inviata')")
             ->execute([$userId, $boardDayId, $msg]);
@@ -383,18 +383,20 @@ class BarRepository
         $boardDayId = (int) ($data['board_day_id'] ?? 0);
         $message = trim((string) ($data['message'] ?? ''));
 
-        if ($userId < 1 || $boardDayId < 1 || $message === '') {
+        if ($userId < 1 || $message === '') {
             return;
         }
 
+        $boardDayValue = $boardDayId > 0 ? $boardDayId : null;
+
         if (!empty($data['id'])) {
             $this->pdo->prepare('UPDATE notifications SET user_id=?, board_day_id=?, message=?, status=? WHERE id=?')
-                ->execute([$userId, $boardDayId, $message, $status, (int) $data['id']]);
+                ->execute([$userId, $boardDayValue, $message, $status, (int) $data['id']]);
             return;
         }
 
         $this->pdo->prepare('INSERT INTO notifications (user_id, board_day_id, message, status) VALUES (?,?,?,?)')
-            ->execute([$userId, $boardDayId, $message, $status]);
+            ->execute([$userId, $boardDayValue, $message, $status]);
     }
 
     public function updateNotificationStatus(int $id, string $status): void
@@ -412,7 +414,7 @@ class BarRepository
 
     public function notifications(): array
     {
-        return $this->pdo->query('SELECT n.*, u.username, bd.day_date FROM notifications n JOIN users u ON u.id=n.user_id JOIN board_days bd ON bd.id=n.board_day_id ORDER BY n.created_at DESC')->fetchAll();
+        return $this->pdo->query('SELECT n.*, u.username, bd.day_date FROM notifications n JOIN users u ON u.id=n.user_id LEFT JOIN board_days bd ON bd.id=n.board_day_id ORDER BY n.created_at DESC')->fetchAll();
     }
 
     public function boardsForConsultation(): array
@@ -434,12 +436,6 @@ class BarRepository
                 FROM boards b
                 JOIN board_days bd ON bd.board_id = b.id
                 LEFT JOIN day_types dt ON dt.id = bd.day_type_id
-                JOIN (
-                    SELECT id
-                    FROM boards
-                    ORDER BY year DESC, month DESC
-                    LIMIT 3
-                ) recent_boards ON recent_boards.id = b.id
                 ORDER BY b.year DESC, b.month DESC, bd.day_date';
 
         return $this->pdo->query($sql)->fetchAll();
