@@ -5,6 +5,27 @@ foreach ($shifts as $shift) {
     $groupedShifts[$boardKey][] = $shift;
 }
 
+$monthNames = [
+    1 => 'Gennaio',
+    2 => 'Febbraio',
+    3 => 'Marzo',
+    4 => 'Aprile',
+    5 => 'Maggio',
+    6 => 'Giugno',
+    7 => 'Luglio',
+    8 => 'Agosto',
+    9 => 'Settembre',
+    10 => 'Ottobre',
+    11 => 'Novembre',
+    12 => 'Dicembre',
+];
+
+$formatBoardLabel = static function (int $month, int $year) use ($monthNames): string {
+    $monthLabel = $monthNames[$month] ?? sprintf('%02d', $month);
+
+    return $monthLabel . ' ' . $year;
+};
+
 $statusClassMap = [
     'inviata' => 'text-bg-secondary',
     'letto' => 'text-bg-info',
@@ -29,7 +50,6 @@ $statusLabels = [
       </div>
       <div class="d-flex flex-wrap gap-2">
         <a class="btn btn-outline-secondary" href="#elenco-telefonico">Elenco telefonico utenti</a>
-        <a class="btn btn-danger" href="?action=logout">Logout</a>
       </div>
     </div>
   </div>
@@ -84,14 +104,18 @@ $statusLabels = [
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body p-4">
         <h5 class="card-title mb-3">Turni pubblicati</h5>
-        <p class="text-muted small">Consultazione disponibile per gli ultimi 3 tabelloni.</p>
+        <p class="text-muted small">Turni visibili per mese/anno in ordine decrescente.</p>
 
         <?php if (empty($groupedShifts)): ?>
           <div class="alert alert-info mb-0">Nessun turno disponibile al momento.</div>
         <?php else: ?>
           <?php foreach ($groupedShifts as $boardLabel => $boardShifts): ?>
             <div class="mb-4">
-              <h6 class="fw-semibold mb-2">Tabellone <?= htmlspecialchars($boardLabel) ?></h6>
+              <?php
+                [$boardMonth, $boardYear] = array_map('intval', explode('/', $boardLabel));
+                $boardTitle = $formatBoardLabel($boardMonth, $boardYear);
+              ?>
+              <h6 class="fw-semibold mb-2">Tabellone <?= htmlspecialchars($boardTitle) ?></h6>
               <div class="table-responsive border rounded">
                 <table class="table table-sm align-middle mb-0">
                   <thead class="table-light">
@@ -127,22 +151,12 @@ $statusLabels = [
         <h5 class="card-title mb-3">Nuova segnalazione</h5>
         <form method="post" class="d-grid gap-3">
           <div>
-            <label class="form-label" for="report_day">Turno di riferimento</label>
-            <select id="report_day" name="report_day" class="form-select" required>
-              <option value="">Seleziona un turno</option>
-              <?php foreach ($shifts as $s): ?>
-                <option value="<?= $s['id'] ?>"><?= htmlspecialchars($s['day_date'] . ' - ' . sprintf('%02d/%04d', $s['month'], $s['year'])) ?></option>
-              <?php endforeach; ?>
-            </select>
-          </div>
-
-          <div>
             <label class="form-label" for="message">Testo libero</label>
             <textarea id="message" name="message" rows="5" class="form-control" placeholder="Scrivi la tua segnalazione" required></textarea>
           </div>
 
           <div class="d-flex justify-content-between align-items-center gap-2">
-            <small class="text-muted">All'invio, la segnalazione sarà registrata con stato <strong>inviato</strong>.</small>
+            <small class="text-muted">All'invio, la segnalazione sarà registrata con stato <strong>inviata</strong>.</small>
             <button class="btn btn-warning" type="submit">Invia</button>
           </div>
         </form>

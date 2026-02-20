@@ -55,6 +55,7 @@ class InstallerService
             $this->ensureDailyShiftConfigSchema($pdo);
             $this->ensureBoardDaysSchema($pdo);
             $this->ensureBoardDayShiftsSchema($pdo);
+            $this->ensureNotificationsSchema($pdo);
             $this->ensureAppSettingsSchema($pdo);
             $this->removeBoardDayUsersTable($pdo);
         } catch (Throwable $e) {
@@ -72,7 +73,7 @@ class InstallerService
             'CREATE TABLE IF NOT EXISTS boards (id INT AUTO_INCREMENT PRIMARY KEY, month INT NOT NULL, year INT NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, UNIQUE KEY uq_board (month, year))',
             'CREATE TABLE IF NOT EXISTS board_days (id INT AUTO_INCREMENT PRIMARY KEY, board_id INT NOT NULL, day_date DATE NOT NULL, weekday_name VARCHAR(30) NOT NULL, recurrence_name VARCHAR(255) NULL, day_type_id INT NULL, notes TEXT NULL, FOREIGN KEY (board_id) REFERENCES boards(id) ON DELETE CASCADE, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE SET NULL)',
             'CREATE TABLE IF NOT EXISTS board_day_shifts (id INT AUTO_INCREMENT PRIMARY KEY, board_day_id INT NOT NULL, daily_shift_config_id INT NULL, start_time TIME NOT NULL, end_time TIME NOT NULL, closes_bar TINYINT(1) NOT NULL DEFAULT 0, priority INT NOT NULL DEFAULT 1, volunteers TEXT NULL, UNIQUE KEY uq_board_day_shift_priority (board_day_id, priority), FOREIGN KEY (board_day_id) REFERENCES board_days(id) ON DELETE CASCADE, FOREIGN KEY (daily_shift_config_id) REFERENCES daily_shift_config(id) ON DELETE SET NULL)',
-            "CREATE TABLE IF NOT EXISTS notifications (id INT AUTO_INCREMENT PRIMARY KEY, user_id INT NOT NULL, board_day_id INT NOT NULL, message TEXT NOT NULL, status VARCHAR(20) NOT NULL DEFAULT 'nuova', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE, FOREIGN KEY (board_day_id) REFERENCES board_days(id) ON DELETE CASCADE)",
+            "CREATE TABLE IF NOT EXISTS notifications (id INT AUTO_INCREMENT PRIMARY KEY, user_id INT NOT NULL, board_day_id INT NULL, message TEXT NOT NULL, status VARCHAR(20) NOT NULL DEFAULT 'inviata', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE, FOREIGN KEY (board_day_id) REFERENCES board_days(id) ON DELETE SET NULL)",
             'CREATE TABLE IF NOT EXISTS app_settings (setting_key VARCHAR(100) PRIMARY KEY, setting_value VARCHAR(255) NOT NULL)'
         ];
     }
@@ -155,6 +156,24 @@ class InstallerService
 
         if (!in_array('volunteers', $columnNames, true)) {
             $pdo->exec('ALTER TABLE board_day_shifts ADD COLUMN volunteers TEXT NULL AFTER priority');
+        }
+    }
+
+    private function ensureNotificationsSchema(PDO $pdo): void
+    {
+        $columns = $pdo->query('SHOW COLUMNS FROM notifications')->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($columns as $column) {
+            if ((string) ($column['Field'] ?? '') === 'board_day_id' && strtoupper((string) ($column['Null'] ?? 'NO')) !== 'YES') {
+                $fkStmt = $pdo->query("SELECT CONSTRAINT_NAME FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'notifications' AND COLUMN_NAME = 'board_day_id' AND REFERENCED_TABLE_NAME = 'board_days' LIMIT 1");
+                $fkName = (string) ($fkStmt?->fetchColumn() ?: '');
+                if ($fkName !== '') {
+                    $safeFkName = str_replace('`', '``', $fkName);
+                    $pdo->exec("ALTER TABLE notifications DROP FOREIGN KEY `{$safeFkName}`");
+                }
+                $pdo->exec('ALTER TABLE notifications MODIFY board_day_id INT NULL');
+                $pdo->exec('ALTER TABLE notifications ADD CONSTRAINT notifications_ibfk_2 FOREIGN KEY (board_day_id) REFERENCES board_days(id) ON DELETE SET NULL');
+                break;
+            }
         }
     }
 

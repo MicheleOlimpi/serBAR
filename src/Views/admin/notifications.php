@@ -40,9 +40,9 @@ $statusBadgeMap = [
       </div>
 
       <div class="col-md-4">
-        <label class="form-label">Turno</label>
-        <select name="board_day_id" class="form-select" required>
-          <option value="">Seleziona</option>
+        <label class="form-label">Turno (opzionale)</label>
+        <select name="board_day_id" class="form-select">
+          <option value="">Nessun turno</option>
           <?php foreach ($boardDays as $day): ?>
             <?php $label = $day['day_date'] . ' - ' . sprintf('%02d/%04d', $day['month'], $day['year']); ?>
             <option value="<?= (int) $day['id'] ?>" <?= $isEditing && (int) $editingRow['board_day_id'] === (int) $day['id'] ? 'selected' : '' ?>>
