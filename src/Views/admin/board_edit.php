@@ -36,13 +36,27 @@
           <?php if (!empty($shift['closes_bar'])): ?> · Chiusura bar<?php endif; ?>
         </div>
         <?php if (Auth::isAdmin()): ?>
-          <textarea id="volunteers-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" rows="2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][volunteers]" placeholder="Volontari (es. M. Rossi)"><?= htmlspecialchars((string) ($shift['volunteers'] ?? '')) ?></textarea>
-          <div class="input-group input-group-sm volunteer-picker" data-target="volunteers-<?= (int) $shift['id'] ?>">
-            <input type="text" class="form-control" list="users-list" placeholder="Seleziona utente">
-            <button class="btn btn-outline-secondary" type="button">Aggiungi</button>
+          <div class="row g-2">
+            <div class="col-md-7">
+              <textarea id="volunteers-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" rows="2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][volunteers]" placeholder="Volontari (es. M. Rossi)"><?= htmlspecialchars((string) ($shift['volunteers'] ?? '')) ?></textarea>
+              <div class="input-group input-group-sm volunteer-picker" data-target="volunteers-<?= (int) $shift['id'] ?>">
+                <input type="text" class="form-control" list="users-list" placeholder="Seleziona utente">
+                <button class="btn btn-outline-secondary" type="button">Aggiungi</button>
+              </div>
+            </div>
+            <div class="col-md-5">
+              <input id="responsabile-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][responsabile_chiusura]" value="<?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?? '')) ?>" placeholder="Responsabile chiusura" <?= empty($shift['closes_bar']) ? 'readonly' : '' ?>>
+              <div class="input-group input-group-sm responsible-picker" data-target="responsabile-<?= (int) $shift['id'] ?>">
+                <input type="text" class="form-control" list="users-list" placeholder="Seleziona utente" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?>>
+                <button class="btn btn-outline-secondary" type="button" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?>>Imposta</button>
+              </div>
+            </div>
           </div>
         <?php else: ?>
           <div><?= nl2br(htmlspecialchars((string) ($shift['volunteers'] ?: '-'))) ?></div>
+          <?php if (!empty($shift['closes_bar'])): ?>
+            <div class="small text-muted mt-1">Responsabile chiusura: <?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?: '-')) ?></div>
+          <?php endif; ?>
         <?php endif; ?>
       </div>
     <?php endforeach; ?>
@@ -87,6 +101,22 @@
         const value = userAbbreviations[selectedUser] || selectedUser;
 
         target.value = target.value.trim() ? target.value.trim() + ' ' + value : value;
+        input.value = '';
+      });
+    });
+
+    document.querySelectorAll('.responsible-picker').forEach(function (picker) {
+      const input = picker.querySelector('input');
+      const button = picker.querySelector('button');
+      const target = document.getElementById(picker.dataset.target);
+
+      button.addEventListener('click', function () {
+        const selectedUser = input.value.trim();
+        if (!selectedUser || !target || button.disabled) {
+          return;
+        }
+
+        target.value = userAbbreviations[selectedUser] || selectedUser;
         input.value = '';
       });
     });

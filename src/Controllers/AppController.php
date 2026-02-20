@@ -98,7 +98,11 @@ class AppController
                 $this->repo->syncBoardDayShifts($dayId, $dayTypeId);
 
                 foreach ($dayData['shifts'] ?? [] as $shiftId => $shiftData) {
-                    $this->repo->updateBoardDayShiftVolunteers((int) $shiftId, trim((string) ($shiftData['volunteers'] ?? '')));
+                    $this->repo->updateBoardDayShiftVolunteers(
+                        (int) $shiftId,
+                        trim((string) ($shiftData['volunteers'] ?? '')),
+                        trim((string) ($shiftData['responsabile_chiusura'] ?? '')) !== '' ? trim((string) ($shiftData['responsabile_chiusura'] ?? '')) : null
+                    );
                 }
             }
         }

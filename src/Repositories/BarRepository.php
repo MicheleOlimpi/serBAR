@@ -318,7 +318,7 @@ class BarRepository
         $stmtConfig->execute([$dayTypeId]);
         $configs = $stmtConfig->fetchAll();
 
-        $stmtCurrent = $this->pdo->prepare('SELECT id, priority, volunteers FROM board_day_shifts WHERE board_day_id=?');
+        $stmtCurrent = $this->pdo->prepare('SELECT id, priority, volunteers, responsabile_chiusura FROM board_day_shifts WHERE board_day_id=?');
         $stmtCurrent->execute([$boardDayId]);
         $currentRows = $stmtCurrent->fetchAll();
 
@@ -327,13 +327,14 @@ class BarRepository
             $currentByPriority[(int) $row['priority']] = $row;
         }
 
-        $upsert = $this->pdo->prepare('INSERT INTO board_day_shifts (board_day_id, daily_shift_config_id, start_time, end_time, closes_bar, priority, volunteers) VALUES (?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE daily_shift_config_id=VALUES(daily_shift_config_id), start_time=VALUES(start_time), end_time=VALUES(end_time), closes_bar=VALUES(closes_bar), volunteers=VALUES(volunteers)');
+        $upsert = $this->pdo->prepare('INSERT INTO board_day_shifts (board_day_id, daily_shift_config_id, start_time, end_time, closes_bar, priority, volunteers, responsabile_chiusura) VALUES (?,?,?,?,?,?,?,?) ON DUPLICATE KEY UPDATE daily_shift_config_id=VALUES(daily_shift_config_id), start_time=VALUES(start_time), end_time=VALUES(end_time), closes_bar=VALUES(closes_bar), volunteers=VALUES(volunteers), responsabile_chiusura=VALUES(responsabile_chiusura)');
         $priorities = [];
 
         foreach ($configs as $config) {
             $priority = (int) $config['priority'];
             $priorities[] = $priority;
             $volunteers = $currentByPriority[$priority]['volunteers'] ?? null;
+            $responsabileChiusura = $currentByPriority[$priority]['responsabile_chiusura'] ?? null;
             $upsert->execute([
                 $boardDayId,
                 (int) $config['id'],
@@ -342,6 +343,7 @@ class BarRepository
                 (int) $config['closes_bar'],
                 $priority,
                 $volunteers,
+                $responsabileChiusura,
             ]);
         }
 
@@ -357,9 +359,9 @@ class BarRepository
         }
     }
 
-    public function updateBoardDayShiftVolunteers(int $shiftId, string $volunteers): void
+    public function updateBoardDayShiftVolunteers(int $shiftId, string $volunteers, ?string $responsabileChiusura): void
     {
-        $this->pdo->prepare('UPDATE board_day_shifts SET volunteers=? WHERE id=?')->execute([$volunteers, $shiftId]);
+        $this->pdo->prepare('UPDATE board_day_shifts SET volunteers=?, responsabile_chiusura=? WHERE id=?')->execute([$volunteers, $responsabileChiusura, $shiftId]);
     }
 
     public function createNotification(int $userId, ?int $boardDayId, string $msg): void
