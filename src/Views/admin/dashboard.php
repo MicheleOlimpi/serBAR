@@ -20,7 +20,6 @@ $statusLabels = [
   <a class="btn btn-outline-primary" href="?action=calendar">Calendario</a>
   <a class="btn btn-outline-primary" href="?action=notifications">Segnalazioni</a>
   <a class="btn btn-outline-primary" href="?action=setup">Setup</a>
-  <a class="btn btn-danger" href="?action=logout">Logout</a>
 </div>
 <div class="row">
   <div class="col-md-6"><div class="card"><div class="card-body"><h5>Tabelloni</h5><ul><?php foreach($boards as $b): ?><li><a href="?action=board_edit&id=<?= $b['id'] ?>"><?= sprintf('%02d/%04d',$b['month'],$b['year']) ?></a></li><?php endforeach; ?></ul></div></div></div>
