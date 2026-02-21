@@ -37,23 +37,26 @@ class BoardService
             $cal = $stmtCal->fetch(PDO::FETCH_ASSOC) ?: null;
 
             $type = $feriale;
-            $weekdayNumber = $d->format('N');
-            if ($weekdayNumber === '6' && $prefestivo > 0) {
+            $weekdayNumber = (int) $d->format('N');
+            if ($weekdayNumber === 6 && $prefestivo > 0) {
                 $type = $prefestivo;
             }
-            if ($weekdayNumber === '7' && $festivo > 0) {
+            if ($weekdayNumber === 7 && $festivo > 0) {
                 $type = $festivo;
             }
 
-            $recurrenceName = $cal['recurrence_name'] ?? null;
+            $recurrenceName = isset($cal['recurrence_name']) ? trim((string) $cal['recurrence_name']) : null;
+            if ($recurrenceName === '') {
+                $recurrenceName = null;
+            }
 
             if ($cal) {
                 if (!empty($cal['day_type_id'])) {
                     $type = (int) $cal['day_type_id'];
-                } elseif ((int) $cal['is_special'] === 1) {
-                    $type = $speciale;
                 } elseif ((int) $cal['is_holiday'] === 1) {
                     $type = $festivo;
+                } elseif ((int) $cal['is_special'] === 1) {
+                    $type = $speciale;
                 }
             }
 
@@ -79,13 +82,13 @@ class BoardService
         }
 
         for ($i = 1, $count = count($days); $i < $count; $i++) {
-            if ((int) $days[$i]['day_type_id'] === $festivo && $prefestivo > 0) {
+            if ((int) $days[$i]['day_type_id'] === $festivo && $prefestivo > 0 && (int) $days[$i - 1]['day_type_id'] !== $festivo) {
                 $days[$i - 1]['day_type_id'] = $prefestivo;
             }
         }
 
         $ins = $this->pdo->prepare('INSERT INTO board_days (board_id, day_date, weekday_name, recurrence_name, day_type_id) VALUES (?,?,?,?,?)');
-        $insShift = $this->pdo->prepare('INSERT INTO board_day_shifts (board_day_id, daily_shift_config_id, start_time, end_time, closes_bar, priority, volunteers, responsabile_chiusura) SELECT ?, id, start_time, end_time, closes_bar, priority, NULL, NULL FROM daily_shift_config WHERE day_type_id=? ORDER BY priority ASC, start_time ASC');
+        $insShift = $this->pdo->prepare("INSERT INTO board_day_shifts (board_day_id, daily_shift_config_id, start_time, end_time, closes_bar, priority, volunteers, responsabile_chiusura) SELECT ?, id, start_time, end_time, closes_bar, priority, '', NULL FROM daily_shift_config WHERE day_type_id=? ORDER BY priority ASC, start_time ASC");
 
         foreach ($days as $day) {
             $ins->execute([
