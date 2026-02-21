@@ -210,7 +210,8 @@ class AppController
                     $calendarDayId,
                     trim((string) ($rowData['recurrence_name'] ?? '')),
                     trim((string) ($rowData['santo'] ?? '')),
-                    (int) ($rowData['day_type_id'] ?? 0)
+                    (int) ($rowData['day_type_id'] ?? 0),
+                    isset($rowData['is_special'])
                 );
             }
             View::redirect('?action=calendar');
