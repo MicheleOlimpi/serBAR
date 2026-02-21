@@ -259,7 +259,7 @@ class BarRepository
     public function calendarDays(?string $month = null): array
     {
         if ($month) {
-            $stmt = $this->pdo->prepare("SELECT c.*, DAYNAME(c.day_date) AS weekday_name, d.name as day_type_name, d.color_hex as day_type_color FROM calendar_days c LEFT JOIN day_types d ON d.id=c.day_type_id WHERE DATE_FORMAT(c.day_date, '%Y-%m')=? ORDER BY c.day_date");
+            $stmt = $this->pdo->prepare("SELECT c.*, DAYNAME(c.day_date) AS weekday_name, d.name as day_type_name, d.color_hex as day_type_color FROM calendar_days c LEFT JOIN day_types d ON d.id=c.day_type_id WHERE DATE_FORMAT(c.day_date, '%Y-%m')=? ORDER BY c.day_date ASC");
             $stmt->execute([$month]);
             return $stmt->fetchAll();
         }
@@ -275,10 +275,10 @@ class BarRepository
         return '#6c757d';
     }
 
-    public function updateCalendarDayDetails(int $id, string $recurrenceName, string $santo, int $dayTypeId): void
+    public function updateCalendarDayDetails(int $id, string $recurrenceName, string $santo, int $dayTypeId, bool $isSpecial): void
     {
-        $this->pdo->prepare('UPDATE calendar_days SET recurrence_name=?, santo=?, day_type_id=? WHERE id=?')
-            ->execute([$recurrenceName, $santo, $dayTypeId > 0 ? $dayTypeId : null, $id]);
+        $this->pdo->prepare('UPDATE calendar_days SET recurrence_name=?, santo=?, day_type_id=?, is_special=? WHERE id=?')
+            ->execute([$recurrenceName, $santo, $dayTypeId > 0 ? $dayTypeId : null, $isSpecial ? 1 : 0, $id]);
     }
 
     public function saveCalendarDay(array $d): void
