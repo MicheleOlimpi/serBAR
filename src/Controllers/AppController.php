@@ -66,8 +66,11 @@ class AppController
     {
         $this->guardAdmin();
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_board'])) {
-            $month = (int) $_POST['month'];
-            $year = (int) $_POST['year'];
+            $month = max(1, min(12, (int) ($_POST['month'] ?? 0)));
+            $year = (int) ($_POST['year'] ?? 0);
+            if ($year < 1970 || $year > 2100) {
+                $year = (int) date('Y');
+            }
             $id = $this->repo->createBoard($month, $year);
             $this->boardService->generate($id, $month, $year);
         }
