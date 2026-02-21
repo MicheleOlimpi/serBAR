@@ -57,13 +57,6 @@ class BarRepository
     public function saveUser(array $data): void
     {
         if (!empty($data['id'])) {
-            $params = [$data['username'], $data['last_name'], $data['first_name'], $data['role'], (string) ($data['phone'] ?? ''), $data['status'], (int) $data['id']];
-            $sql = 'UPDATE users SET username=?, last_name=?, first_name=?, role=?, phone=?, status=? WHERE id=?';
-            if (!empty($data['password'])) {
-                $sql = 'UPDATE users SET username=?, last_name=?, first_name=?, role=?, phone=?, status=?, password_hash=? WHERE id=?';
-                $params = [$data['username'], $data['last_name'], $data['first_name'], $data['role'], (string) ($data['phone'] ?? ''), $data['status'], password_hash($data['password'], PASSWORD_DEFAULT), (int) $data['id']];
-            }
-            $this->pdo->prepare($sql)->execute($params);
             return;
         }
 
@@ -77,6 +70,20 @@ class BarRepository
                 (string) ($data['phone'] ?? ''),
                 $data['status'],
             ]);
+    }
+
+    public function updateUserProfile(int $id, string $lastName, string $firstName, string $status): void
+    {
+        $lastName = trim($lastName);
+        $firstName = trim($firstName);
+        $status = $status === 'inattivo' ? 'inattivo' : 'attivo';
+
+        if ($id < 1 || $lastName === '' || $firstName === '') {
+            return;
+        }
+
+        $this->pdo->prepare('UPDATE users SET last_name=?, first_name=?, status=? WHERE id=?')
+            ->execute([$lastName, $firstName, $status, $id]);
     }
 
     public function deleteUser(int $id): void
