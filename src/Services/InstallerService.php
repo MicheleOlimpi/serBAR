@@ -224,12 +224,12 @@ class InstallerService
     private function seed(PDO $pdo): void
     {
         try {
-            $pdo->exec("INSERT IGNORE INTO day_types (id, name, code, color_hex, is_locked) VALUES (1,'speciale','speciale','#0d6efd',1),(2,'feriale','feriale','#198754',1),(3,'prefestivo','prefestivo','#fd7e14',1),(4,'festivo','festivo','#dc3545',1)");
+            $pdo->exec("INSERT IGNORE INTO day_types (id, name, code, color_hex, is_locked) VALUES (1,'feriale','feriale','#FFFFFF',1),(2,'prefestivo','prefestivo','#FF9090',1),(3,'festivo','festivo','#FF0000',1)");
             $adminHash = password_hash('admin', PASSWORD_DEFAULT);
             $userHash = password_hash('user', PASSWORD_DEFAULT);
-            $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES ('admin','Admin','Sistema','{$adminHash}','admin','','attivo')");
-            $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES ('user','User','Default','{$userHash}','user','','attivo')");
-            $pdo->exec("INSERT IGNORE INTO daily_shift_config(day_type_id, start_time, end_time, closes_bar, priority) VALUES (1,'08:00:00','14:00:00',0,1),(1,'14:00:00','20:00:00',1,2),(2,'08:00:00','14:00:00',0,1),(2,'14:00:00','20:00:00',1,2),(3,'08:00:00','14:00:00',0,1),(3,'14:00:00','20:00:00',1,2),(4,'08:00:00','14:00:00',0,1),(4,'14:00:00','20:00:00',1,2)");
+            $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES ('admin','System','Admin','{$adminHash}','admin','','attivo')");
+            $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES ('user','System','User','{$userHash}','user','','attivo')");
+            $pdo->exec("INSERT IGNORE INTO daily_shift_config(id, day_type_id, start_time, end_time, closes_bar, priority) VALUES (1,1,'15:00:00','20:00:00',0,1),(2,1,'20:00:00','23:00:00',1,2),(3,2,'15:00:00','20:00:00',0,1),(4,2,'20:00:00','23:00:00',1,2),(5,3,'08:00:00','12:00:00',1,1),(6,3,'15:00:00','20:00:00',0,2),(7,3,'20:00:00','23:00:00',1,3)");
             $this->seedCalendarDays($pdo);
         } catch (Throwable $e) {
             throw new \RuntimeException('Errore popolamento dati iniziali: ' . $e->getMessage(), 0, $e);
@@ -240,53 +240,42 @@ class InstallerService
     {
         $year = (int) date('Y');
 
-        $stmt = $pdo->prepare('INSERT IGNORE INTO calendar_days (day_date, recurrence_name, santo, is_holiday, is_special, day_type_id) VALUES (?, ?, ?, ?, 0, ?)');
+        $stmt = $pdo->prepare('INSERT IGNORE INTO calendar_days (day_date, recurrence_name, santo, is_holiday, is_special, day_type_id) VALUES (?, ?, ?, 0, 0, ?)');
 
-        $ferialeTypeId = 2;
-        $prefestivoTypeId = 3;
-        $festivoTypeId = 4;
+        $ferialeTypeId = 1;
+        $festivoTypeId = 3;
 
         $start = new \DateTimeImmutable(sprintf('%04d-01-01', $year));
         $end = new \DateTimeImmutable(sprintf('%04d-12-31', $year));
 
         for ($day = $start; $day <= $end; $day = $day->modify('+1 day')) {
-            $dayTypeId = $ferialeTypeId;
-            if ($day->format('N') === '6') {
-                $dayTypeId = $prefestivoTypeId;
-            }
-            if ($day->format('N') === '7') {
-                $dayTypeId = $festivoTypeId;
-            }
-
             $stmt->execute([
                 $day->format('Y-m-d'),
                 '',
                 '',
-                0,
-                $dayTypeId,
+                $ferialeTypeId,
             ]);
         }
 
-        $pdo->prepare("UPDATE calendar_days SET day_type_id=? WHERE YEAR(day_date)=? AND WEEKDAY(day_date)=5")->execute([$prefestivoTypeId, $year]);
-        $pdo->prepare("UPDATE calendar_days SET day_type_id=? WHERE YEAR(day_date)=? AND WEEKDAY(day_date)=6")->execute([$festivoTypeId, $year]);
-
         $holidays = [
-            ['date' => sprintf('%04d-01-01', $year), 'recurrence' => 'capodanno', 'santo' => 'Maria Santisima madre di Dio'],
-            ['date' => sprintf('%04d-06-02', $year), 'recurrence' => 'Festa delle repubblica', 'santo' => 'Santi martiri Marcellino e Pietro'],
-            ['date' => sprintf('%04d-08-15', $year), 'recurrence' => 'ferragosto', 'santo' => 'Assunzione della B.V. Maria'],
-            ['date' => sprintf('%04d-11-01', $year), 'recurrence' => 'Tutti i santi', 'santo' => 'Tutti i santi'],
-            ['date' => sprintf('%04d-12-08', $year), 'recurrence' => 'SS. Madonna', 'santo' => 'Immacolata concezione della B.V. Maria'],
-            ['date' => sprintf('%04d-12-25', $year), 'recurrence' => 'Natale', 'santo' => 'Natale del Signore'],
-            ['date' => sprintf('%04d-12-26', $year), 'recurrence' => 'Santo Stefano', 'santo' => 'S. Stefano'],
+            ['date' => sprintf('%04d-01-01', $year), 'recurrence' => 'capodanno', 'santo' => 'Maria Santissima madre di Dio', 'special' => 0],
+            ['date' => sprintf('%04d-06-02', $year), 'recurrence' => 'Festa delle repubblica', 'santo' => 'Santi martiri Marcellino e Pietro', 'special' => 0],
+            ['date' => sprintf('%04d-08-15', $year), 'recurrence' => 'ferragosto', 'santo' => 'Assunzione della B.V. Maria', 'special' => 0],
+            ['date' => sprintf('%04d-09-29', $year), 'recurrence' => 'Tutti i santi', 'santo' => 'Tutti i santi', 'special' => 1],
+            ['date' => sprintf('%04d-11-01', $year), 'recurrence' => 'Tutti i santi', 'santo' => 'Tutti i santi', 'special' => 0],
+            ['date' => sprintf('%04d-12-08', $year), 'recurrence' => 'SS. Madonna', 'santo' => 'Immacolata concezione della B.V. Maria', 'special' => 0],
+            ['date' => sprintf('%04d-12-25', $year), 'recurrence' => 'Natale', 'santo' => 'Natale del Signore', 'special' => 0],
+            ['date' => sprintf('%04d-12-26', $year), 'recurrence' => 'Santo Stefano', 'santo' => 'S. Stefano', 'special' => 0],
         ];
 
         $updateHoliday = $pdo->prepare(
-            'UPDATE calendar_days SET day_type_id = ?, is_holiday = 1, recurrence_name = ?, santo = ? WHERE day_date = ?'
+            'UPDATE calendar_days SET day_type_id = ?, is_holiday = 1, is_special = ?, recurrence_name = ?, santo = ? WHERE day_date = ?'
         );
 
         foreach ($holidays as $holiday) {
             $updateHoliday->execute([
                 $festivoTypeId,
+                (int) $holiday['special'],
                 $holiday['recurrence'],
                 $holiday['santo'],
                 $holiday['date'],
