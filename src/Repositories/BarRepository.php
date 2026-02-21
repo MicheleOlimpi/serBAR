@@ -82,6 +82,17 @@ class BarRepository
             return;
         }
 
+        $stmt = $this->pdo->prepare('SELECT username, status FROM users WHERE id=? LIMIT 1');
+        $stmt->execute([$id]);
+        $user = $stmt->fetch();
+        if (!$user) {
+            return;
+        }
+
+        if (strtolower((string) $user['username']) === 'admin') {
+            $status = (string) $user['status'];
+        }
+
         $this->pdo->prepare('UPDATE users SET last_name=?, first_name=?, status=? WHERE id=?')
             ->execute([$lastName, $firstName, $status, $id]);
     }
