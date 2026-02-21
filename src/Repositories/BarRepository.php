@@ -11,6 +11,7 @@ class BarRepository
 {
     private const NOTIFICATION_STATUSES = ['inviata', 'letto', 'in_corso', 'chiuso'];
     private const SETUP_KEYS = ['consultation_notifications_enabled', 'consultation_directory_enabled'];
+    private const NON_DELETABLE_DAY_TYPE_CODES = ['feriale', 'prefestivo', 'festivo'];
 
     public function __construct(private PDO $pdo)
     {
@@ -135,19 +136,27 @@ class BarRepository
 
     public function saveDayType(array $data): void
     {
+        $colorHex = $this->sanitizeColorHex((string) ($data['color_hex'] ?? ''));
+
         if (!empty($data['id'])) {
-            $this->pdo->prepare('UPDATE day_types SET name=?, code=? WHERE id=?')->execute([$data['name'], $data['code'], (int) $data['id']]);
+            $this->pdo->prepare('UPDATE day_types SET name=?, code=?, color_hex=? WHERE id=?')
+                ->execute([$data['name'], $data['code'], $colorHex, (int) $data['id']]);
             return;
         }
-        $this->pdo->prepare('INSERT INTO day_types (name, code, is_locked) VALUES (?,?,0)')->execute([$data['name'], $data['code']]);
+        $this->pdo->prepare('INSERT INTO day_types (name, code, color_hex, is_locked) VALUES (?,?,?,0)')
+            ->execute([$data['name'], $data['code'], $colorHex]);
     }
 
     public function deleteDayType(int $id): bool
     {
-        $stmt = $this->pdo->prepare('SELECT is_locked FROM day_types WHERE id=?');
+        $stmt = $this->pdo->prepare('SELECT is_locked, code FROM day_types WHERE id=?');
         $stmt->execute([$id]);
         $row = $stmt->fetch();
-        if (!$row || (int) $row['is_locked'] === 1) {
+        if (
+            !$row
+            || (int) $row['is_locked'] === 1
+            || in_array(strtolower((string) $row['code']), self::NON_DELETABLE_DAY_TYPE_CODES, true)
+        ) {
             return false;
         }
         $this->pdo->prepare('DELETE FROM day_types WHERE id=?')->execute([$id]);
@@ -250,11 +259,20 @@ class BarRepository
     public function calendarDays(?string $month = null): array
     {
         if ($month) {
-            $stmt = $this->pdo->prepare("SELECT c.*, DAYNAME(c.day_date) AS weekday_name, d.name as day_type_name FROM calendar_days c LEFT JOIN day_types d ON d.id=c.day_type_id WHERE DATE_FORMAT(c.day_date, '%Y-%m')=? ORDER BY c.day_date");
+            $stmt = $this->pdo->prepare("SELECT c.*, DAYNAME(c.day_date) AS weekday_name, d.name as day_type_name, d.color_hex as day_type_color FROM calendar_days c LEFT JOIN day_types d ON d.id=c.day_type_id WHERE DATE_FORMAT(c.day_date, '%Y-%m')=? ORDER BY c.day_date");
             $stmt->execute([$month]);
             return $stmt->fetchAll();
         }
-        return $this->pdo->query('SELECT c.*, DAYNAME(c.day_date) AS weekday_name, d.name as day_type_name FROM calendar_days c LEFT JOIN day_types d ON d.id=c.day_type_id ORDER BY c.day_date ASC')->fetchAll();
+        return $this->pdo->query('SELECT c.*, DAYNAME(c.day_date) AS weekday_name, d.name as day_type_name, d.color_hex as day_type_color FROM calendar_days c LEFT JOIN day_types d ON d.id=c.day_type_id ORDER BY c.day_date ASC')->fetchAll();
+    }
+
+    private function sanitizeColorHex(string $colorHex): string
+    {
+        if (preg_match('/^#[0-9a-fA-F]{6}$/', $colorHex) === 1) {
+            return strtolower($colorHex);
+        }
+
+        return '#6c757d';
     }
 
     public function updateCalendarDayDetails(int $id, string $recurrenceName, string $santo, int $dayTypeId): void
