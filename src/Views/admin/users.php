@@ -27,16 +27,25 @@
       <td><?= htmlspecialchars($u['last_name']) ?></td>
       <td><?= htmlspecialchars($u['first_name']) ?></td>
       <td><?= htmlspecialchars($u['role']) ?></td>
-      <td><?= htmlspecialchars($u['status']) ?></td>
+      <td>
+        <span class="<?= $u['status'] === 'attivo' ? 'text-success fw-semibold' : '' ?>">
+          <?= htmlspecialchars($u['status']) ?>
+        </span>
+      </td>
       <td>
         <form method="post" class="d-flex gap-1">
           <input type="hidden" name="update_user_id" value="<?= (int) $u['id'] ?>">
           <input type="text" name="last_name" class="form-control form-control-sm" value="<?= htmlspecialchars($u['last_name']) ?>" required>
           <input type="text" name="first_name" class="form-control form-control-sm" value="<?= htmlspecialchars($u['first_name']) ?>" required>
-          <select name="status" class="form-select form-select-sm">
-            <option value="attivo" <?= $u['status'] === 'attivo' ? 'selected' : '' ?>>attivo</option>
-            <option value="inattivo" <?= $u['status'] === 'inattivo' ? 'selected' : '' ?>>inattivo</option>
-          </select>
+          <?php if ($isProtectedAdmin): ?>
+            <input type="hidden" name="status" value="<?= htmlspecialchars($u['status']) ?>">
+            <span class="form-control form-control-sm bg-light">Stato bloccato</span>
+          <?php else: ?>
+            <select name="status" class="form-select form-select-sm">
+              <option value="attivo" <?= $u['status'] === 'attivo' ? 'selected' : '' ?>>attivo</option>
+              <option value="inattivo" <?= $u['status'] === 'inattivo' ? 'selected' : '' ?>>inattivo</option>
+            </select>
+          <?php endif; ?>
           <button class="btn btn-sm btn-outline-primary">Salva</button>
         </form>
       </td>
