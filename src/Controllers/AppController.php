@@ -131,6 +131,13 @@ class AppController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isset($_POST['change_password_user_id'])) {
                 $this->repo->changeUserPassword((int) $_POST['change_password_user_id'], (string) ($_POST['new_password'] ?? ''));
+            } elseif (isset($_POST['update_user_id'])) {
+                $this->repo->updateUserProfile(
+                    (int) $_POST['update_user_id'],
+                    (string) ($_POST['last_name'] ?? ''),
+                    (string) ($_POST['first_name'] ?? ''),
+                    (string) ($_POST['status'] ?? 'attivo')
+                );
             } else {
                 $this->repo->saveUser($_POST);
             }

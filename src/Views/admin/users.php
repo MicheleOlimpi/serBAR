@@ -1,22 +1,22 @@
 <h4>Gestione utenti</h4>
-<form method="post" class="row g-2 mb-3">
-  <input type="hidden" name="id" value="">
+<form method="post" class="row g-2 mb-4">
   <div class="col"><input name="username" class="form-control" placeholder="username" required></div>
   <div class="col"><input name="last_name" class="form-control" placeholder="cognome" required></div>
   <div class="col"><input name="first_name" class="form-control" placeholder="nome" required></div>
-  <div class="col"><input name="password" class="form-control" placeholder="password" required></div>
-  <div class="col"><input name="phone" class="form-control" placeholder="telefono"></div>
-  <div class="col"><select name="role" class="form-select"><option value="admin">admin</option><option value="user">user</option></select></div>
-  <div class="col"><select name="status" class="form-select"><option value="attivo">attivo</option><option value="inattivo">inattivo</option></select></div>
+  <div class="col"><input type="password" name="password" class="form-control" placeholder="password" required></div>
+  <div class="col"><select name="role" class="form-select"><option value="admin">admin</option><option value="user" selected>user</option></select></div>
+  <div class="col"><select name="status" class="form-select"><option value="attivo" selected>attivo</option><option value="inattivo">inattivo</option></select></div>
   <div class="col"><button class="btn btn-success">Aggiungi</button></div>
 </form>
-<table class="table table-striped">
+
+<table class="table table-striped align-middle">
   <tr>
     <th>Username</th>
-    <th>Nominativo</th>
-    <th>Telefono</th>
+    <th>Cognome</th>
+    <th>Nome</th>
     <th>Ruolo</th>
     <th>Stato</th>
+    <th>Modifica dati</th>
     <th>Cambio password</th>
     <th></th>
   </tr>
@@ -24,10 +24,22 @@
     <?php $isProtectedAdmin = strtolower((string) $u['username']) === 'admin'; ?>
     <tr>
       <td><?= htmlspecialchars($u['username']) ?></td>
-      <td><?= htmlspecialchars($u['last_name'].' '.$u['first_name']) ?></td>
-      <td><?= htmlspecialchars((string) ($u['phone'] ?: '-')) ?></td>
+      <td><?= htmlspecialchars($u['last_name']) ?></td>
+      <td><?= htmlspecialchars($u['first_name']) ?></td>
       <td><?= htmlspecialchars($u['role']) ?></td>
       <td><?= htmlspecialchars($u['status']) ?></td>
+      <td>
+        <form method="post" class="d-flex gap-1">
+          <input type="hidden" name="update_user_id" value="<?= (int) $u['id'] ?>">
+          <input type="text" name="last_name" class="form-control form-control-sm" value="<?= htmlspecialchars($u['last_name']) ?>" required>
+          <input type="text" name="first_name" class="form-control form-control-sm" value="<?= htmlspecialchars($u['first_name']) ?>" required>
+          <select name="status" class="form-select form-select-sm">
+            <option value="attivo" <?= $u['status'] === 'attivo' ? 'selected' : '' ?>>attivo</option>
+            <option value="inattivo" <?= $u['status'] === 'inattivo' ? 'selected' : '' ?>>inattivo</option>
+          </select>
+          <button class="btn btn-sm btn-outline-primary">Salva</button>
+        </form>
+      </td>
       <td>
         <form method="post" class="d-flex gap-1">
           <input type="hidden" name="change_password_user_id" value="<?= (int) $u['id'] ?>">
