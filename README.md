@@ -1,4 +1,6 @@
-![GitHub License](https://img.shields.io/github/license/MicheleOlimpi/serBAR) ![GitHub last commit](https://img.shields.io/github/last-commit/MicheleOlimpi/serBAR)
+![Static Badge](https://img.shields.io/badge/version-alpha-red?logo=alert)
+![GitHub License](https://img.shields.io/github/license/MicheleOlimpi/serBAR)
+![GitHub last commit](https://img.shields.io/github/last-commit/MicheleOlimpi/serBAR)
 
 
 # ACLI servizio BAR
