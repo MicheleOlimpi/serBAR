@@ -105,7 +105,7 @@ class BoardService
     private function easterSunday(int $year): \DateTimeImmutable
     {
         $timestamp = easter_date($year);
-        return (new \DateTimeImmutable('@' . $timestamp))->setTimezone(new \DateTimeZone(date_default_timezone_get()));
+        return new \DateTimeImmutable(gmdate('Y-m-d', $timestamp));
     }
 
     /**
