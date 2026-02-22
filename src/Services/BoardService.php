@@ -19,6 +19,8 @@ class BoardService
         $start = new \DateTimeImmutable(sprintf('%04d-%02d-01', $year, $month));
         $end = $start->modify('last day of this month');
         $feriale = $this->idByCode('feriale');
+        $prefestivo = $this->idByCode('prefestivo');
+        $festivo = $this->idByCode('festivo');
         $stmtCal = $this->pdo->prepare('SELECT day_date, recurrence_name, day_type_id FROM calendar_days WHERE day_date BETWEEN ? AND ? ORDER BY day_date ASC');
         $days = [];
 
@@ -45,12 +47,35 @@ class BoardService
             $calendarDayTypeId = isset($cal['day_type_id']) ? (int) $cal['day_type_id'] : 0;
             $type = $calendarDayTypeId > 0 ? $calendarDayTypeId : $feriale;
 
-            $days[] = [
+            $days[$iso] = [
                 'day_date' => $iso,
                 'weekday_name' => $this->weekday[$d->format('l')] ?? $d->format('l'),
                 'recurrence_name' => $recurrenceName,
                 'day_type_id' => $type,
             ];
+
+            if ($d->format('N') === '7' && $festivo > 0) {
+                $days[$iso]['day_type_id'] = $festivo;
+            }
+        }
+
+        $easter = $this->easterSunday($year);
+        $this->applySpecialDay($days, $easter->modify('-47 days'), $feriale, 'Martedì grasso');
+        $this->applySpecialDay($days, $easter->modify('-46 days'), $feriale, 'Mercoledì delle ceneri');
+        $this->applySpecialDay($days, $easter->modify('-7 days'), $festivo, 'Domenica delle palme');
+        $this->applySpecialDay($days, $easter, $festivo, 'Pasqua');
+        $this->applySpecialDay($days, $easter->modify('+1 day'), $festivo, "Lunedì dell'angelo");
+
+        $orderedDates = array_keys($days);
+        for ($index = 1, $count = count($orderedDates); $index < $count; $index++) {
+            $currentDate = $orderedDates[$index];
+            $previousDate = $orderedDates[$index - 1];
+
+            if ((int) $days[$currentDate]['day_type_id'] === $festivo
+                && (int) $days[$previousDate]['day_type_id'] !== $festivo
+                && $prefestivo > 0) {
+                $days[$previousDate]['day_type_id'] = $prefestivo;
+            }
         }
 
         $ins = $this->pdo->prepare('INSERT INTO board_days (board_id, day_date, weekday_name, recurrence_name, day_type_id) VALUES (?,?,?,?,?)');
@@ -75,5 +100,27 @@ class BoardService
         $stmt = $this->pdo->prepare('SELECT id FROM day_types WHERE code=? LIMIT 1');
         $stmt->execute([$code]);
         return (int) $stmt->fetchColumn();
+    }
+
+    private function easterSunday(int $year): \DateTimeImmutable
+    {
+        $timestamp = easter_date($year);
+        return (new \DateTimeImmutable('@' . $timestamp))->setTimezone(new \DateTimeZone(date_default_timezone_get()));
+    }
+
+    /**
+     * @param array<string, array{day_date:string, weekday_name:string, recurrence_name:string|null, day_type_id:int}> $days
+     */
+    private function applySpecialDay(array &$days, \DateTimeImmutable $date, int $dayTypeId, string $recurrence): void
+    {
+        $iso = $date->format('Y-m-d');
+        if (!isset($days[$iso])) {
+            return;
+        }
+
+        if ($dayTypeId > 0) {
+            $days[$iso]['day_type_id'] = $dayTypeId;
+        }
+        $days[$iso]['recurrence_name'] = $recurrence;
     }
 }
