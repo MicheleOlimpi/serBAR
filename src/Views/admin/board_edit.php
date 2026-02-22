@@ -2,8 +2,13 @@
 <h4>Tabellone <?= sprintf('%02d/%04d',$board['month'],$board['year']) ?></h4>
 <style>
   .day-cell { min-width: 170px; }
-  .day-number { font-size: 1.2rem; font-weight: 700; line-height: 1.1; }
-  .day-meta { font-size: 0.82rem; color: #6c757d; line-height: 1.3; }
+  .day-badge {
+    border-radius: .5rem;
+    padding: .6rem;
+    min-height: 100%;
+  }
+  .day-number { font-size: 1.3rem; font-weight: 700; line-height: 1.1; }
+  .day-meta { font-size: 0.82rem; line-height: 1.3; }
 </style>
 <?php if (Auth::isAdmin()): ?><form method="post"><?php endif; ?>
 <table class="table table-sm table-bordered bg-white">
@@ -11,18 +16,20 @@
 <?php foreach($days as $d): $shifts = $dayShifts[$d['id']] ?? []; ?>
 <tr>
 <td class="day-cell">
-  <div class="day-number"><?= (int) date('j', strtotime($d['day_date'])) ?></div>
-  <div class="day-meta mt-1"><?= htmlspecialchars($d['weekday_name']) ?></div>
-  <?php if (!empty($d['recurrence_name'])): ?><div class="day-meta"><?= htmlspecialchars((string) $d['recurrence_name']) ?></div><?php endif; ?>
-  <div class="day-meta mt-1">
-    <?php if (Auth::isAdmin()): ?>
-      <label class="form-label mb-1 small">Tipo giorno</label>
-      <select class="form-select form-select-sm" name="day[<?= $d['id'] ?>][day_type_id]">
-        <?php foreach($dayTypes as $t): ?><option value="<?= $t['id'] ?>" <?= $d['day_type_id']==$t['id']?'selected':'' ?>><?= htmlspecialchars($t['name']) ?></option><?php endforeach; ?>
-      </select>
-    <?php else: ?>
-      <strong><?= htmlspecialchars((string) ($d['day_type_name'] ?? '-')) ?></strong>
-    <?php endif; ?>
+  <div class="day-badge" style="background-color: <?= htmlspecialchars((string) ($d['day_type_color'] ?? '#6c757d')) ?>;">
+    <div class="day-number"><?= (int) date('j', strtotime($d['day_date'])) ?></div>
+    <div class="day-meta mt-1"><?= htmlspecialchars($d['weekday_name']) ?></div>
+    <?php if (!empty($d['recurrence_name'])): ?><div class="day-meta"><?= htmlspecialchars((string) $d['recurrence_name']) ?></div><?php endif; ?>
+    <div class="day-meta mt-1">
+      <?php if (Auth::isAdmin()): ?>
+        <label class="form-label mb-1 small">Tipo giorno</label>
+        <select class="form-select form-select-sm" name="day[<?= $d['id'] ?>][day_type_id]">
+          <?php foreach($dayTypes as $t): ?><option value="<?= $t['id'] ?>" <?= $d['day_type_id']==$t['id']?'selected':'' ?>><?= htmlspecialchars($t['name']) ?></option><?php endforeach; ?>
+        </select>
+      <?php else: ?>
+        <strong><?= htmlspecialchars((string) ($d['day_type_name'] ?? '-')) ?></strong>
+      <?php endif; ?>
+    </div>
   </div>
 </td>
 <td>
