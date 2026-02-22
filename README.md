@@ -36,3 +36,18 @@ Il sistema dispone di due interfacce web, una amministrativa dedicata ai gestori
 - Gestione turni giornalieri e annotazioni
 - Interfaccia consultazione e segnalazioni
 - Vista stampabile/esportabile PDF via stampa browser
+
+## GESTIONE DELLE FESTIVITA'
+Vengono gestite sia le festività nazionali che cattoliche
+### FISSE
+   Definite da calendario su tabella intera del programma
+### MOBILI
+- Gestione dei giorni prefestivi
+- Gestione dei giorni Festivi
+- Gestione delle festività cattoliche e dei giorni speciali mobili:
+   - Martedì Grasso
+   - Mercoledì delle ceneri
+   - Domenica delle Palme
+   - Pasqua
+   - Lunedì dell'angelo
+
