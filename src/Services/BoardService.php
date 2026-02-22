@@ -18,54 +18,32 @@ class BoardService
     {
         $start = new \DateTimeImmutable(sprintf('%04d-%02d-01', $year, $month));
         $end = $start->modify('last day of this month');
-        $easterDate = new \DateTimeImmutable(sprintf('%04d-%02d-%02d', $year, 3, 21));
-        $easterDate = $easterDate->modify('+' . easter_days($year) . ' days');
-        $mardiGrasDate = $easterDate->modify('-47 days');
-        $ashWednesdayDate = $easterDate->modify('-46 days');
-        $palmSundayDate = $easterDate->modify('-7 days');
-        $easterMondayDate = $easterDate->modify('+1 day');
-
         $feriale = $this->idByCode('feriale');
-        $prefestivo = $this->idByCode('prefestivo');
-        $festivo = $this->idByCode('festivo');
-        $stmtCal = $this->pdo->prepare('SELECT * FROM calendar_days WHERE day_date=?');
+        $stmtCal = $this->pdo->prepare('SELECT day_date, recurrence_name, day_type_id FROM calendar_days WHERE day_date BETWEEN ? AND ? ORDER BY day_date ASC');
         $days = [];
+
+        $stmtCal->execute([$start->format('Y-m-d'), $end->format('Y-m-d')]);
+        $calendarRows = $stmtCal->fetchAll(PDO::FETCH_ASSOC);
+        $calendarByDate = [];
+        foreach ($calendarRows as $row) {
+            $dayDate = (string) ($row['day_date'] ?? '');
+            if ($dayDate === '') {
+                continue;
+            }
+            $calendarByDate[$dayDate] = $row;
+        }
 
         for ($d = $start; $d <= $end; $d = $d->modify('+1 day')) {
             $iso = $d->format('Y-m-d');
-            $stmtCal->execute([$iso]);
-            $cal = $stmtCal->fetch(PDO::FETCH_ASSOC) ?: null;
-
-            $type = $feriale;
-
-            if ((int) $d->format('N') === 7 && $festivo > 0) {
-                $type = $festivo;
-            }
+            $cal = $calendarByDate[$iso] ?? null;
 
             $recurrenceName = isset($cal['recurrence_name']) ? trim((string) $cal['recurrence_name']) : null;
             if ($recurrenceName === '') {
                 $recurrenceName = null;
             }
-            if ($iso === $palmSundayDate->format('Y-m-d')) {
-                $type = $festivo;
-                $recurrenceName = 'Domenica delle palme';
-            }
-            if ($iso === $mardiGrasDate->format('Y-m-d')) {
-                $type = $feriale;
-                $recurrenceName = 'Martedì grasso';
-            }
-            if ($iso === $ashWednesdayDate->format('Y-m-d')) {
-                $type = $feriale;
-                $recurrenceName = 'Mercoledì delle ceneri';
-            }
-            if ($iso === $easterDate->format('Y-m-d')) {
-                $type = $festivo;
-                $recurrenceName = 'Pasqua';
-            }
-            if ($iso === $easterMondayDate->format('Y-m-d')) {
-                $type = $festivo;
-                $recurrenceName = "Lunedì dell'angelo";
-            }
+
+            $calendarDayTypeId = isset($cal['day_type_id']) ? (int) $cal['day_type_id'] : 0;
+            $type = $calendarDayTypeId > 0 ? $calendarDayTypeId : $feriale;
 
             $days[] = [
                 'day_date' => $iso,
@@ -73,12 +51,6 @@ class BoardService
                 'recurrence_name' => $recurrenceName,
                 'day_type_id' => $type,
             ];
-        }
-
-        for ($i = 1, $count = count($days); $i < $count; $i++) {
-            if ((int) $days[$i]['day_type_id'] === $festivo && $prefestivo > 0 && (int) $days[$i - 1]['day_type_id'] !== $festivo) {
-                $days[$i - 1]['day_type_id'] = $prefestivo;
-            }
         }
 
         $ins = $this->pdo->prepare('INSERT INTO board_days (board_id, day_date, weekday_name, recurrence_name, day_type_id) VALUES (?,?,?,?,?)');
