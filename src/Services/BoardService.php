@@ -28,8 +28,6 @@ class BoardService
         $feriale = $this->idByCode('feriale');
         $prefestivo = $this->idByCode('prefestivo');
         $festivo = $this->idByCode('festivo');
-        $speciale = $this->idByCode('speciale');
-
         $stmtCal = $this->pdo->prepare('SELECT * FROM calendar_days WHERE day_date=?');
         $days = [];
 
@@ -39,11 +37,8 @@ class BoardService
             $cal = $stmtCal->fetch(PDO::FETCH_ASSOC) ?: null;
 
             $type = $feriale;
-            $weekdayNumber = (int) $d->format('N');
-            if ($weekdayNumber === 6 && $prefestivo > 0) {
-                $type = $prefestivo;
-            }
-            if ($weekdayNumber === 7 && $festivo > 0) {
+
+            if ((int) $d->format('N') === 7 && $festivo > 0) {
                 $type = $festivo;
             }
 
@@ -51,17 +46,6 @@ class BoardService
             if ($recurrenceName === '') {
                 $recurrenceName = null;
             }
-
-            if ($cal) {
-                if (!empty($cal['day_type_id'])) {
-                    $type = (int) $cal['day_type_id'];
-                } elseif ((int) $cal['is_holiday'] === 1) {
-                    $type = $festivo;
-                } elseif ((int) $cal['is_special'] === 1) {
-                    $type = $speciale;
-                }
-            }
-
             if ($iso === $palmSundayDate->format('Y-m-d')) {
                 $type = $festivo;
                 $recurrenceName = 'Domenica delle palme';
