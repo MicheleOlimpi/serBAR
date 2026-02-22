@@ -2,6 +2,15 @@
 <h4>Tabellone <?= sprintf('%02d/%04d',$board['month'],$board['year']) ?></h4>
 <style>
   .day-cell { min-width: 170px; }
+  .shift-grid {
+    display: grid;
+    gap: .5rem;
+    grid-template-columns: minmax(120px, auto) minmax(280px, 1fr) minmax(220px, 1fr);
+    align-items: start;
+  }
+  @media (max-width: 1199.98px) {
+    .shift-grid { grid-template-columns: 1fr; }
+  }
   .day-badge {
     border-radius: .5rem;
     padding: .6rem;
@@ -38,20 +47,24 @@
   <?php else: ?>
     <?php foreach ($shifts as $shift): ?>
       <div class="border rounded p-2 mb-2">
-        <div class="small fw-semibold mb-1">
-          <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?> - <?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?>
-          <?php if (!empty($shift['closes_bar'])): ?> · Chiusura bar<?php endif; ?>
-        </div>
         <?php if (Auth::isAdmin()): ?>
-          <div class="row g-2">
-            <div class="col-md-7">
-              <textarea id="volunteers-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" rows="2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][volunteers]" placeholder="Volontari (es. M. Rossi)"><?= htmlspecialchars((string) ($shift['volunteers'] ?? '')) ?></textarea>
+          <div class="shift-grid">
+            <div>
+              <div class="small fw-semibold">
+                <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?> - <?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?>
+              </div>
+              <?php if (!empty($shift['closes_bar'])): ?><div class="small text-muted">Chiusura bar</div><?php endif; ?>
+            </div>
+            <div>
+              <label class="form-label small mb-1">Volontari in turno</label>
+              <input id="volunteers-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][volunteers]" value="<?= htmlspecialchars((string) ($shift['volunteers'] ?? '')) ?>" placeholder="Es. M. Rossi A. Bianchi">
               <div class="input-group input-group-sm volunteer-picker" data-target="volunteers-<?= (int) $shift['id'] ?>">
-                <input type="text" class="form-control" list="users-list" placeholder="Seleziona utente">
+                <input type="text" class="form-control" list="users-list" placeholder="Aggiungi dalla lista utenti">
                 <button class="btn btn-outline-secondary" type="button">Aggiungi</button>
               </div>
             </div>
-            <div class="col-md-5">
+            <div>
+              <label class="form-label small mb-1">Responsabile chiusura</label>
               <input id="responsabile-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][responsabile_chiusura]" value="<?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?? '')) ?>" placeholder="Responsabile chiusura" <?= empty($shift['closes_bar']) ? 'readonly' : '' ?>>
               <div class="input-group input-group-sm responsible-picker" data-target="responsabile-<?= (int) $shift['id'] ?>">
                 <input type="text" class="form-control" list="users-list" placeholder="Seleziona utente" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?>>
@@ -60,6 +73,10 @@
             </div>
           </div>
         <?php else: ?>
+          <div class="small fw-semibold mb-1">
+            <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?> - <?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?>
+            <?php if (!empty($shift['closes_bar'])): ?> · Chiusura bar<?php endif; ?>
+          </div>
           <div><?= nl2br(htmlspecialchars((string) ($shift['volunteers'] ?: '-'))) ?></div>
           <?php if (!empty($shift['closes_bar'])): ?>
             <div class="small text-muted mt-1">Responsabile chiusura: <?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?: '-')) ?></div>
