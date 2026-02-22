@@ -20,6 +20,8 @@ class BoardService
         $end = $start->modify('last day of this month');
         $easterDate = new \DateTimeImmutable(sprintf('%04d-%02d-%02d', $year, 3, 21));
         $easterDate = $easterDate->modify('+' . easter_days($year) . ' days');
+        $mardiGrasDate = $easterDate->modify('-47 days');
+        $ashWednesdayDate = $easterDate->modify('-46 days');
         $palmSundayDate = $easterDate->modify('-7 days');
         $easterMondayDate = $easterDate->modify('+1 day');
 
@@ -63,6 +65,14 @@ class BoardService
             if ($iso === $palmSundayDate->format('Y-m-d')) {
                 $type = $festivo;
                 $recurrenceName = 'Domenica delle palme';
+            }
+            if ($iso === $mardiGrasDate->format('Y-m-d')) {
+                $type = $feriale;
+                $recurrenceName = 'Martedì grasso';
+            }
+            if ($iso === $ashWednesdayDate->format('Y-m-d')) {
+                $type = $feriale;
+                $recurrenceName = 'Mercoledì delle ceneri';
             }
             if ($iso === $easterDate->format('Y-m-d')) {
                 $type = $festivo;
