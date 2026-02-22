@@ -1,10 +1,13 @@
+![GitHub License](https://img.shields.io/github/license/MicheleOlimpi/serBAR) ![GitHub last commit](https://img.shields.io/github/last-commit/MicheleOlimpi/serBAR)
+
+
 # ACLI servizio BAR
 
 Applicazione PHP 8 (PSR-4) con MariaDB per la gestione dei turni di servizio BAR in un circolo di volontari.
 Viene gestita anche la comunicazione di eventuali messaggi sullo stile di un software di ticketing.<br>
 Il sistema dispone di due interfacce web, una amministrativa dedicata ai gestori e una di consultazione/comunicazione dedicata ai volontari.
 
-## Stack
+## STACK
 - PHP 8+
 - MariaDB/MySQL
 - Bootstrap 5
@@ -27,7 +30,7 @@ Il sistema dispone di due interfacce web, una amministrativa dedicata ai gestori
 - `admin` / `admin`
 - `user` / `user` (ruolo user)
 
-## Funzioni principali
+## FUNZIONI PRINCIPALI
 - Installazione guidata DB, creazione schema e pagina di riepilogo finale
 - Login/logout con ruoli
 - Dashboard amministratore
