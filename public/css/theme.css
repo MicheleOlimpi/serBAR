@@ -1,0 +1,46 @@
+:root {
+  --bs-primary: #3b82f6;
+  --bs-primary-rgb: 59, 130, 246;
+  --bs-secondary: #334155;
+  --bs-secondary-rgb: 51, 65, 85;
+  --bs-success: #22c55e;
+  --bs-danger: #ef4444;
+  --bs-warning: #f59e0b;
+  --bs-info: #0ea5e9;
+  --bs-light: #f8fafc;
+  --bs-dark: #0f172a;
+  --bs-body-bg: #f1f5f9;
+  --bs-body-color: #1e293b;
+  --bs-border-radius: 0.75rem;
+  --bs-border-radius-sm: 0.5rem;
+  --bs-border-radius-lg: 1rem;
+  --bs-focus-ring-color: rgba(59, 130, 246, 0.35);
+}
+
+/*
+ * Tema applicativo:
+ * - Personalizzare qui le variabili Bootstrap 5
+ * - Evitare override inline nelle viste
+ */
+
+.navbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+}
+
+.app-brand-logo {
+  height: 42px;
+  width: auto;
+}
+
+.auth-logo {
+  max-width: 120px;
+  width: 100%;
+  height: auto;
+}
+
+.table-sm td {
+  vertical-align: middle;
+}
