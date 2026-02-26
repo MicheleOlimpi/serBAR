@@ -23,6 +23,9 @@
 <table class="table table-sm table-bordered bg-white">
 <tr><th>Giorno</th><th>Turni giornalieri</th><th>Annotazioni</th><?php if(!Auth::isAdmin()):?><th>Segnala</th><?php endif; ?></tr>
 <?php foreach($days as $d): $shifts = $dayShifts[$d['id']] ?? []; ?>
+<?php if ($shifts !== []): usort($shifts, static function (array $left, array $right): int {
+  return [(int) ($left['priority'] ?? 0), (string) ($left['start_time'] ?? '')] <=> [(int) ($right['priority'] ?? 0), (string) ($right['start_time'] ?? '')];
+}); endif; ?>
 <tr>
 <td class="day-cell">
   <div class="day-badge" style="background-color: <?= htmlspecialchars((string) ($d['day_type_color'] ?? '#6c757d')) ?>;">
@@ -56,7 +59,6 @@
               <?php if (!empty($shift['closes_bar'])): ?><div class="small text-muted">Chiusura bar</div><?php endif; ?>
             </div>
             <div>
-              <label class="form-label small mb-1">Volontari in turno</label>
               <input id="volunteers-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][volunteers]" value="<?= htmlspecialchars((string) ($shift['volunteers'] ?? '')) ?>" placeholder="Es. M. Rossi A. Bianchi">
               <div class="input-group input-group-sm volunteer-picker" data-target="volunteers-<?= (int) $shift['id'] ?>">
                 <input type="text" class="form-control" list="users-list" placeholder="Aggiungi dalla lista utenti">
@@ -64,8 +66,7 @@
               </div>
             </div>
             <div>
-              <label class="form-label small mb-1">Responsabile chiusura</label>
-              <input id="responsabile-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][responsabile_chiusura]" value="<?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?? '')) ?>" placeholder="Responsabile chiusura" <?= empty($shift['closes_bar']) ? 'readonly' : '' ?>>
+              <input id="responsabile-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][responsabile_chiusura]" value="<?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?? '')) ?>" <?= empty($shift['closes_bar']) ? 'readonly' : '' ?>>
               <div class="input-group input-group-sm responsible-picker" data-target="responsabile-<?= (int) $shift['id'] ?>">
                 <input type="text" class="form-control" list="users-list" placeholder="Seleziona utente" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?>>
                 <button class="btn btn-outline-secondary" type="button" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?>>Imposta</button>
