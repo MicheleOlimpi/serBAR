@@ -23,12 +23,12 @@ $adminNavItems = [
   <title>ACLI servizio BAR</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-  <style>.logo{height:48px}.table-sm td{vertical-align:middle}</style>
+  <link href="/css/theme.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
   <div class="container-fluid">
-    <a class="navbar-brand" href="./"><img src="logo.svg" class="logo me-2">ACLI servizio BAR</a>
+    <a class="navbar-brand" href="./"><img src="/serBAR-landscape.svg" alt="Logo serBAR" class="app-brand-logo">ACLI servizio BAR</a>
 
     <?php if ($u && Auth::isAdmin()): ?>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar" aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">
