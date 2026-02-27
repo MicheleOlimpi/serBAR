@@ -28,7 +28,7 @@ $adminNavItems = [
 <body class="bg-light">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
   <div class="container-fluid">
-    <a class="navbar-brand" href="./"><img src="public/serBAR-landscape.svg" alt="Logo serBAR" class="app-brand-logo">ACLI servizio BAR</a>
+    <a class="navbar-brand" href="./"><img src="serBAR-landscape.svg" alt="Logo serBAR" class="app-brand-logo">ACLI servizio BAR</a>
 
     <?php if ($u && Auth::isAdmin()): ?>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar" aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">
