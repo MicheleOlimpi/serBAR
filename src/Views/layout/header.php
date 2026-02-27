@@ -4,6 +4,8 @@ use App\Core\Auth;
 
 $u = Auth::user();
 $currentAction = (string) ($_GET['action'] ?? 'dashboard');
+$assetBasePath = rtrim(str_replace('\\', '/', dirname((string) ($_SERVER['SCRIPT_NAME'] ?? '/'))), '/');
+$assetBasePath = $assetBasePath === '' ? '.' : $assetBasePath;
 $adminNavItems = [
     'dashboard' => ['label' => 'Dashboard', 'href' => './'],
     'boards' => ['label' => 'Tabelloni', 'href' => '?action=boards'],
@@ -23,7 +25,7 @@ $adminNavItems = [
   <title>ACLI servizio BAR</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
-  <link href="/css/theme.css" rel="stylesheet">
+  <link href="<?= htmlspecialchars($assetBasePath . '/css/theme.css') ?>" rel="stylesheet">
 </head>
 <body class="bg-light">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
