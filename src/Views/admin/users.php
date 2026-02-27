@@ -5,7 +5,12 @@
   <div class="col"><input name="first_name" class="form-control" placeholder="nome" required></div>
   <div class="col"><input type="password" name="password" class="form-control" placeholder="password" required></div>
   <div class="col"><select name="role" class="form-select"><option value="admin">admin</option><option value="user" selected>user</option></select></div>
-  <div class="col"><select name="status" class="form-select"><option value="attivo" selected>attivo</option><option value="inattivo">inattivo</option></select></div>
+  <div class="col">
+    <select name="status" class="form-select js-status-select" data-active-class="text-success" data-inactive-class="text-danger">
+      <option value="attivo" selected>attivo</option>
+      <option value="inattivo">inattivo</option>
+    </select>
+  </div>
   <div class="col"><button class="btn btn-success">Aggiungi</button></div>
 </form>
 
@@ -28,7 +33,7 @@
       <td><?= htmlspecialchars($u['first_name']) ?></td>
       <td><?= htmlspecialchars($u['role']) ?></td>
       <td>
-        <span class="<?= $u['status'] === 'attivo' ? 'text-success fw-semibold' : '' ?>">
+        <span class="<?= $u['status'] === 'attivo' ? 'text-success fw-semibold' : 'text-danger fw-semibold' ?>">
           <?= htmlspecialchars($u['status']) ?>
         </span>
       </td>
@@ -41,7 +46,7 @@
             <input type="hidden" name="status" value="<?= htmlspecialchars($u['status']) ?>">
             <span class="form-control form-control-sm bg-light">Stato bloccato</span>
           <?php else: ?>
-            <select name="status" class="form-select form-select-sm">
+            <select name="status" class="form-select form-select-sm js-status-select" data-active-class="text-success" data-inactive-class="text-danger">
               <option value="attivo" <?= $u['status'] === 'attivo' ? 'selected' : '' ?>>attivo</option>
               <option value="inattivo" <?= $u['status'] === 'inattivo' ? 'selected' : '' ?>>inattivo</option>
             </select>
@@ -67,3 +72,22 @@
   <?php endforeach; ?>
 </table>
 <a class="btn btn-outline-dark" href="./">Indietro</a>
+
+<script>
+  document.querySelectorAll('.js-status-select').forEach((select) => {
+    const activeClass = select.dataset.activeClass || 'text-success';
+    const inactiveClass = select.dataset.inactiveClass || 'text-danger';
+
+    const applyColor = () => {
+      select.classList.remove(activeClass, inactiveClass);
+      if (select.value === 'attivo') {
+        select.classList.add(activeClass);
+      } else if (select.value === 'inattivo') {
+        select.classList.add(inactiveClass);
+      }
+    };
+
+    select.addEventListener('change', applyColor);
+    applyColor();
+  });
+</script>
