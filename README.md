@@ -15,6 +15,10 @@ Il sistema dispone di due interfacce web, una amministrativa dedicata ai gestori
 - Bootstrap 5
 - FontAwesome
 
+## Tema (v0.1.1)
+Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le variabili CSS di Bootstrap 5 (`--bs-*`) per personalizzare colori, radius e aspetto generale senza modificare le viste.
+Il file viene caricato con riferimento relativo così l'app continua a funzionare anche quando è pubblicata in una sottocartella del dominio.
+
 ## Avvio rapido
 1. Installare dipendenze:
    ```bash
@@ -55,4 +59,3 @@ Vengono gestite sia le festività nazionali che cattoliche
    - Domenica delle Palme
    - Pasqua
    - Lunedì dell'angelo
-
