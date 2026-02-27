@@ -31,14 +31,15 @@
 }
 
 .app-brand-logo {
-  height: 42px;
-  width: auto;
+  width: 120px;
+  height: 60px;
+  object-fit: contain;
 }
 
 .auth-logo {
-  max-width: 120px;
-  width: 100%;
-  height: auto;
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
 }
 
 .table-sm td {
