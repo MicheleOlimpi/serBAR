@@ -3,6 +3,7 @@
   <div class="col"><input name="username" class="form-control" placeholder="username" required></div>
   <div class="col"><input name="last_name" class="form-control" placeholder="cognome" required></div>
   <div class="col"><input name="first_name" class="form-control" placeholder="nome" required></div>
+  <div class="col"><input name="phone" class="form-control" placeholder="telefono"></div>
   <div class="col"><input type="password" name="password" class="form-control" placeholder="password" required></div>
   <div class="col"><select name="role" class="form-select"><option value="admin">admin</option><option value="user" selected>user</option></select></div>
   <div class="col">
@@ -19,6 +20,7 @@
     <th>Username</th>
     <th>Cognome</th>
     <th>Nome</th>
+    <th>Telefono</th>
     <th>Ruolo</th>
     <th>Stato</th>
     <th>Modifica dati</th>
@@ -31,6 +33,7 @@
       <td><?= htmlspecialchars($u['username']) ?></td>
       <td><?= htmlspecialchars($u['last_name']) ?></td>
       <td><?= htmlspecialchars($u['first_name']) ?></td>
+      <td><?= htmlspecialchars((string) ($u['phone'] ?? '')) ?></td>
       <td><?= htmlspecialchars($u['role']) ?></td>
       <td>
         <span class="<?= $u['status'] === 'attivo' ? 'text-success fw-semibold' : 'text-danger fw-semibold' ?>">
@@ -38,14 +41,20 @@
         </span>
       </td>
       <td>
-        <form method="post" class="d-flex gap-1">
+        <form method="post" class="d-flex flex-wrap gap-1">
           <input type="hidden" name="update_user_id" value="<?= (int) $u['id'] ?>">
           <input type="text" name="last_name" class="form-control form-control-sm" value="<?= htmlspecialchars($u['last_name']) ?>" required>
           <input type="text" name="first_name" class="form-control form-control-sm" value="<?= htmlspecialchars($u['first_name']) ?>" required>
+          <input type="text" name="phone" class="form-control form-control-sm" value="<?= htmlspecialchars((string) ($u['phone'] ?? '')) ?>" placeholder="Telefono">
           <?php if ($isProtectedAdmin): ?>
+            <input type="hidden" name="role" value="<?= htmlspecialchars($u['role']) ?>">
             <input type="hidden" name="status" value="<?= htmlspecialchars($u['status']) ?>">
-            <span class="form-control form-control-sm bg-light">Stato bloccato</span>
+            <span class="form-control form-control-sm bg-light">Ruolo/Stato bloccati</span>
           <?php else: ?>
+            <select name="role" class="form-select form-select-sm">
+              <option value="admin" <?= $u['role'] === 'admin' ? 'selected' : '' ?>>admin</option>
+              <option value="user" <?= $u['role'] === 'user' ? 'selected' : '' ?>>user</option>
+            </select>
             <select name="status" class="form-select form-select-sm js-status-select" data-active-class="text-success" data-inactive-class="text-danger">
               <option value="attivo" <?= $u['status'] === 'attivo' ? 'selected' : '' ?>>attivo</option>
               <option value="inattivo" <?= $u['status'] === 'inattivo' ? 'selected' : '' ?>>inattivo</option>
@@ -65,13 +74,40 @@
         <?php if ($isProtectedAdmin): ?>
           <span class="badge text-bg-secondary">Non eliminabile</span>
         <?php else: ?>
-          <a class="btn btn-sm btn-danger" href="?action=users&delete=<?= $u['id'] ?>">Elimina</a>
+          <button
+            type="button"
+            class="btn btn-sm btn-danger js-delete-user"
+            data-delete-url="?action=users&delete=<?= (int) $u['id'] ?>"
+            data-username="<?= htmlspecialchars($u['username']) ?>"
+            data-bs-toggle="modal"
+            data-bs-target="#deleteUserModal"
+          >
+            Elimina
+          </button>
         <?php endif; ?>
       </td>
     </tr>
   <?php endforeach; ?>
 </table>
 <a class="btn btn-outline-dark" href="./">Indietro</a>
+
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteUserModalLabel">Conferma eliminazione utente</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+      </div>
+      <div class="modal-body">
+        Sei sicuro di voler eliminare l'utente <strong id="deleteUserName"></strong>?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+        <a href="#" class="btn btn-danger" id="confirmDeleteUserBtn">Sì, elimina</a>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
   document.querySelectorAll('.js-status-select').forEach((select) => {
@@ -89,5 +125,19 @@
 
     select.addEventListener('change', applyColor);
     applyColor();
+  });
+
+  const deleteUserNameElement = document.getElementById('deleteUserName');
+  const confirmDeleteUserBtn = document.getElementById('confirmDeleteUserBtn');
+
+  document.querySelectorAll('.js-delete-user').forEach((button) => {
+    button.addEventListener('click', () => {
+      if (deleteUserNameElement) {
+        deleteUserNameElement.textContent = button.dataset.username || '';
+      }
+      if (confirmDeleteUserBtn) {
+        confirmDeleteUserBtn.setAttribute('href', button.dataset.deleteUrl || '#');
+      }
+    });
   });
 </script>
