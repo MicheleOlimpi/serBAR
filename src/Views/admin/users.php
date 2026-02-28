@@ -1,4 +1,8 @@
 <h4>Gestione utenti</h4>
+<?php
+$duplicateUsernameError = (string) ($duplicateUsernameError ?? '');
+$passwordChangeError = (string) ($passwordChangeError ?? '');
+?>
 <form method="post" class="row g-2 mb-4">
   <div class="col"><input name="username" class="form-control" placeholder="username" required></div>
   <div class="col"><input name="last_name" class="form-control" placeholder="cognome" required></div>
@@ -50,11 +54,16 @@
         </form>
       </td>
       <td>
-        <form method="post" class="d-flex gap-1">
-          <input type="hidden" name="change_password_user_id" value="<?= (int) $u['id'] ?>">
-          <input type="password" name="new_password" class="form-control form-control-sm" placeholder="Nuova password" required>
-          <button class="btn btn-sm btn-outline-primary">Salva</button>
-        </form>
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-primary js-change-password"
+          data-user-id="<?= (int) $u['id'] ?>"
+          data-username="<?= htmlspecialchars($u['username']) ?>"
+          data-bs-toggle="modal"
+          data-bs-target="#changePasswordModal"
+        >
+          Cambia password
+        </button>
       </td>
       <td>
         <?php if ($isProtectedAdmin): ?>
@@ -95,6 +104,55 @@
   </div>
 </div>
 
+<div class="modal fade" id="duplicateUsernameModal" tabindex="-1" aria-labelledby="duplicateUsernameModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="duplicateUsernameModalLabel">Errore creazione utente</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+      </div>
+      <div class="modal-body">
+        <?= htmlspecialchars($duplicateUsernameError) ?>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" id="changePasswordForm">
+        <div class="modal-header">
+          <h5 class="modal-title" id="changePasswordModalLabel">Cambio password utente</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="change_password_user_id" id="changePasswordUserId" value="">
+          <p>Utente: <strong id="changePasswordUsername"></strong></p>
+          <?php if ($passwordChangeError !== ''): ?>
+            <div class="alert alert-danger"><?= htmlspecialchars($passwordChangeError) ?></div>
+          <?php endif; ?>
+          <div class="mb-3">
+            <label for="newPasswordInput" class="form-label">Nuova password</label>
+            <input type="password" class="form-control" id="newPasswordInput" name="new_password" required>
+          </div>
+          <div>
+            <label for="confirmPasswordInput" class="form-label">Ripeti nuova password</label>
+            <input type="password" class="form-control" id="confirmPasswordInput" name="confirm_new_password" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+          <button class="btn btn-primary">Salva</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <script>
   document.querySelectorAll('.js-status-select').forEach((select) => {
     const activeClass = select.dataset.activeClass || 'text-success';
@@ -115,6 +173,13 @@
 
   const deleteUserNameElement = document.getElementById('deleteUserName');
   const confirmDeleteUserBtn = document.getElementById('confirmDeleteUserBtn');
+  const changePasswordUserId = document.getElementById('changePasswordUserId');
+  const changePasswordUsername = document.getElementById('changePasswordUsername');
+  const changePasswordModalElement = document.getElementById('changePasswordModal');
+  const duplicateUsernameModalElement = document.getElementById('duplicateUsernameModal');
+  const changePasswordForm = document.getElementById('changePasswordForm');
+  const newPasswordInput = document.getElementById('newPasswordInput');
+  const confirmPasswordInput = document.getElementById('confirmPasswordInput');
 
   document.querySelectorAll('.js-delete-user').forEach((button) => {
     button.addEventListener('click', () => {
@@ -126,4 +191,41 @@
       }
     });
   });
+
+  document.querySelectorAll('.js-change-password').forEach((button) => {
+    button.addEventListener('click', () => {
+      if (changePasswordUserId) {
+        changePasswordUserId.value = button.dataset.userId || '';
+      }
+      if (changePasswordUsername) {
+        changePasswordUsername.textContent = button.dataset.username || '';
+      }
+    });
+  });
+
+  if (changePasswordForm && newPasswordInput && confirmPasswordInput) {
+    changePasswordForm.addEventListener('submit', (event) => {
+      if (newPasswordInput.value !== confirmPasswordInput.value) {
+        event.preventDefault();
+        confirmPasswordInput.setCustomValidity('Le password non coincidono.');
+        confirmPasswordInput.reportValidity();
+      } else {
+        confirmPasswordInput.setCustomValidity('');
+      }
+    });
+
+    confirmPasswordInput.addEventListener('input', () => {
+      confirmPasswordInput.setCustomValidity('');
+    });
+  }
+
+  if (duplicateUsernameModalElement && <?= $duplicateUsernameError !== '' ? 'true' : 'false' ?>) {
+    const duplicateModal = new bootstrap.Modal(duplicateUsernameModalElement);
+    duplicateModal.show();
+  }
+
+  if (changePasswordModalElement && <?= $passwordChangeError !== '' ? 'true' : 'false' ?>) {
+    const passwordModal = new bootstrap.Modal(changePasswordModalElement);
+    passwordModal.show();
+  }
 </script>
