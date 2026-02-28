@@ -18,11 +18,6 @@
 <table class="table table-striped align-middle">
   <tr>
     <th>Username</th>
-    <th>Cognome</th>
-    <th>Nome</th>
-    <th>Telefono</th>
-    <th>Ruolo</th>
-    <th>Stato</th>
     <th>Modifica dati</th>
     <th>Cambio password</th>
     <th></th>
@@ -31,15 +26,6 @@
     <?php $isProtectedAdmin = strtolower((string) $u['username']) === 'admin'; ?>
     <tr>
       <td><?= htmlspecialchars($u['username']) ?></td>
-      <td><?= htmlspecialchars($u['last_name']) ?></td>
-      <td><?= htmlspecialchars($u['first_name']) ?></td>
-      <td><?= htmlspecialchars((string) ($u['phone'] ?? '')) ?></td>
-      <td><?= htmlspecialchars($u['role']) ?></td>
-      <td>
-        <span class="<?= $u['status'] === 'attivo' ? 'text-success fw-semibold' : 'text-danger fw-semibold' ?>">
-          <?= htmlspecialchars($u['status']) ?>
-        </span>
-      </td>
       <td>
         <form method="post" class="d-flex flex-wrap gap-1">
           <input type="hidden" name="update_user_id" value="<?= (int) $u['id'] ?>">
