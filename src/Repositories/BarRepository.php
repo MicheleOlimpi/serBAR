@@ -73,10 +73,12 @@ class BarRepository
             ]);
     }
 
-    public function updateUserProfile(int $id, string $lastName, string $firstName, string $status): void
+    public function updateUserProfile(int $id, string $lastName, string $firstName, string $phone, string $role, string $status): void
     {
         $lastName = trim($lastName);
         $firstName = trim($firstName);
+        $phone = trim($phone);
+        $role = $role === 'admin' ? 'admin' : 'user';
         $status = $status === 'inattivo' ? 'inattivo' : 'attivo';
 
         if ($id < 1 || $lastName === '' || $firstName === '') {
@@ -92,10 +94,11 @@ class BarRepository
 
         if (strtolower((string) $user['username']) === 'admin') {
             $status = (string) $user['status'];
+            $role = (string) ($user['role'] ?? 'admin');
         }
 
-        $this->pdo->prepare('UPDATE users SET last_name=?, first_name=?, status=? WHERE id=?')
-            ->execute([$lastName, $firstName, $status, $id]);
+        $this->pdo->prepare('UPDATE users SET last_name=?, first_name=?, phone=?, role=?, status=? WHERE id=?')
+            ->execute([$lastName, $firstName, $phone, $role, $status, $id]);
     }
 
     public function deleteUser(int $id): void
