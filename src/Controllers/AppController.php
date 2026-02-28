@@ -131,9 +131,19 @@ class AppController
     public function users(): void
     {
         $this->guardAdmin();
+        $duplicateUsernameError = '';
+        $passwordChangeError = '';
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isset($_POST['change_password_user_id'])) {
-                $this->repo->changeUserPassword((int) $_POST['change_password_user_id'], (string) ($_POST['new_password'] ?? ''));
+                $newPassword = (string) ($_POST['new_password'] ?? '');
+                $confirmPassword = (string) ($_POST['confirm_new_password'] ?? '');
+
+                if ($newPassword === '' || $newPassword !== $confirmPassword) {
+                    $passwordChangeError = 'Le due password non coincidono.';
+                } else {
+                    $this->repo->changeUserPassword((int) $_POST['change_password_user_id'], $newPassword);
+                }
             } elseif (isset($_POST['update_user_id'])) {
                 $this->repo->updateUserProfile(
                     (int) $_POST['update_user_id'],
@@ -144,14 +154,23 @@ class AppController
                     (string) ($_POST['status'] ?? 'attivo')
                 );
             } else {
-                $this->repo->saveUser($_POST);
+                $username = trim((string) ($_POST['username'] ?? ''));
+                if ($username !== '' && $this->repo->findUserByUsername($username) !== null) {
+                    $duplicateUsernameError = 'Esiste già un utente con questa username.';
+                } else {
+                    $this->repo->saveUser($_POST);
+                }
             }
         }
         if (isset($_GET['delete'])) {
             $this->repo->deleteUser((int) $_GET['delete']);
             View::redirect('?action=users');
         }
-        View::render('admin/users', ['users' => $this->repo->allUsers()]);
+        View::render('admin/users', [
+            'users' => $this->repo->allUsers(),
+            'duplicateUsernameError' => $duplicateUsernameError,
+            'passwordChangeError' => $passwordChangeError,
+        ]);
     }
 
     public function dayTypes(): void
