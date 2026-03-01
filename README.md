@@ -19,6 +19,19 @@ Il sistema dispone di due interfacce web, una amministrativa dedicata ai gestori
 Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le variabili CSS di Bootstrap 5 (`--bs-*`) per personalizzare colori, radius e aspetto generale senza modificare le viste.
 Il file viene caricato con riferimento relativo così l'app continua a funzionare anche quando è pubblicata in una sottocartella del dominio.
 
+## Novità recenti
+- **Editor tabellone mensile (area admin) migliorato**:
+  - badge giorno più leggibile (numero giorno più grande, metadati compatti);
+  - disposizione dei campi turno ottimizzata su desktop/mobile;
+  - ordinamento turni per priorità e orario.
+- **Ricerca e inserimento rapido volontari/responsabile**:
+  - in modifica tabellone è disponibile un selettore con elenco utenti attivi;
+  - i nominativi dei volontari possono essere aggiunti in forma abbreviata (es. `M. Rossi`);
+  - il responsabile chiusura è selezionabile rapidamente solo per i turni che chiudono il bar.
+- **Campo “Santo” allineato correttamente**:
+  - nella vista tabellone il santo viene recuperato in base al giorno/mese,
+    mantenendo la coerenza anche tra anni diversi.
+
 ## Avvio rapido
 1. Installare dipendenze:
    ```bash
@@ -43,6 +56,7 @@ Il file viene caricato con riferimento relativo così l'app continua a funzionar
 - CRUD utenti (password hash), tipo giorno, numero turni, calendario annuale
 - Creazione/modifica/eliminazione tabelloni mensili
 - Gestione turni giornalieri e annotazioni
+- Editing tabellone con supporto a selezione rapida utenti e responsabile chiusura
 - Interfaccia consultazione e segnalazioni
 - Vista stampabile/esportabile PDF via stampa browser
 
