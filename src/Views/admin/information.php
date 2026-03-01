@@ -2,13 +2,11 @@
 
 <div class="card shadow-sm mb-4">
   <div class="card-body">
-    <h2 class="h5">Informazioni sul server</h2>
+    <h2 class="h5">Dati del programma</h2>
     <ul class="mb-0">
-      <li><strong>Nome server HTTP:</strong> <?= htmlspecialchars($serverName) ?></li>
-      <li><strong>Versione server HTTP:</strong> <?= htmlspecialchars($serverVersion !== '' ? $serverVersion : 'Non disponibile') ?></li>
-      <li><strong>Versione PHP:</strong> <?= htmlspecialchars($phpVersion) ?></li>
-      <li><strong>Sistema operativo server:</strong> <?= htmlspecialchars($osName) ?></li>
-      <li><strong>Versione sistema operativo:</strong> <?= htmlspecialchars($osVersion) ?></li>
+      <li><strong>Nome programma:</strong> <?= htmlspecialchars((string) ($programInfo['program_name'] ?? 'serBAR')) ?></li>
+      <li><strong>Autore:</strong> <?= htmlspecialchars((string) ($programInfo['program_author'] ?? 'Non disponibile')) ?></li>
+      <li><strong>Versione:</strong> <?= htmlspecialchars((string) ($programInfo['program_version'] ?? 'Non disponibile')) ?></li>
     </ul>
   </div>
 </div>

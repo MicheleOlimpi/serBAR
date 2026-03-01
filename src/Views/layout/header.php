@@ -55,8 +55,8 @@ $adminNavItems = [
         </div>
       </div>
     <?php elseif ($u): ?>
-      <div class="d-flex align-items-center gap-2 ms-auto">
-        <a class="btn btn-sm btn-outline-light" href="?action=information">INFORMAZIONI</a>
+      <div class="d-flex align-items-center gap-3 ms-auto">
+        <a class="nav-link text-white" href="?action=information">informazioni</a>
         <span class="text-white"><?= htmlspecialchars($u['username']) ?></span>
         <a class="btn btn-sm btn-outline-light" href="?action=logout">Logout</a>
       </div>
