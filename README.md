@@ -15,7 +15,7 @@ Il sistema dispone di due interfacce web, una amministrativa dedicata ai gestori
 - Bootstrap 5
 - FontAwesome
 
-## Tema (v0.1.1)
+## Tema
 Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le variabili CSS di Bootstrap 5 (`--bs-*`) per personalizzare colori, radius e aspetto generale senza modificare le viste.
 Il file viene caricato con riferimento relativo così l'app continua a funzionare anche quando è pubblicata in una sottocartella del dominio.
 
@@ -61,9 +61,9 @@ Il file viene caricato con riferimento relativo così l'app continua a funzionar
 - Vista stampabile/esportabile PDF via stampa browser
 
 ## GESTIONE DELLE FESTIVITA'
-Vengono gestite sia le festività nazionali che cattoliche
+Vengono gestite le festività nazionali, cattoliche e eventuali giorni speciali sia fisse che mobili.
 ### FISSE
-   Definite da calendario su tabella intera del programma
+   Definite da calendario su tabella interna del programma
 ### MOBILI
 - Gestione dei giorni prefestivi
 - Gestione dei giorni Festivi
