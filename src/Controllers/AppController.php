@@ -268,6 +268,8 @@ class AppController
             'serverName' => $serverName,
             'serverVersion' => $serverVersion,
             'phpVersion' => PHP_VERSION,
+            'osName' => php_uname('s'),
+            'osVersion' => php_uname('r'),
         ]);
     }
 

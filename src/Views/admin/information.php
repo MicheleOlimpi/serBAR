@@ -7,6 +7,8 @@
       <li><strong>Nome server HTTP:</strong> <?= htmlspecialchars($serverName) ?></li>
       <li><strong>Versione server HTTP:</strong> <?= htmlspecialchars($serverVersion !== '' ? $serverVersion : 'Non disponibile') ?></li>
       <li><strong>Versione PHP:</strong> <?= htmlspecialchars($phpVersion) ?></li>
+      <li><strong>Sistema operativo server:</strong> <?= htmlspecialchars($osName) ?></li>
+      <li><strong>Versione sistema operativo:</strong> <?= htmlspecialchars($osVersion) ?></li>
     </ul>
   </div>
 </div>
