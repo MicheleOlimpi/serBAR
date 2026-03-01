@@ -14,18 +14,6 @@ $monthNames = [
   12 => 'Dicembre',
 ];
 
-$statusClassMap = [
-  'inviata' => 'text-bg-secondary',
-  'letto' => 'text-bg-info',
-  'in_corso' => 'text-bg-warning text-dark',
-  'chiuso' => 'text-bg-success',
-];
-$statusLabels = [
-  'inviata' => 'Inviato',
-  'letto' => 'Letto',
-  'in_corso' => 'In corso',
-  'chiuso' => 'Chiuso',
-];
 ?>
 <h1 class="h3 mb-3">DASHBOARD</h1>
 <div class="row">
@@ -40,7 +28,7 @@ $statusLabels = [
             <?php foreach ($boards as $b): ?>
               <?php $monthLabel = $monthNames[(int) $b['month']] ?? (string) $b['month']; ?>
               <li>
-                <a href="?action=board_edit&id=<?= $b['id'] ?>"><?= htmlspecialchars($monthLabel . '/' . $b['year']) ?></a>
+                <a href="?action=board_edit&id=<?= $b['id'] ?>"><?= htmlspecialchars($monthLabel . ' ' . $b['year']) ?></a>
               </li>
             <?php endforeach; ?>
           </ul>
@@ -57,14 +45,18 @@ $statusLabels = [
         <?php else: ?>
           <ul class="mb-0">
             <?php foreach ($notifications as $n): ?>
-              <?php $statusClass = $statusClassMap[$n['status']] ?? 'text-bg-secondary'; ?>
+              <?php
+              $notificationDate = isset($n['created_at']) ? date('d/m/Y', strtotime((string) $n['created_at'])) : '';
+              $message = (string) $n['message'];
+              $shortMessage = function_exists('mb_substr')
+                ? mb_substr($message, 0, 30)
+                : substr($message, 0, 30);
+              $isTrimmed = function_exists('mb_strlen') ? mb_strlen($message) > 30 : strlen($message) > 30;
+              ?>
               <li>
-                <?= htmlspecialchars($n['username']) ?>
-                <?php if (!empty($n['day_date'])): ?>
-                  - <?= htmlspecialchars($n['day_date']) ?>
-                <?php endif; ?>
-                : <?= htmlspecialchars($n['message']) ?>
-                <span class="badge <?= $statusClass ?>"><?= htmlspecialchars($statusLabels[$n['status']] ?? $n['status']) ?></span>
+                <?= htmlspecialchars($notificationDate) ?> -
+                <?= htmlspecialchars((string) $n['username']) ?> -
+                <?= htmlspecialchars($shortMessage . ($isTrimmed ? '…' : '')) ?>
               </li>
             <?php endforeach; ?>
           </ul>
