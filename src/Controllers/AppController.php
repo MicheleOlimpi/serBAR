@@ -273,8 +273,28 @@ class AppController
     {
         $this->guard();
 
+        $serverSoftwareRaw = trim((string) ($_SERVER['SERVER_SOFTWARE'] ?? 'Non disponibile'));
+        $httpServerName = 'Non disponibile';
+        $httpServerVersion = 'Non disponibile';
+        if ($serverSoftwareRaw !== '' && $serverSoftwareRaw !== 'Non disponibile') {
+            $serverSoftwareParts = preg_split('/\s+/', $serverSoftwareRaw);
+            $mainServerToken = (string) ($serverSoftwareParts[0] ?? '');
+            if ($mainServerToken !== '' && str_contains($mainServerToken, '/')) {
+                [$httpServerName, $httpServerVersion] = array_pad(explode('/', $mainServerToken, 2), 2, 'Non disponibile');
+            } else {
+                $httpServerName = $mainServerToken !== '' ? $mainServerToken : $serverSoftwareRaw;
+            }
+        }
+
         View::render('admin/information', [
             'programInfo' => $this->repo->programInfoSettings(),
+            'serverInfo' => [
+                'os_name' => php_uname('s') ?: 'Non disponibile',
+                'os_version' => php_uname('r') ?: 'Non disponibile',
+                'http_server_name' => $httpServerName,
+                'http_server_version' => $httpServerVersion,
+                'php_version' => PHP_VERSION,
+            ],
         ]);
     }
 
