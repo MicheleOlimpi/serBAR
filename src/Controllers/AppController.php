@@ -273,6 +273,14 @@ class AppController
     {
         $this->guard();
 
+        if (!Auth::isAdmin()) {
+            View::render('consultation/information', [
+                'programInfo' => $this->repo->programInfoSettings(),
+            ]);
+
+            return;
+        }
+
         $serverSoftwareRaw = trim((string) ($_SERVER['SERVER_SOFTWARE'] ?? 'Non disponibile'));
         $httpServerName = 'Non disponibile';
         $httpServerVersion = 'Non disponibile';
