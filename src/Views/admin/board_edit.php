@@ -40,6 +40,7 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
   }
   .day-meta { font-size: 0.82rem; line-height: 1.3; }
   .day-type-selector { max-width: 140px; }
+  .day-number { font-size: 1.75rem; font-weight: 700; line-height: 1; }
 </style>
 <?php if (Auth::isAdmin()): ?><form method="post"><?php endif; ?>
 <table class="table table-sm table-bordered bg-white">
@@ -52,7 +53,10 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
 <td class="day-cell">
   <div class="day-badge" style="background-color: <?= htmlspecialchars((string) ($d['day_type_color'] ?? '#6c757d')) ?>;">
     <div class="day-number"><?= (int) date('j', strtotime($d['day_date'])) ?></div>
-    <div class="day-meta mt-1">
+    <div class="day-weekday mt-2"><?= htmlspecialchars($d['weekday_name']) ?></div>
+    <?php if (!empty($d['recurrence_name'])): ?><div class="day-meta mt-1"><?= htmlspecialchars((string) $d['recurrence_name']) ?></div><?php endif; ?>
+    <?php if (!empty($d['santo'])): ?><div class="day-meta"><?= htmlspecialchars((string) $d['santo']) ?></div><?php endif; ?>
+    <div class="day-meta mt-2">
       <?php if (Auth::isAdmin()): ?>
         <select class="form-select form-select-sm day-type-selector" name="day[<?= $d['id'] ?>][day_type_id]">
           <?php foreach($dayTypes as $t): ?><option value="<?= $t['id'] ?>" <?= $d['day_type_id']==$t['id']?'selected':'' ?>><?= htmlspecialchars($t['name']) ?></option><?php endforeach; ?>
@@ -61,9 +65,6 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
         <strong><?= htmlspecialchars((string) ($d['day_type_name'] ?? '-')) ?></strong>
       <?php endif; ?>
     </div>
-    <div class="day-weekday mt-1"><?= htmlspecialchars($d['weekday_name']) ?></div>
-    <?php if (!empty($d['recurrence_name'])): ?><div class="day-meta"><?= htmlspecialchars((string) $d['recurrence_name']) ?></div><?php endif; ?>
-    <?php if (!empty($d['santo'])): ?><div class="day-meta"><?= htmlspecialchars((string) $d['santo']) ?></div><?php endif; ?>
   </div>
 </td>
 <td>
