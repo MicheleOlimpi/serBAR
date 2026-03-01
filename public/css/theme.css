@@ -15,6 +15,9 @@
   --bs-border-radius-sm: 0.5rem;
   --bs-border-radius-lg: 1rem;
   --bs-focus-ring-color: rgba(59, 130, 246, 0.35);
+  --board-day-number-size: 1.3rem;
+  --board-day-number-weight: 700;
+  --board-day-number-line-height: 1.1;
 }
 
 /*
@@ -44,4 +47,10 @@
 
 .table-sm td {
   vertical-align: middle;
+}
+
+.day-number {
+  font-size: var(--board-day-number-size);
+  font-weight: var(--board-day-number-weight);
+  line-height: var(--board-day-number-line-height);
 }

@@ -15,9 +15,14 @@
     border-radius: .5rem;
     padding: .6rem;
     min-height: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
-  .day-number { font-size: 1.3rem; font-weight: 700; line-height: 1.1; }
   .day-meta { font-size: 0.82rem; line-height: 1.3; }
+  .day-type-selector { max-width: 140px; }
 </style>
 <?php if (Auth::isAdmin()): ?><form method="post"><?php endif; ?>
 <table class="table table-sm table-bordered bg-white">
@@ -35,7 +40,7 @@
     <div class="day-meta mt-1">
       <?php if (Auth::isAdmin()): ?>
         <label class="form-label mb-1 small">Tipo giorno</label>
-        <select class="form-select form-select-sm" name="day[<?= $d['id'] ?>][day_type_id]">
+        <select class="form-select form-select-sm day-type-selector" name="day[<?= $d['id'] ?>][day_type_id]">
           <?php foreach($dayTypes as $t): ?><option value="<?= $t['id'] ?>" <?= $d['day_type_id']==$t['id']?'selected':'' ?>><?= htmlspecialchars($t['name']) ?></option><?php endforeach; ?>
         </select>
       <?php else: ?>
@@ -56,7 +61,6 @@
               <div class="small fw-semibold">
                 <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?> - <?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?>
               </div>
-              <?php if (!empty($shift['closes_bar'])): ?><div class="small text-muted">Chiusura bar</div><?php endif; ?>
             </div>
             <div>
               <input id="volunteers-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][volunteers]" value="<?= htmlspecialchars((string) ($shift['volunteers'] ?? '')) ?>" placeholder="Es. M. Rossi A. Bianchi">
@@ -76,7 +80,6 @@
         <?php else: ?>
           <div class="small fw-semibold mb-1">
             <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?> - <?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?>
-            <?php if (!empty($shift['closes_bar'])): ?> · Chiusura bar<?php endif; ?>
           </div>
           <div><?= nl2br(htmlspecialchars((string) ($shift['volunteers'] ?: '-'))) ?></div>
           <?php if (!empty($shift['closes_bar'])): ?>
