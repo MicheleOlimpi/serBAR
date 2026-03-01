@@ -250,6 +250,40 @@ class AppController
         ]);
     }
 
+
+    public function information(): void
+    {
+        $this->guard();
+
+        $serverSoftware = (string) ($_SERVER['SERVER_SOFTWARE'] ?? 'Sconosciuto');
+        $serverName = $serverSoftware;
+        $serverVersion = '';
+
+        if (preg_match('/^([^\/]+)\/(.+)$/', $serverSoftware, $matches) === 1) {
+            $serverName = trim((string) $matches[1]);
+            $serverVersion = trim((string) $matches[2]);
+        }
+
+        View::render('admin/information', [
+            'serverName' => $serverName,
+            'serverVersion' => $serverVersion,
+            'phpVersion' => PHP_VERSION,
+        ]);
+    }
+
+    public function license(): void
+    {
+        $this->guard();
+
+        $licensePath = dirname(__DIR__, 2) . '/LICENSE';
+        $licenseContent = is_readable($licensePath) ? (string) file_get_contents($licensePath) : 'File LICENSE non disponibile.';
+
+        header('Content-Type: text/html; charset=utf-8');
+        echo '<!doctype html><html lang="it"><head><meta charset="utf-8"><title>Licenza programma</title>'
+            . '<style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;margin:1.5rem;background:#f8f9fa;color:#212529}pre{white-space:pre-wrap;background:#fff;border:1px solid #dee2e6;border-radius:.375rem;padding:1rem;max-width:1000px;margin:0 auto}</style>'
+            . '</head><body><pre>' . htmlspecialchars($licenseContent) . '</pre></body></html>';
+    }
+
     public function setup(): void
     {
         $this->guardAdmin();
