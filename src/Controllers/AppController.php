@@ -39,9 +39,12 @@ class AppController
     {
         $this->guard();
         if (Auth::isAdmin()) {
+            $boards = array_slice($this->repo->boards(), 0, 12);
+            $notifications = array_slice($this->repo->notifications(), 0, 20);
+
             View::render('admin/dashboard', [
-                'boards' => $this->repo->boards(),
-                'notifications' => $this->repo->notifications(),
+                'boards' => $boards,
+                'notifications' => $notifications,
             ]);
             return;
         }
