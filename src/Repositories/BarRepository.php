@@ -346,7 +346,7 @@ class BarRepository
 
     public function boardDays(int $boardId): array
     {
-        $stmt = $this->pdo->prepare('SELECT bd.*, dt.name day_type_name, dt.color_hex day_type_color FROM board_days bd LEFT JOIN day_types dt ON dt.id=bd.day_type_id WHERE board_id=? ORDER BY day_date');
+        $stmt = $this->pdo->prepare('SELECT bd.*, dt.name day_type_name, dt.color_hex day_type_color, c.santo FROM board_days bd LEFT JOIN day_types dt ON dt.id=bd.day_type_id LEFT JOIN calendar_days c ON c.day_date = bd.day_date WHERE bd.board_id=? ORDER BY day_date');
         $stmt->execute([$boardId]);
         return $stmt->fetchAll();
     }
