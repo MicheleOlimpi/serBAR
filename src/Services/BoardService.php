@@ -21,23 +21,27 @@ class BoardService
         $feriale = $this->idByCode('feriale');
         $prefestivo = $this->idByCode('prefestivo');
         $festivo = $this->idByCode('festivo');
-        $stmtCal = $this->pdo->prepare('SELECT day_date, recurrence_name, day_type_id FROM calendar_days WHERE day_date BETWEEN ? AND ? ORDER BY day_date ASC');
+        $stmtCal = $this->pdo->prepare('SELECT day_date, recurrence_name, day_type_id FROM calendar_days WHERE MONTH(day_date) = ? ORDER BY day_date DESC');
         $days = [];
 
-        $stmtCal->execute([$start->format('Y-m-d'), $end->format('Y-m-d')]);
+        $stmtCal->execute([$month]);
         $calendarRows = $stmtCal->fetchAll(PDO::FETCH_ASSOC);
-        $calendarByDate = [];
+        $calendarByMonthDay = [];
         foreach ($calendarRows as $row) {
             $dayDate = (string) ($row['day_date'] ?? '');
             if ($dayDate === '') {
                 continue;
             }
-            $calendarByDate[$dayDate] = $row;
+
+            $monthDay = (new \DateTimeImmutable($dayDate))->format('m-d');
+            if (!isset($calendarByMonthDay[$monthDay])) {
+                $calendarByMonthDay[$monthDay] = $row;
+            }
         }
 
         for ($d = $start; $d <= $end; $d = $d->modify('+1 day')) {
             $iso = $d->format('Y-m-d');
-            $cal = $calendarByDate[$iso] ?? null;
+            $cal = $calendarByMonthDay[$d->format('m-d')] ?? null;
 
             $recurrenceName = isset($cal['recurrence_name']) ? trim((string) $cal['recurrence_name']) : null;
             if ($recurrenceName === '') {

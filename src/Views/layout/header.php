@@ -15,6 +15,7 @@ $adminNavItems = [
     'calendar' => ['label' => 'Calendario', 'href' => '?action=calendar'],
     'notifications' => ['label' => 'Segnalazioni', 'href' => '?action=notifications'],
     'setup' => ['label' => 'Setup', 'href' => '?action=setup'],
+    'information' => ['label' => 'INFORMAZIONI', 'href' => '?action=information'],
 ];
 ?>
 <!doctype html>
@@ -55,6 +56,7 @@ $adminNavItems = [
       </div>
     <?php elseif ($u): ?>
       <div class="d-flex align-items-center gap-2 ms-auto">
+        <a class="btn btn-sm btn-outline-light" href="?action=information">INFORMAZIONI</a>
         <span class="text-white"><?= htmlspecialchars($u['username']) ?></span>
         <a class="btn btn-sm btn-outline-light" href="?action=logout">Logout</a>
       </div>

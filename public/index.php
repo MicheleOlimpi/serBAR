@@ -49,6 +49,8 @@ $routes = [
     'calendar' => 'calendar',
     'notifications' => 'notifications',
     'setup' => 'setup',
+    'information' => 'information',
+    'license' => 'license',
 ];
 
 $method = $routes[$action] ?? 'dashboard';
