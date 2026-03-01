@@ -14,6 +14,20 @@ $monthNames = [
   12 => 'Dicembre',
 ];
 
+$statusLabels = [
+  'inviata' => 'Inviato',
+  'letto' => 'Letto',
+  'in_corso' => 'In corso',
+  'chiuso' => 'Chiuso',
+];
+
+$statusBadgeMap = [
+  'inviata' => 'text-bg-secondary',
+  'letto' => 'text-bg-info',
+  'in_corso' => 'text-bg-warning text-dark',
+  'chiuso' => 'text-bg-success',
+];
+
 ?>
 <h1 class="h3 mb-3">DASHBOARD</h1>
 <div class="row">
@@ -57,6 +71,8 @@ $monthNames = [
                 <?= htmlspecialchars($notificationDate) ?> -
                 <?= htmlspecialchars((string) $n['username']) ?> -
                 <?= htmlspecialchars($shortMessage . ($isTrimmed ? '…' : '')) ?>
+                <?php $statusClass = $statusBadgeMap[(string) ($n['status'] ?? '')] ?? 'text-bg-secondary'; ?>
+                <span class="badge <?= $statusClass ?> ms-1"><?= htmlspecialchars($statusLabels[(string) ($n['status'] ?? '')] ?? (string) ($n['status'] ?? 'Sconosciuto')) ?></span>
               </li>
             <?php endforeach; ?>
           </ul>
