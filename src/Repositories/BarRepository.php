@@ -11,6 +11,7 @@ class BarRepository
 {
     private const NOTIFICATION_STATUSES = ['inviata', 'letto', 'in_corso', 'chiuso'];
     private const SETUP_KEYS = ['consultation_notifications_enabled', 'consultation_directory_enabled'];
+    private const PROGRAM_INFO_KEYS = ['program_name', 'program_author', 'program_version'];
     private const NON_DELETABLE_DAY_TYPE_CODES = ['feriale', 'prefestivo', 'festivo'];
 
     public function __construct(private PDO $pdo)
@@ -243,6 +244,29 @@ class BarRepository
             $key = (string) ($row['setting_key'] ?? '');
             if (in_array($key, self::SETUP_KEYS, true)) {
                 $defaults[$key] = (string) ($row['setting_value'] ?? '1');
+            }
+        }
+
+        return $defaults;
+    }
+
+    public function programInfoSettings(): array
+    {
+        $defaults = [
+            'program_name' => 'serBAR',
+            'program_author' => 'Non disponibile',
+            'program_version' => 'Non disponibile',
+        ];
+
+        $stmt = $this->pdo->query('SELECT setting_key, setting_value FROM app_settings');
+        if ($stmt === false) {
+            return $defaults;
+        }
+
+        foreach ($stmt->fetchAll() as $row) {
+            $key = (string) ($row['setting_key'] ?? '');
+            if (in_array($key, self::PROGRAM_INFO_KEYS, true)) {
+                $defaults[$key] = trim((string) ($row['setting_value'] ?? ''));
             }
         }
 

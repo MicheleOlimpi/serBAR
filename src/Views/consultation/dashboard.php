@@ -1,10 +1,4 @@
 <?php
-$groupedShifts = [];
-foreach ($shifts as $shift) {
-    $boardKey = sprintf('%02d/%04d', $shift['month'], $shift['year']);
-    $groupedShifts[$boardKey][] = $shift;
-}
-
 $monthNames = [
     1 => 'Gennaio',
     2 => 'Febbraio',
@@ -25,6 +19,16 @@ $formatBoardLabel = static function (int $month, int $year) use ($monthNames): s
 
     return $monthLabel . ' ' . $year;
 };
+
+$selectedBoardShifts = [];
+if (!empty($selectedBoard)) {
+    $selectedBoardId = (int) ($selectedBoard['id'] ?? 0);
+    foreach ($shifts as $shift) {
+        if ((int) $shift['board_id'] === $selectedBoardId) {
+            $selectedBoardShifts[] = $shift;
+        }
+    }
+}
 
 $statusClassMap = [
     'inviata' => 'text-bg-secondary',
@@ -104,42 +108,57 @@ $statusLabels = [
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body p-4">
         <h5 class="card-title mb-3">Turni pubblicati</h5>
-        <p class="text-muted small">Turni visibili per mese/anno in ordine decrescente.</p>
+        <p class="text-muted small">Scegli mese/anno dalla lista in ordine decrescente.</p>
 
-        <?php if (empty($groupedShifts)): ?>
+        <?php if (empty($boards)): ?>
           <div class="alert alert-info mb-0">Nessun turno disponibile al momento.</div>
         <?php else: ?>
-          <?php foreach ($groupedShifts as $boardLabel => $boardShifts): ?>
-            <div class="mb-4">
-              <?php
-                [$boardMonth, $boardYear] = array_map('intval', explode('/', $boardLabel));
-                $boardTitle = $formatBoardLabel($boardMonth, $boardYear);
-              ?>
-              <h6 class="fw-semibold mb-2">Tabellone <?= htmlspecialchars($boardTitle) ?></h6>
-              <div class="table-responsive border rounded">
-                <table class="table table-sm align-middle mb-0">
-                  <thead class="table-light">
-                    <tr>
-                      <th>Data</th>
-                      <th>Giorno</th>
-                      <th>Tipo</th>
-                      <th>Note</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <?php foreach ($boardShifts as $s): ?>
-                      <tr>
-                        <td><?= htmlspecialchars($s['day_date']) ?></td>
-                        <td><?= htmlspecialchars($s['weekday_name']) ?></td>
-                        <td><?= htmlspecialchars((string) $s['day_type_name']) ?></td>
-                        <td><?= htmlspecialchars((string) $s['notes']) ?></td>
-                      </tr>
-                    <?php endforeach; ?>
-                  </tbody>
-                </table>
+          <div class="row g-3">
+            <div class="col-12 col-lg-4">
+              <div class="list-group">
+                <?php foreach ($boards as $board): ?>
+                  <?php $boardTitle = $formatBoardLabel((int) $board['month'], (int) $board['year']); ?>
+                  <a href="./?board_id=<?= (int) $board['id'] ?>" class="list-group-item list-group-item-action <?= (int) $board['id'] === (int) $selectedBoardId ? 'active' : '' ?>">
+                    <?= htmlspecialchars($boardTitle) ?>
+                  </a>
+                <?php endforeach; ?>
               </div>
             </div>
-          <?php endforeach; ?>
+
+            <div class="col-12 col-lg-8">
+              <?php if (!empty($selectedBoard)): ?>
+                <?php $selectedBoardTitle = $formatBoardLabel((int) $selectedBoard['month'], (int) $selectedBoard['year']); ?>
+                <h6 class="fw-semibold mb-2">Tabellone <?= htmlspecialchars($selectedBoardTitle) ?></h6>
+              <?php endif; ?>
+
+              <?php if (empty($selectedBoardShifts)): ?>
+                <div class="alert alert-info mb-0">Nessun turno disponibile per il mese selezionato.</div>
+              <?php else: ?>
+                <div class="table-responsive border rounded">
+                  <table class="table table-sm align-middle mb-0">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Data</th>
+                        <th>Giorno</th>
+                        <th>Tipo</th>
+                        <th>Note</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php foreach ($selectedBoardShifts as $s): ?>
+                        <tr>
+                          <td><?= htmlspecialchars($s['day_date']) ?></td>
+                          <td><?= htmlspecialchars($s['weekday_name']) ?></td>
+                          <td><?= htmlspecialchars((string) $s['day_type_name']) ?></td>
+                          <td><?= htmlspecialchars((string) $s['notes']) ?></td>
+                        </tr>
+                      <?php endforeach; ?>
+                    </tbody>
+                  </table>
+                </div>
+              <?php endif; ?>
+            </div>
+          </div>
         <?php endif; ?>
       </div>
     </div>
@@ -187,7 +206,7 @@ $statusLabels = [
                     $createdAtFormatted = (string) $n['created_at'];
                     if (!empty($n['created_at'])) {
                         try {
-                            $createdAtFormatted = (new DateTimeImmutable((string) $n['created_at']))->format('d/m/Y H:i');
+                            $createdAtFormatted = (new DateTimeImmutable((string) $n['created_at']))->format('d/m/y H:i');
                         } catch (Exception) {
                             $createdAtFormatted = (string) $n['created_at'];
                         }

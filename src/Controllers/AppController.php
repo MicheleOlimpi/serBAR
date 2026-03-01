@@ -57,8 +57,26 @@ class AppController
             View::redirect('./');
         }
 
+        $boards = $this->repo->boardsForConsultation();
+        $selectedBoardId = (int) ($_GET['board_id'] ?? ($boards[0]['id'] ?? 0));
+        $selectedBoard = null;
+
+        foreach ($boards as $board) {
+            if ((int) $board['id'] === $selectedBoardId) {
+                $selectedBoard = $board;
+                break;
+            }
+        }
+
+        if ($selectedBoard === null && !empty($boards)) {
+            $selectedBoard = $boards[0];
+            $selectedBoardId = (int) $selectedBoard['id'];
+        }
+
         View::render('consultation/dashboard', [
-            'boards' => $this->repo->boardsForConsultation(),
+            'boards' => $boards,
+            'selectedBoard' => $selectedBoard,
+            'selectedBoardId' => $selectedBoardId,
             'shifts' => $this->repo->consultationShifts(),
             'notifications' => $this->repo->consultationNotifications(),
             'directoryUsers' => $this->repo->consultationDirectory(),
@@ -255,21 +273,8 @@ class AppController
     {
         $this->guard();
 
-        $serverSoftware = (string) ($_SERVER['SERVER_SOFTWARE'] ?? 'Sconosciuto');
-        $serverName = $serverSoftware;
-        $serverVersion = '';
-
-        if (preg_match('/^([^\/]+)\/(.+)$/', $serverSoftware, $matches) === 1) {
-            $serverName = trim((string) $matches[1]);
-            $serverVersion = trim((string) $matches[2]);
-        }
-
         View::render('admin/information', [
-            'serverName' => $serverName,
-            'serverVersion' => $serverVersion,
-            'phpVersion' => PHP_VERSION,
-            'osName' => php_uname('s'),
-            'osVersion' => php_uname('r'),
+            'programInfo' => $this->repo->programInfoSettings(),
         ]);
     }
 
