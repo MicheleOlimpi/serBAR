@@ -60,7 +60,7 @@ $statusBadgeMap = [
           <ul class="mb-0">
             <?php foreach ($notifications as $n): ?>
               <?php
-              $notificationDate = isset($n['created_at']) ? date('d/m/Y', strtotime((string) $n['created_at'])) : '';
+              $notificationDate = isset($n['created_at']) ? date('d/m/y', strtotime((string) $n['created_at'])) : '';
               $message = (string) $n['message'];
               $shortMessage = function_exists('mb_substr')
                 ? mb_substr($message, 0, 30)

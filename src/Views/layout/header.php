@@ -15,7 +15,7 @@ $adminNavItems = [
     'calendar' => ['label' => 'Calendario', 'href' => '?action=calendar'],
     'notifications' => ['label' => 'Segnalazioni', 'href' => '?action=notifications'],
     'setup' => ['label' => 'Setup', 'href' => '?action=setup'],
-    'information' => ['label' => 'INFORMAZIONI', 'href' => '?action=information'],
+    'information' => ['label' => 'Informazioni', 'href' => '?action=information'],
 ];
 ?>
 <!doctype html>
