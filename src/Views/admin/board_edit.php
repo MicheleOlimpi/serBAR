@@ -1,5 +1,22 @@
 <?php use App\Core\Auth; $print = isset($_GET['print']); if($print): ?><script>window.onload=()=>window.print()</script><?php endif; ?>
-<h4>Tabellone <?= sprintf('%02d/%04d',$board['month'],$board['year']) ?></h4>
+<?php
+$monthNames = [
+  1 => 'Gennaio',
+  2 => 'Febbraio',
+  3 => 'Marzo',
+  4 => 'Aprile',
+  5 => 'Maggio',
+  6 => 'Giugno',
+  7 => 'Luglio',
+  8 => 'Agosto',
+  9 => 'Settembre',
+  10 => 'Ottobre',
+  11 => 'Novembre',
+  12 => 'Dicembre',
+];
+$monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) ($board['month'] ?? 0));
+?>
+<h4>TABELLONE <?= htmlspecialchars($monthName) ?> <?= (int) ($board['year'] ?? 0) ?></h4>
 <style>
   .day-cell { min-width: 170px; }
   .shift-grid {
@@ -35,11 +52,8 @@
 <td class="day-cell">
   <div class="day-badge" style="background-color: <?= htmlspecialchars((string) ($d['day_type_color'] ?? '#6c757d')) ?>;">
     <div class="day-number"><?= (int) date('j', strtotime($d['day_date'])) ?></div>
-    <div class="day-meta mt-1"><?= htmlspecialchars($d['weekday_name']) ?></div>
-    <?php if (!empty($d['recurrence_name'])): ?><div class="day-meta"><?= htmlspecialchars((string) $d['recurrence_name']) ?></div><?php endif; ?>
     <div class="day-meta mt-1">
       <?php if (Auth::isAdmin()): ?>
-        <label class="form-label mb-1 small">Tipo giorno</label>
         <select class="form-select form-select-sm day-type-selector" name="day[<?= $d['id'] ?>][day_type_id]">
           <?php foreach($dayTypes as $t): ?><option value="<?= $t['id'] ?>" <?= $d['day_type_id']==$t['id']?'selected':'' ?>><?= htmlspecialchars($t['name']) ?></option><?php endforeach; ?>
         </select>
@@ -47,6 +61,9 @@
         <strong><?= htmlspecialchars((string) ($d['day_type_name'] ?? '-')) ?></strong>
       <?php endif; ?>
     </div>
+    <div class="day-weekday mt-1"><?= htmlspecialchars($d['weekday_name']) ?></div>
+    <?php if (!empty($d['recurrence_name'])): ?><div class="day-meta"><?= htmlspecialchars((string) $d['recurrence_name']) ?></div><?php endif; ?>
+    <?php if (!empty($d['santo'])): ?><div class="day-meta"><?= htmlspecialchars((string) $d['santo']) ?></div><?php endif; ?>
   </div>
 </td>
 <td>

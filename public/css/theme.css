@@ -18,6 +18,9 @@
   --board-day-number-size: 1.9rem;
   --board-day-number-weight: 700;
   --board-day-number-line-height: 1.1;
+  --board-day-weekday-size: 0.9rem;
+  --board-day-weekday-weight: 600;
+  --board-day-weekday-line-height: 1.2;
 }
 
 /*
@@ -53,4 +56,10 @@
   font-size: var(--board-day-number-size);
   font-weight: var(--board-day-number-weight);
   line-height: var(--board-day-number-line-height);
+}
+
+.day-weekday {
+  font-size: var(--board-day-weekday-size);
+  font-weight: var(--board-day-weekday-weight);
+  line-height: var(--board-day-weekday-line-height);
 }
