@@ -229,6 +229,7 @@ class InstallerService
             $userHash = password_hash('user', PASSWORD_DEFAULT);
             $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES ('admin','System','Admin','{$adminHash}','admin','','attivo')");
             $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES ('user','System','User','{$userHash}','user','','attivo')");
+            $pdo->exec("INSERT IGNORE INTO app_settings (setting_key, setting_value) VALUES ('program_name','serBAR'),('program_author','Michele Olimpi'),('program_version','V00.00')");
             $pdo->exec("INSERT IGNORE INTO daily_shift_config(id, day_type_id, start_time, end_time, closes_bar, priority) VALUES (1,1,'15:00:00','20:00:00',0,1),(2,1,'20:00:00','23:00:00',1,2),(3,2,'15:00:00','20:00:00',0,1),(4,2,'20:00:00','23:00:00',1,2),(5,3,'08:00:00','12:00:00',1,1),(6,3,'15:00:00','20:00:00',0,2),(7,3,'20:00:00','23:00:00',1,3)");
             $this->seedCalendarDays($pdo);
         } catch (Throwable $e) {
@@ -238,7 +239,7 @@ class InstallerService
 
     private function seedCalendarDays(PDO $pdo): void
     {
-        $year = (int) date('Y');
+        $year = 2024;
 
         $stmt = $pdo->prepare('INSERT IGNORE INTO calendar_days (day_date, recurrence_name, santo, is_holiday, is_special, day_type_id) VALUES (?, ?, ?, 0, 0, ?)');
 
@@ -259,9 +260,10 @@ class InstallerService
 
         $holidays = [
             ['date' => sprintf('%04d-01-01', $year), 'recurrence' => 'capodanno', 'santo' => 'Maria Santissima madre di Dio', 'special' => 0],
+            ['date' => sprintf('%04d-01-06', $year), 'recurrence' => 'Epifania', 'santo' => 'Epifania del Signore', 'special' => 0],
             ['date' => sprintf('%04d-06-02', $year), 'recurrence' => 'Festa delle repubblica', 'santo' => 'Santi martiri Marcellino e Pietro', 'special' => 0],
             ['date' => sprintf('%04d-08-15', $year), 'recurrence' => 'ferragosto', 'santo' => 'Assunzione della B.V. Maria', 'special' => 0],
-            ['date' => sprintf('%04d-09-29', $year), 'recurrence' => 'Tutti i santi', 'santo' => 'Tutti i santi', 'special' => 1],
+            ['date' => sprintf('%04d-09-29', $year), 'recurrence' => 'San Michele Arcangelo', 'santo' => 'San Michele Arcangelo', 'special' => 1],
             ['date' => sprintf('%04d-11-01', $year), 'recurrence' => 'Tutti i santi', 'santo' => 'Tutti i santi', 'special' => 0],
             ['date' => sprintf('%04d-12-08', $year), 'recurrence' => 'SS. Madonna', 'santo' => 'Immacolata concezione della B.V. Maria', 'special' => 0],
             ['date' => sprintf('%04d-12-25', $year), 'recurrence' => 'Natale', 'santo' => 'Natale del Signore', 'special' => 0],
