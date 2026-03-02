@@ -52,7 +52,8 @@ $statusLabels = [
         <h3 class="mb-2">Area consultazione</h3>
         <p class="text-muted mb-0">Visualizza i turni, invia segnalazioni e controlla lo stato di tutte le segnalazioni inviate.</p>
       </div>
-      <div class="d-flex flex-wrap gap-2">
+    <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-warning" href="#segnalazioni">Segnalazione</a>
         <a class="btn btn-outline-secondary" href="#elenco-telefonico">Elenco telefonico utenti</a>
       </div>
     </div>
@@ -165,7 +166,7 @@ $statusLabels = [
   </div>
 
   <div class="col-12 col-xl-5">
-    <div class="card border-0 shadow-sm mb-4">
+    <div class="card border-0 shadow-sm mb-4" id="segnalazioni">
       <div class="card-body p-4">
         <h5 class="card-title mb-3">Nuova segnalazione</h5>
         <form method="post" class="d-grid gap-3">
@@ -194,8 +195,7 @@ $statusLabels = [
                 <tr>
                   <th>Data invio</th>
                   <th>Utente</th>
-                  <th>Turno</th>
-                  <th>Messaggio</th>
+                  <th>Testo (prime 20)</th>
                   <th>Stato</th>
                 </tr>
               </thead>
@@ -206,17 +206,22 @@ $statusLabels = [
                     $createdAtFormatted = (string) $n['created_at'];
                     if (!empty($n['created_at'])) {
                         try {
-                            $createdAtFormatted = (new DateTimeImmutable((string) $n['created_at']))->format('d/m/y H:i');
+                            $createdAtFormatted = (new DateTimeImmutable((string) $n['created_at']))->format('d/m/y');
                         } catch (Exception) {
                             $createdAtFormatted = (string) $n['created_at'];
                         }
                     }
+
+                    $message = trim((string) ($n['message'] ?? ''));
+                    $messageLength = function_exists('mb_strlen') ? mb_strlen($message) : strlen($message);
+                    $messagePreview = $messageLength > 20
+                        ? ((function_exists('mb_substr') ? mb_substr($message, 0, 20) : substr($message, 0, 20)) . '…')
+                        : $message;
                   ?>
                   <tr>
                     <td><?= htmlspecialchars($createdAtFormatted) ?></td>
                     <td><?= htmlspecialchars($n['username']) ?></td>
-                    <td><?= htmlspecialchars((string) ($n['day_date'] ? $n['day_date'] . ' - ' . sprintf('%02d/%04d', $n['month'], $n['year']) : '-')) ?></td>
-                    <td><?= htmlspecialchars($n['message']) ?></td>
+                    <td><?= htmlspecialchars($messagePreview !== '' ? $messagePreview : '-') ?></td>
                     <td><span class="badge <?= $statusClass ?>"><?= htmlspecialchars($statusLabels[$n['status']] ?? $n['status']) ?></span></td>
                   </tr>
                 <?php endforeach; ?>
