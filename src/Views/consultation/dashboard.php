@@ -49,11 +49,10 @@ $statusLabels = [
   <div class="card-body p-4">
     <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
       <div>
-        <h3 class="mb-2">Area consultazione</h3>
-        <p class="text-muted mb-0">Visualizza i turni, invia segnalazioni e controlla lo stato di tutte le segnalazioni inviate.</p>
+        <h3 class="mb-2">DASHBOARD</h3>
+        <p class="text-muted mb-0">Visualizza i turni pubblicati, l'elenco telefonico e tutte le segnalazioni inviate dagli utenti.</p>
       </div>
     <div class="d-flex flex-wrap gap-2">
-        <a class="btn btn-warning" href="#segnalazioni">Segnalazione</a>
         <a class="btn btn-outline-secondary" href="#elenco-telefonico">Elenco telefonico utenti</a>
       </div>
     </div>
@@ -166,20 +165,10 @@ $statusLabels = [
   </div>
 
   <div class="col-12 col-xl-5">
-    <div class="card border-0 shadow-sm mb-4" id="segnalazioni">
+    <div class="card border-0 shadow-sm mb-4">
       <div class="card-body p-4">
-        <h5 class="card-title mb-3">Nuova segnalazione</h5>
-        <form method="post" class="d-grid gap-3">
-          <div>
-            <label class="form-label" for="message">Testo libero</label>
-            <textarea id="message" name="message" rows="5" class="form-control" placeholder="Scrivi la tua segnalazione" required></textarea>
-          </div>
-
-          <div class="d-flex justify-content-between align-items-center gap-2">
-            <small class="text-muted">All'invio, la segnalazione sarà registrata con stato <strong>inviata</strong>.</small>
-            <button class="btn btn-warning" type="submit">Invia</button>
-          </div>
-        </form>
+        <h5 class="card-title mb-2">Invio segnalazioni</h5>
+        <p class="text-muted mb-0">In quest'area di consultazione la creazione di nuove segnalazioni non è disponibile.</p>
       </div>
     </div>
 
