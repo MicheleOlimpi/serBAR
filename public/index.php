@@ -50,6 +50,7 @@ $routes = [
     'notifications' => 'notifications',
     'setup' => 'setup',
     'information' => 'information',
+    'segnalazione' => 'segnalazione',
     'license' => 'license',
 ];
 

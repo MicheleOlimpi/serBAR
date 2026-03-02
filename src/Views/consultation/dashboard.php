@@ -168,7 +168,8 @@ $statusLabels = [
     <div class="card border-0 shadow-sm mb-4">
       <div class="card-body p-4">
         <h5 class="card-title mb-2">Invio segnalazioni</h5>
-        <p class="text-muted mb-0">In quest'area di consultazione la creazione di nuove segnalazioni non è disponibile.</p>
+        <p class="text-muted mb-3">Puoi inviare una segnalazione libera dalla voce <strong>Segnalazione</strong> nella barra di navigazione.</p>
+        <a class="btn btn-outline-primary" href="?action=segnalazione">Vai a Segnalazione</a>
       </div>
     </div>
 
