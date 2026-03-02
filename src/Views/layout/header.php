@@ -17,6 +17,12 @@ $adminNavItems = [
     'setup' => ['label' => 'Setup', 'href' => '?action=setup'],
     'information' => ['label' => 'Informazioni', 'href' => '?action=information'],
 ];
+$consultationNavItems = [
+    'dashboard' => ['label' => 'Dashboard', 'href' => './'],
+    'segnalazione' => ['label' => 'Segnalazione', 'href' => '?action=dashboard#segnalazioni'],
+    'lista_volontari' => ['label' => 'Lista Volontari', 'href' => '?action=dashboard#elenco-telefonico'],
+    'information' => ['label' => 'Informazioni', 'href' => '?action=information'],
+];
 ?>
 <!doctype html>
 <html lang="it">
@@ -55,10 +61,23 @@ $adminNavItems = [
         </div>
       </div>
     <?php elseif ($u): ?>
-      <div class="d-flex align-items-center gap-3 ms-auto">
-        <a class="nav-link text-white" href="?action=information">informazioni</a>
-        <span class="text-white"><?= htmlspecialchars($u['username']) ?></span>
-        <a class="btn btn-sm btn-outline-light" href="?action=logout">Logout</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#consultationNavbar" aria-controls="consultationNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="consultationNavbar">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <?php foreach ($consultationNavItems as $action => $item): ?>
+            <?php $isActive = $currentAction === $action || ($action === 'dashboard' && ($currentAction === '' || $currentAction === 'dashboard')); ?>
+            <li class="nav-item">
+              <a class="nav-link <?= $isActive ? 'active' : '' ?>" href="<?= $item['href'] ?>"><?= htmlspecialchars($item['label']) ?></a>
+            </li>
+          <?php endforeach; ?>
+        </ul>
+        <div class="d-flex align-items-center gap-2">
+          <span class="text-white"><?= htmlspecialchars($u['username']) ?></span>
+          <a class="btn btn-sm btn-outline-light" href="?action=logout">Logout</a>
+        </div>
       </div>
     <?php endif; ?>
   </div>
