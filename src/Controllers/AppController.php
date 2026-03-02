@@ -298,6 +298,34 @@ class AppController
         ]);
     }
 
+    public function segnalazione(): void
+    {
+        $this->guard();
+
+        if (Auth::isAdmin()) {
+            View::redirect('./');
+        }
+
+        $error = '';
+        $message = '';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $message = trim((string) ($_POST['message'] ?? ''));
+            if ($message === '') {
+                $error = 'Inserisci un testo prima di inviare la segnalazione.';
+            } else {
+                $this->repo->createNotification((int) Auth::user()['id'], null, $message);
+                View::redirect('?action=segnalazione&sent=1');
+            }
+        }
+
+        View::render('consultation/report', [
+            'error' => $error,
+            'message' => $message,
+            'sent' => isset($_GET['sent']),
+        ]);
+    }
+
     public function license(): void
     {
         $this->guard();

@@ -20,6 +20,7 @@ $adminNavItems = [
 $consultationNavItems = [
     'dashboard' => ['label' => 'dashboard', 'href' => './'],
     'lista_volontari' => ['label' => 'Lista Volontari', 'href' => '?action=dashboard#elenco-telefonico'],
+    'segnalazione' => ['label' => 'Segnalazione', 'href' => '?action=segnalazione'],
     'information' => ['label' => 'Informazioni', 'href' => '?action=information'],
 ];
 ?>
