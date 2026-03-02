@@ -49,14 +49,6 @@ class AppController
             return;
         }
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'])) {
-            $message = trim((string) $_POST['message']);
-            if ($message !== '') {
-                $this->repo->createNotification((int) Auth::user()['id'], null, $message);
-            }
-            View::redirect('./');
-        }
-
         $boards = $this->repo->boardsForConsultation();
         $selectedBoardId = (int) ($_GET['board_id'] ?? ($boards[0]['id'] ?? 0));
         $selectedBoard = null;
