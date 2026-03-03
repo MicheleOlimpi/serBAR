@@ -15,16 +15,18 @@ $monthNames = [
   12 => 'Dicembre',
 ];
 $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) ($board['month'] ?? 0));
+$boardTitle = strtoupper($monthName . ' ' . (int) ($board['year'] ?? 0));
 ?>
-<h4>TABELLONE <?= htmlspecialchars($monthName) ?> <?= (int) ($board['year'] ?? 0) ?></h4>
+<h4 class="board-title text-center mb-3"><?= htmlspecialchars($boardTitle) ?></h4>
 <style>
   .day-cell { min-width: 170px; }
   .shift-grid {
     display: grid;
     gap: .5rem;
-    grid-template-columns: minmax(120px, auto) minmax(280px, 1fr) minmax(220px, 1fr);
+    grid-template-columns: minmax(120px, auto) minmax(280px, 1fr);
     align-items: start;
   }
+  .shift-grid.has-closure { grid-template-columns: minmax(120px, auto) minmax(280px, 1fr) minmax(220px, 1fr); }
   @media (max-width: 1199.98px) {
     .shift-grid { grid-template-columns: 1fr; }
   }
@@ -41,10 +43,16 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
   .day-meta { font-size: 0.82rem; line-height: 1.3; }
   .day-type-selector { max-width: 140px; }
   .day-number { font-size: 1.75rem; font-weight: 700; line-height: 1; }
+  @media print {
+    .no-print { display: none !important; }
+    .board-title { font-size: 22px; letter-spacing: .08em; }
+  }
 </style>
 <?php if (Auth::isAdmin()): ?><form method="post"><?php endif; ?>
 <table class="table table-sm table-bordered bg-white">
+<?php if (!$print): ?>
 <tr><th>Giorno</th><th>Turni giornalieri</th><th>Annotazioni</th><?php if(!Auth::isAdmin()):?><th>Segnala</th><?php endif; ?></tr>
+<?php endif; ?>
 <?php foreach($days as $d): $shifts = $dayShifts[$d['id']] ?? []; ?>
 <?php if ($shifts !== []): usort($shifts, static function (array $left, array $right): int {
   return [(int) ($left['priority'] ?? 0), (string) ($left['start_time'] ?? '')] <=> [(int) ($right['priority'] ?? 0), (string) ($right['start_time'] ?? '')];
@@ -74,26 +82,28 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
     <?php foreach ($shifts as $shift): ?>
       <div class="border rounded p-2 mb-2">
         <?php if (Auth::isAdmin()): ?>
-          <div class="shift-grid">
+          <div class="shift-grid<?= !empty($shift['closes_bar']) ? ' has-closure' : '' ?>">
             <div>
               <div class="small fw-semibold">
                 <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?> - <?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?>
               </div>
             </div>
             <div>
-              <input id="volunteers-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][volunteers]" value="<?= htmlspecialchars((string) ($shift['volunteers'] ?? '')) ?>" placeholder="Es. M. Rossi A. Bianchi">
-              <div class="input-group input-group-sm volunteer-picker" data-target="volunteers-<?= (int) $shift['id'] ?>">
+              <input id="volunteers-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][volunteers]" value="<?= htmlspecialchars((string) ($shift['volunteers'] ?? '')) ?>">
+              <div class="input-group input-group-sm volunteer-picker no-print" data-target="volunteers-<?= (int) $shift['id'] ?>">
                 <input type="text" class="form-control" list="users-list" placeholder="Aggiungi dalla lista utenti">
                 <button class="btn btn-outline-secondary" type="button">Aggiungi</button>
               </div>
             </div>
-            <div>
-              <input id="responsabile-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][responsabile_chiusura]" value="<?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?? '')) ?>" <?= empty($shift['closes_bar']) ? 'readonly' : '' ?>>
-              <div class="input-group input-group-sm responsible-picker" data-target="responsabile-<?= (int) $shift['id'] ?>">
-                <input type="text" class="form-control" list="users-list" placeholder="Seleziona utente" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?>>
-                <button class="btn btn-outline-secondary" type="button" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?>>Imposta</button>
+            <?php if (!empty($shift['closes_bar'])): ?>
+              <div>
+                <input id="responsabile-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][responsabile_chiusura]" value="<?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?? '')) ?>">
+                <div class="input-group input-group-sm responsible-picker no-print" data-target="responsabile-<?= (int) $shift['id'] ?>">
+                  <input type="text" class="form-control" list="users-list" placeholder="Seleziona utente">
+                  <button class="btn btn-outline-secondary" type="button">Imposta</button>
+                </div>
               </div>
-            </div>
+            <?php endif; ?>
           </div>
         <?php else: ?>
           <div class="small fw-semibold mb-1">
@@ -101,7 +111,7 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
           </div>
           <div><?= nl2br(htmlspecialchars((string) ($shift['volunteers'] ?: '-'))) ?></div>
           <?php if (!empty($shift['closes_bar'])): ?>
-            <div class="small text-muted mt-1">Responsabile chiusura: <?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?: '-')) ?></div>
+            <div class="small text-muted mt-1"><?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?: '-')) ?></div>
           <?php endif; ?>
         <?php endif; ?>
       </div>
@@ -171,4 +181,4 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
   <button class="btn btn-success">Salva modifiche</button>
 </form>
 <?php endif; ?>
-<a class="btn btn-outline-dark" href="./">Indietro</a>
+<a class="btn btn-outline-dark no-print" href="./">Indietro</a>
