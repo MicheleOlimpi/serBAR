@@ -40,7 +40,10 @@ $monthNames = [
 <?php foreach($boards as $b): ?>
 <tr><td><?= ($monthNames[(int) $b['month']] ?? sprintf('%02d', $b['month'])) . ' ' . $b['year'] ?></td><td>
 <a class="btn btn-sm btn-primary" href="?action=board_edit&id=<?= $b['id'] ?>">Edita</a>
-<a class="btn btn-sm btn-secondary" href="?action=board_edit&id=<?= $b['id'] ?>&print=1" target="_blank">Stampa/PDF</a>
+<div class="btn-group btn-group-sm" role="group" aria-label="Formati di stampa">
+  <a class="btn btn-secondary" href="?action=board_edit&id=<?= $b['id'] ?>&print=1&format=promemoria" target="_blank">Stampa promemoria/PDF</a>
+  <a class="btn btn-secondary" href="?action=board_edit&id=<?= $b['id'] ?>&print=1&format=tabellone" target="_blank">Stampa tabellone/PDF</a>
+</div>
 <a class="btn btn-sm btn-danger" href="?action=boards&delete=<?= $b['id'] ?>" onclick="return confirm('Eliminare?')">Elimina</a>
 </td></tr>
 <?php endforeach; ?>

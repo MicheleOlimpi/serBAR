@@ -1,4 +1,14 @@
-<?php use App\Core\Auth; $print = isset($_GET['print']); if($print): ?><script>window.onload=()=>window.print()</script><?php endif; ?>
+<?php
+
+use App\Core\Auth;
+
+$print = isset($_GET['print']);
+$printFormat = (string) ($_GET['format'] ?? 'tabellone');
+$printFormat = in_array($printFormat, ['tabellone', 'promemoria'], true) ? $printFormat : 'tabellone';
+
+if ($print): ?>
+  <script>window.onload=()=>window.print()</script>
+<?php endif; ?>
 <?php
 $monthNames = [
   1 => 'Gennaio',
@@ -15,8 +25,10 @@ $monthNames = [
   12 => 'Dicembre',
 ];
 $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) ($board['month'] ?? 0));
+$isReminderPrint = $print && $printFormat === 'promemoria';
+$boardTitle = $isReminderPrint ? 'PROMEMORIA TURNI' : 'TABELLONE';
 ?>
-<h4>TABELLONE <?= htmlspecialchars($monthName) ?> <?= (int) ($board['year'] ?? 0) ?></h4>
+<h4><?= $boardTitle ?> <?= htmlspecialchars($monthName) ?> <?= (int) ($board['year'] ?? 0) ?></h4>
 <style>
   .day-cell { min-width: 170px; }
   .shift-grid {
@@ -44,7 +56,12 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
 </style>
 <?php if (Auth::isAdmin()): ?><form method="post"><?php endif; ?>
 <table class="table table-sm table-bordered bg-white">
-<tr><th>Giorno</th><th>Turni giornalieri</th><th>Annotazioni</th><?php if(!Auth::isAdmin()):?><th>Segnala</th><?php endif; ?></tr>
+<tr>
+  <th>Giorno</th>
+  <th>Turni giornalieri</th>
+  <?php if (!$isReminderPrint): ?><th>Annotazioni</th><?php endif; ?>
+  <?php if(!Auth::isAdmin()):?><th>Segnala</th><?php endif; ?>
+</tr>
 <?php foreach($days as $d): $shifts = $dayShifts[$d['id']] ?? []; ?>
 <?php if ($shifts !== []): usort($shifts, static function (array $left, array $right): int {
   return [(int) ($left['priority'] ?? 0), (string) ($left['start_time'] ?? '')] <=> [(int) ($right['priority'] ?? 0), (string) ($right['start_time'] ?? '')];
@@ -56,15 +73,17 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
     <div class="day-weekday mt-2"><?= htmlspecialchars($d['weekday_name']) ?></div>
     <?php if (!empty($d['recurrence_name'])): ?><div class="day-meta mt-1"><?= htmlspecialchars((string) $d['recurrence_name']) ?></div><?php endif; ?>
     <?php if (!empty($d['santo'])): ?><div class="day-meta"><?= htmlspecialchars((string) $d['santo']) ?></div><?php endif; ?>
-    <div class="day-meta mt-2">
-      <?php if (Auth::isAdmin()): ?>
-        <select class="form-select form-select-sm day-type-selector" name="day[<?= $d['id'] ?>][day_type_id]">
-          <?php foreach($dayTypes as $t): ?><option value="<?= $t['id'] ?>" <?= $d['day_type_id']==$t['id']?'selected':'' ?>><?= htmlspecialchars($t['name']) ?></option><?php endforeach; ?>
-        </select>
-      <?php else: ?>
-        <strong><?= htmlspecialchars((string) ($d['day_type_name'] ?? '-')) ?></strong>
-      <?php endif; ?>
-    </div>
+    <?php if (!$isReminderPrint): ?>
+      <div class="day-meta mt-2">
+        <?php if (Auth::isAdmin()): ?>
+          <select class="form-select form-select-sm day-type-selector" name="day[<?= $d['id'] ?>][day_type_id]">
+            <?php foreach($dayTypes as $t): ?><option value="<?= $t['id'] ?>" <?= $d['day_type_id']==$t['id']?'selected':'' ?>><?= htmlspecialchars($t['name']) ?></option><?php endforeach; ?>
+          </select>
+        <?php else: ?>
+          <strong><?= htmlspecialchars((string) ($d['day_type_name'] ?? '-')) ?></strong>
+        <?php endif; ?>
+      </div>
+    <?php endif; ?>
   </div>
 </td>
 <td>
@@ -73,7 +92,7 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
   <?php else: ?>
     <?php foreach ($shifts as $shift): ?>
       <div class="border rounded p-2 mb-2">
-        <?php if (Auth::isAdmin()): ?>
+        <?php if (Auth::isAdmin() && !$isReminderPrint): ?>
           <div class="shift-grid">
             <div>
               <div class="small fw-semibold">
@@ -108,13 +127,13 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
     <?php endforeach; ?>
   <?php endif; ?>
 </td>
-<td><?php if(Auth::isAdmin()): ?><input class="form-control form-control-sm" name="day[<?= $d['id'] ?>][notes]" value="<?= htmlspecialchars((string)$d['notes']) ?>"><?php else: ?><?= htmlspecialchars((string)$d['notes']) ?><?php endif; ?></td>
+<?php if (!$isReminderPrint): ?><td><?php if(Auth::isAdmin()): ?><input class="form-control form-control-sm" name="day[<?= $d['id'] ?>][notes]" value="<?= htmlspecialchars((string)$d['notes']) ?>"><?php else: ?><?= htmlspecialchars((string)$d['notes']) ?><?php endif; ?></td><?php endif; ?>
 <?php if(!Auth::isAdmin()): ?><td><form method="post"><input type="hidden" name="report_day" value="<?= $d['id'] ?>"><input name="message" class="form-control form-control-sm" placeholder="Segnalazione"><button class="btn btn-sm btn-warning mt-1">Invia</button></form></td><?php endif; ?>
 </tr>
 <?php endforeach; ?>
 </table>
 
-<?php if (Auth::isAdmin()): ?>
+<?php if (Auth::isAdmin() && !$isReminderPrint): ?>
   <datalist id="users-list">
     <?php foreach ($activeUsers as $activeUser): ?>
       <option value="<?= htmlspecialchars(trim($activeUser['first_name'] . ' ' . $activeUser['last_name'])) ?>"></option>
