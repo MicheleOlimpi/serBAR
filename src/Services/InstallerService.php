@@ -68,7 +68,7 @@ class InstallerService
     {
         return [
             "CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50) UNIQUE, last_name VARCHAR(100), first_name VARCHAR(100), password_hash VARCHAR(255), role VARCHAR(20) NOT NULL DEFAULT 'user', phone VARCHAR(30) NOT NULL DEFAULT '', status VARCHAR(20) NOT NULL DEFAULT 'attivo', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)",
-            "CREATE TABLE IF NOT EXISTS day_types (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(50) NOT NULL, code VARCHAR(50) NOT NULL, color_hex CHAR(7) NOT NULL DEFAULT '#6c757d', is_locked TINYINT(1) NOT NULL DEFAULT 0)",
+            "CREATE TABLE IF NOT EXISTS day_types (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(50) NOT NULL, code VARCHAR(50) NOT NULL, color_hex CHAR(7) NOT NULL DEFAULT '#FFFFFF', is_locked TINYINT(1) NOT NULL DEFAULT 0)",
             'CREATE TABLE IF NOT EXISTS daily_shift_config (id INT AUTO_INCREMENT PRIMARY KEY, day_type_id INT NOT NULL, start_time TIME NOT NULL, end_time TIME NOT NULL, closes_bar TINYINT(1) NOT NULL DEFAULT 0, priority INT NOT NULL DEFAULT 1, UNIQUE KEY uq_daily_shift_day_type_priority (day_type_id, priority), FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE CASCADE)',
             'CREATE TABLE IF NOT EXISTS calendar_days (id INT AUTO_INCREMENT PRIMARY KEY, day_date DATE NOT NULL UNIQUE, recurrence_name VARCHAR(255) NULL, santo VARCHAR(255) NULL, is_holiday TINYINT(1) NOT NULL DEFAULT 0, is_special TINYINT(1) NOT NULL DEFAULT 0, day_type_id INT NULL, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE SET NULL)',
             'CREATE TABLE IF NOT EXISTS boards (id INT AUTO_INCREMENT PRIMARY KEY, month INT NOT NULL, year INT NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, UNIQUE KEY uq_board (month, year))',
@@ -91,7 +91,7 @@ class InstallerService
     {
         $stmt = $pdo->query("SHOW COLUMNS FROM day_types LIKE 'color_hex'");
         if ($stmt === false || !$stmt->fetch()) {
-            $pdo->exec("ALTER TABLE day_types ADD COLUMN color_hex CHAR(7) NOT NULL DEFAULT '#6c757d' AFTER code");
+            $pdo->exec("ALTER TABLE day_types ADD COLUMN color_hex CHAR(7) NOT NULL DEFAULT '#FFFFFF' AFTER code");
         }
     }
 
