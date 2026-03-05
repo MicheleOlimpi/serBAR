@@ -124,7 +124,15 @@ $statusBadgeMap = [
           </td>
           <td>
             <a class="btn btn-sm btn-outline-primary" href="?action=notifications&edit=<?= (int) $n['id'] ?>">Modifica</a>
-            <a class="btn btn-sm btn-outline-danger" href="?action=notifications&delete=<?= (int) $n['id'] ?>" onclick="return confirm('Eliminare la segnalazione?')">Elimina</a>
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-danger js-delete-notification"
+              data-delete-url="?action=notifications&delete=<?= (int) $n['id'] ?>"
+              data-bs-toggle="modal"
+              data-bs-target="#deleteNotificationModal"
+            >
+              Elimina
+            </button>
           </td>
         </tr>
       <?php endforeach; ?>
@@ -133,3 +141,36 @@ $statusBadgeMap = [
 </div>
 
 <a class="btn btn-outline-dark" href="./">Indietro</a>
+
+<div class="modal fade" id="deleteNotificationModal" tabindex="-1" aria-labelledby="deleteNotificationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title d-flex align-items-center gap-2" id="deleteNotificationModalLabel">
+          <i class="fa-solid fa-circle-exclamation text-danger" aria-hidden="true"></i>
+          Conferma eliminazione segnalazione
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+      </div>
+      <div class="modal-body pt-2">
+        Sei sicuro di voler eliminare la segnalazione?
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+        <a href="#" class="btn btn-danger" id="confirmDeleteNotificationBtn">Sì, elimina</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const confirmDeleteNotificationBtn = document.getElementById('confirmDeleteNotificationBtn');
+
+  document.querySelectorAll('.js-delete-notification').forEach((button) => {
+    button.addEventListener('click', () => {
+      if (confirmDeleteNotificationBtn) {
+        confirmDeleteNotificationBtn.setAttribute('href', button.dataset.deleteUrl || '#');
+      }
+    });
+  });
+</script>
