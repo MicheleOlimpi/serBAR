@@ -299,7 +299,7 @@ class BarRepository
             return strtolower($colorHex);
         }
 
-        return '#6c757d';
+        return '#FFFFFF';
     }
 
     public function updateCalendarDayDetails(int $id, string $recurrenceName, string $santo, int $dayTypeId, bool $isSpecial): void

@@ -1,4 +1,4 @@
-<?php $currentColor = htmlspecialchars((string) ($editing['color_hex'] ?? '#6c757d')); ?>
+<?php $currentColor = htmlspecialchars((string) ($editing['color_hex'] ?? '#FFFFFF')); ?>
 <h4>Tipologie di giorno</h4>
 <form method="post" class="row g-2 mb-3">
   <input type="hidden" name="id" value="<?= (int) ($editing['id'] ?? 0) ?>">
@@ -31,13 +31,20 @@
       <td><?= htmlspecialchars((string) $t['name']) ?></td>
       <td><?= htmlspecialchars((string) $t['code']) ?></td>
       <td>
-        <span class="d-inline-block rounded border" style="width:28px;height:28px;background-color: <?= htmlspecialchars((string) ($t['color_hex'] ?? '#6c757d')) ?>"></span>
-        <small class="text-muted ms-1"><?= htmlspecialchars((string) ($t['color_hex'] ?? '#6c757d')) ?></small>
+        <span class="d-inline-block rounded border" style="width:28px;height:28px;background-color: <?= htmlspecialchars((string) ($t['color_hex'] ?? '#FFFFFF')) ?>"></span>
+        <small class="text-muted ms-1"><?= htmlspecialchars((string) ($t['color_hex'] ?? '#FFFFFF')) ?></small>
       </td>
       <td class="d-flex gap-2">
         <a class="btn btn-sm btn-outline-primary" href="?action=day_types&edit=<?= (int) $t['id'] ?>">Modifica</a>
         <?php if (!(int) $t['is_locked'] && !in_array(strtolower((string) $t['code']), ['feriale', 'prefestivo', 'festivo'], true)): ?>
-          <a class="btn btn-sm btn-danger" href="?action=day_types&delete=<?= (int) $t['id'] ?>" onclick="return confirm('Eliminare questa tipologia di giorno?')">Elimina</a>
+          <button
+            type="button"
+            class="btn btn-sm btn-danger js-delete-day-type"
+            data-delete-url="?action=day_types&delete=<?= (int) $t['id'] ?>"
+            data-day-type-name="<?= htmlspecialchars((string) $t['name']) ?>"
+          >
+            Elimina
+          </button>
         <?php else: ?>
           <span class="badge bg-secondary">Non eliminabile</span>
         <?php endif; ?>
@@ -65,6 +72,25 @@
   </div>
 </div>
 
+<div class="modal fade" id="deleteDayTypeModal" tabindex="-1" aria-labelledby="deleteDayTypeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteDayTypeModalLabel">Conferma eliminazione</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+      </div>
+      <div class="modal-body d-flex align-items-start gap-3">
+        <i class="fa-solid fa-circle-exclamation text-warning fs-3 mt-1" aria-hidden="true"></i>
+        <p class="mb-0" id="deleteDayTypeMessage">Sei sicuro di voler eliminare questa tipologia di giorno?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">No</button>
+        <a href="#" class="btn btn-danger" id="confirmDeleteDayTypeBtn">Sì, elimina</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <a class="btn btn-outline-dark" href="./">Indietro</a>
 
 <script>
@@ -73,6 +99,12 @@
     const pickerInput = document.getElementById('colorPickerInput');
     const confirmBtn = document.getElementById('confirmColorBtn');
     const openBtn = document.getElementById('openColorPickerBtn');
+    const deleteButtons = document.querySelectorAll('.js-delete-day-type');
+    const deleteModalElement = document.getElementById('deleteDayTypeModal');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteDayTypeBtn');
+    const deleteMessage = document.getElementById('deleteDayTypeMessage');
+
+    const deleteModal = deleteModalElement ? new bootstrap.Modal(deleteModalElement) : null;
 
     const paintButton = (color) => {
       openBtn.style.backgroundColor = color;
@@ -84,6 +116,19 @@
     confirmBtn.addEventListener('click', () => {
       hiddenInput.value = pickerInput.value;
       paintButton(pickerInput.value);
+    });
+
+    deleteButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        if (!deleteModal || !confirmDeleteBtn || !deleteMessage) {
+          return;
+        }
+        const deleteUrl = button.dataset.deleteUrl || '#';
+        const dayTypeName = button.dataset.dayTypeName || 'questa tipologia di giorno';
+        confirmDeleteBtn.setAttribute('href', deleteUrl);
+        deleteMessage.textContent = `Sei sicuro di voler eliminare "${dayTypeName}"?`;
+        deleteModal.show();
+      });
     });
 
     paintButton(hiddenInput.value);
