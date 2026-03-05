@@ -41,8 +41,54 @@ $monthNames = [
 <tr><td><?= ($monthNames[(int) $b['month']] ?? sprintf('%02d', $b['month'])) . ' ' . $b['year'] ?></td><td>
 <a class="btn btn-sm btn-primary" href="?action=board_edit&id=<?= $b['id'] ?>">Edita</a>
 <a class="btn btn-sm btn-secondary" href="?action=board_edit&id=<?= $b['id'] ?>&print=1" target="_blank">Stampa/PDF</a>
-<a class="btn btn-sm btn-danger" href="?action=boards&delete=<?= $b['id'] ?>" onclick="return confirm('Eliminare?')">Elimina</a>
+<button
+  type="button"
+  class="btn btn-sm btn-danger js-delete-board"
+  data-delete-url="?action=boards&delete=<?= (int) $b['id'] ?>"
+  data-board-name="<?= htmlspecialchars(($monthNames[(int) $b['month']] ?? sprintf('%02d', $b['month'])) . ' ' . $b['year']) ?>"
+  data-bs-toggle="modal"
+  data-bs-target="#deleteBoardModal"
+>
+  Elimina
+</button>
 </td></tr>
 <?php endforeach; ?>
 </table>
 <a class="btn btn-outline-dark" href="./">Indietro</a>
+
+<div class="modal fade" id="deleteBoardModal" tabindex="-1" aria-labelledby="deleteBoardModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title d-flex align-items-center gap-2" id="deleteBoardModalLabel">
+          <i class="fa-solid fa-triangle-exclamation text-warning" aria-hidden="true"></i>
+          Conferma eliminazione tabellone
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+      </div>
+      <div class="modal-body">
+        Sei sicuro di voler eliminare il tabellone <strong id="deleteBoardName"></strong>?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+        <a href="#" class="btn btn-danger" id="confirmDeleteBoardBtn">Sì, elimina</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const deleteBoardNameElement = document.getElementById('deleteBoardName');
+  const confirmDeleteBoardBtn = document.getElementById('confirmDeleteBoardBtn');
+
+  document.querySelectorAll('.js-delete-board').forEach((button) => {
+    button.addEventListener('click', () => {
+      if (deleteBoardNameElement) {
+        deleteBoardNameElement.textContent = button.dataset.boardName || '';
+      }
+      if (confirmDeleteBoardBtn) {
+        confirmDeleteBoardBtn.setAttribute('href', button.dataset.deleteUrl || '#');
+      }
+    });
+  });
+</script>
