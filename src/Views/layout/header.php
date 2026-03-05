@@ -4,6 +4,7 @@ use App\Core\Auth;
 
 $u = Auth::user();
 $currentAction = (string) ($_GET['action'] ?? 'dashboard');
+$isLoginPage = $currentAction === 'login';
 $assetBasePath = rtrim(str_replace('\\', '/', dirname((string) ($_SERVER['SCRIPT_NAME'] ?? '/'))), '/');
 $assetBasePath = $assetBasePath === '' ? '.' : $assetBasePath;
 $adminNavItems = [
@@ -35,6 +36,7 @@ $consultationNavItems = [
   <link href="<?= htmlspecialchars($assetBasePath . '/css/theme.css') ?>" rel="stylesheet">
 </head>
 <body class="bg-light">
+<?php if (!$isLoginPage): ?>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
   <div class="container-fluid">
     <a class="navbar-brand" href="./"><img src="./serBAR-landscape.svg" alt="Logo serBAR" class="app-brand-logo">ACLI servizio BAR</a>
@@ -82,4 +84,5 @@ $consultationNavItems = [
     <?php endif; ?>
   </div>
 </nav>
-<div class="container pb-5">
+<?php endif; ?>
+<div class="container pb-5<?= $isLoginPage ? ' min-vh-100 d-flex align-items-center justify-content-center' : '' ?>">
