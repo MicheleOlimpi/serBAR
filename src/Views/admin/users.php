@@ -90,7 +90,10 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="deleteUserModalLabel">Conferma eliminazione utente</h5>
+        <h5 class="modal-title d-flex align-items-center gap-2" id="deleteUserModalLabel">
+          <i class="fa-solid fa-triangle-exclamation text-warning" aria-hidden="true"></i>
+          Conferma eliminazione utente
+        </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
       </div>
       <div class="modal-body">
