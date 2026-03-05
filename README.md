@@ -20,6 +20,18 @@ Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le va
 Il file viene caricato con riferimento relativo così l'app continua a funzionare anche quando è pubblicata in una sottocartella del dominio.
 
 ## Novità recenti
+- **Gestione segnalazioni potenziata**:
+  - aggiunta una pagina dedicata alla **segnalazione libera** in area consultazione;
+  - migliorata la UI di gestione segnalazioni lato admin;
+  - introdotta la conferma tramite **modale di sicurezza** prima dell'eliminazione.
+- **Conferme di eliminazione più sicure (area admin)**:
+  - modali di conferma per eliminazione utenti e tabelloni;
+  - flusso di cancellazione dei tipi giorno corretto e reso più chiaro.
+- **Tipi giorno migliorati**:
+  - gestione colori ottimizzata in amministrazione;
+  - aggiornamento della creazione schema/installazione per supportare le nuove impostazioni.
+- **Aggiornamento risorse grafiche**:
+  - file logo aggiornati nell'interfaccia applicativa.
 - **Editor tabellone mensile (area admin) migliorato**:
   - badge giorno più leggibile (numero giorno più grande, metadati compatti);
   - disposizione dei campi turno ottimizzata su desktop/mobile;
