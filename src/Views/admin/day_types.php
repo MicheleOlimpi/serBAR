@@ -42,6 +42,8 @@
             class="btn btn-sm btn-danger js-delete-day-type"
             data-delete-url="?action=day_types&delete=<?= (int) $t['id'] ?>"
             data-day-type-name="<?= htmlspecialchars((string) $t['name']) ?>"
+            data-bs-toggle="modal"
+            data-bs-target="#deleteDayTypeModal"
           >
             Elimina
           </button>
@@ -100,11 +102,8 @@
     const confirmBtn = document.getElementById('confirmColorBtn');
     const openBtn = document.getElementById('openColorPickerBtn');
     const deleteButtons = document.querySelectorAll('.js-delete-day-type');
-    const deleteModalElement = document.getElementById('deleteDayTypeModal');
     const confirmDeleteBtn = document.getElementById('confirmDeleteDayTypeBtn');
     const deleteMessage = document.getElementById('deleteDayTypeMessage');
-
-    const deleteModal = deleteModalElement ? new bootstrap.Modal(deleteModalElement) : null;
 
     const paintButton = (color) => {
       openBtn.style.backgroundColor = color;
@@ -120,14 +119,13 @@
 
     deleteButtons.forEach((button) => {
       button.addEventListener('click', () => {
-        if (!deleteModal || !confirmDeleteBtn || !deleteMessage) {
+        if (!confirmDeleteBtn || !deleteMessage) {
           return;
         }
         const deleteUrl = button.dataset.deleteUrl || '#';
         const dayTypeName = button.dataset.dayTypeName || 'questa tipologia di giorno';
         confirmDeleteBtn.setAttribute('href', deleteUrl);
         deleteMessage.textContent = `Sei sicuro di voler eliminare "${dayTypeName}"?`;
-        deleteModal.show();
       });
     });
 
