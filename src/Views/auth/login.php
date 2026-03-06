@@ -4,6 +4,8 @@
       <div class="card-body">
         <div class="text-center mb-4">
           <img src="<?= htmlspecialchars($assetBasePath . '/serBAR-square.svg') ?>" alt="Logo serBAR" class="auth-logo mb-3">
+          <p class="mb-0"><?= htmlspecialchars((string) ($loginInfo1 ?? '')) ?></p>
+          <p class="mb-2"><?= htmlspecialchars((string) ($loginInfo2 ?? '')) ?></p>
           <h4 class="mb-0">Accesso</h4>
         </div>
         <?php if (!empty($error)): ?><div class="alert alert-danger"><?= htmlspecialchars($error) ?></div><?php endif; ?>

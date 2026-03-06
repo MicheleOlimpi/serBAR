@@ -17,16 +17,25 @@ class AppController
 
     public function login(): void
     {
+        $loginInfo = $this->repo->loginInfoSettings();
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user = $this->repo->findUserByUsername(trim($_POST['username'] ?? ''));
             if ($user && $user['status'] === 'attivo' && password_verify($_POST['password'] ?? '', $user['password_hash'])) {
                 Auth::login($user);
                 View::redirect('./');
             }
-            View::render('auth/login', ['error' => 'Credenziali non valide']);
+            View::render('auth/login', [
+                'error' => 'Credenziali non valide',
+                'loginInfo1' => $loginInfo['login_info1'] ?? '',
+                'loginInfo2' => $loginInfo['login_info2'] ?? '',
+            ]);
             return;
         }
-        View::render('auth/login');
+        View::render('auth/login', [
+            'loginInfo1' => $loginInfo['login_info1'] ?? '',
+            'loginInfo2' => $loginInfo['login_info2'] ?? '',
+        ]);
     }
 
     public function logout(): void
