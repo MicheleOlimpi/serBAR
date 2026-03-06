@@ -443,10 +443,10 @@ class BarRepository
         $this->pdo->prepare('UPDATE board_day_shifts SET volunteers=?, responsabile_chiusura=? WHERE id=?')->execute([$volunteers, $responsabileChiusura, $shiftId]);
     }
 
-    public function createNotification(int $userId, ?int $boardDayId, string $msg): void
+    public function createNotification(int $userId, string $msg): void
     {
-        $this->pdo->prepare("INSERT INTO notifications (user_id, board_day_id, message, status) VALUES (?,?,?,'inviata')")
-            ->execute([$userId, $boardDayId, $msg]);
+        $this->pdo->prepare("INSERT INTO notifications (user_id, message, status) VALUES (?,?,'inviata')")
+            ->execute([$userId, $msg]);
     }
 
     public function notificationById(int $id): ?array
@@ -461,23 +461,20 @@ class BarRepository
     {
         $status = in_array($data['status'] ?? '', self::NOTIFICATION_STATUSES, true) ? $data['status'] : 'inviata';
         $userId = (int) ($data['user_id'] ?? 0);
-        $boardDayId = (int) ($data['board_day_id'] ?? 0);
         $message = trim((string) ($data['message'] ?? ''));
 
         if ($userId < 1 || $message === '') {
             return;
         }
 
-        $boardDayValue = $boardDayId > 0 ? $boardDayId : null;
-
         if (!empty($data['id'])) {
-            $this->pdo->prepare('UPDATE notifications SET user_id=?, board_day_id=?, message=?, status=? WHERE id=?')
-                ->execute([$userId, $boardDayValue, $message, $status, (int) $data['id']]);
+            $this->pdo->prepare('UPDATE notifications SET user_id=?, message=?, status=? WHERE id=?')
+                ->execute([$userId, $message, $status, (int) $data['id']]);
             return;
         }
 
-        $this->pdo->prepare('INSERT INTO notifications (user_id, board_day_id, message, status) VALUES (?,?,?,?)')
-            ->execute([$userId, $boardDayValue, $message, $status]);
+        $this->pdo->prepare('INSERT INTO notifications (user_id, message, status) VALUES (?,?,?)')
+            ->execute([$userId, $message, $status]);
     }
 
     public function updateNotificationStatus(int $id, string $status): void
@@ -495,7 +492,7 @@ class BarRepository
 
     public function notifications(): array
     {
-        return $this->pdo->query('SELECT n.*, u.username, bd.day_date FROM notifications n JOIN users u ON u.id=n.user_id LEFT JOIN board_days bd ON bd.id=n.board_day_id ORDER BY n.created_at DESC')->fetchAll();
+        return $this->pdo->query('SELECT n.*, u.username FROM notifications n JOIN users u ON u.id=n.user_id ORDER BY n.created_at DESC')->fetchAll();
     }
 
     public function boardsForConsultation(): array
@@ -530,24 +527,13 @@ class BarRepository
                     n.status,
                     n.created_at,
                     u.username,
-                    bd.day_date,
-                    b.month,
-                    b.year
+                    NULL AS day_date,
+                    NULL AS month,
+                    NULL AS year
                 FROM notifications n
                 JOIN users u ON u.id = n.user_id
-                LEFT JOIN board_days bd ON bd.id = n.board_day_id
-                LEFT JOIN boards b ON b.id = bd.board_id
                 ORDER BY n.created_at DESC';
 
-        return $this->pdo->query($sql)->fetchAll();
-    }
-
-    public function boardDaysForSelect(): array
-    {
-        $sql = 'SELECT bd.id, bd.day_date, b.month, b.year
-                FROM board_days bd
-                JOIN boards b ON b.id=bd.board_id
-                ORDER BY b.year DESC, b.month DESC, bd.day_date DESC';
         return $this->pdo->query($sql)->fetchAll();
     }
 

@@ -124,7 +124,7 @@ class AppController
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && !Auth::isAdmin() && isset($_POST['report_day'])) {
-            $this->repo->createNotification((int) Auth::user()['id'], (int) $_POST['report_day'], trim($_POST['message']));
+            $this->repo->createNotification((int) Auth::user()['id'], trim($_POST['message']));
         }
 
         $days = $this->repo->boardDays($boardId);
@@ -314,7 +314,7 @@ class AppController
             if ($message === '') {
                 $error = 'Inserisci un testo prima di inviare la segnalazione.';
             } else {
-                $this->repo->createNotification((int) Auth::user()['id'], null, $message);
+                $this->repo->createNotification((int) Auth::user()['id'], $message);
                 View::redirect('?action=segnalazione&sent=1');
             }
         }
@@ -378,7 +378,6 @@ class AppController
         View::render('admin/notifications', [
             'notifications' => $this->repo->notifications(),
             'users' => $this->repo->activeUsers(),
-            'boardDays' => $this->repo->boardDaysForSelect(),
             'editing' => $editing,
             'statuses' => ['inviata', 'letto', 'in_corso', 'chiuso'],
         ]);
