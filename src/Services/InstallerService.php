@@ -74,7 +74,7 @@ class InstallerService
             'CREATE TABLE IF NOT EXISTS boards (id INT AUTO_INCREMENT PRIMARY KEY, month INT NOT NULL, year INT NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, UNIQUE KEY uq_board (month, year))',
             'CREATE TABLE IF NOT EXISTS board_days (id INT AUTO_INCREMENT PRIMARY KEY, board_id INT NOT NULL, day_date DATE NOT NULL, weekday_name VARCHAR(30) NOT NULL, recurrence_name VARCHAR(255) NULL, day_type_id INT NULL, notes TEXT NULL, FOREIGN KEY (board_id) REFERENCES boards(id) ON DELETE CASCADE, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE SET NULL)',
             'CREATE TABLE IF NOT EXISTS board_day_shifts (id INT AUTO_INCREMENT PRIMARY KEY, board_day_id INT NOT NULL, daily_shift_config_id INT NULL, start_time TIME NOT NULL, end_time TIME NOT NULL, closes_bar TINYINT(1) NOT NULL DEFAULT 0, priority INT NOT NULL DEFAULT 1, volunteers TEXT NULL, responsabile_chiusura VARCHAR(255) NULL, UNIQUE KEY uq_board_day_shift_priority (board_day_id, priority), FOREIGN KEY (board_day_id) REFERENCES board_days(id) ON DELETE CASCADE, FOREIGN KEY (daily_shift_config_id) REFERENCES daily_shift_config(id) ON DELETE SET NULL)',
-            "CREATE TABLE IF NOT EXISTS notifications (id INT AUTO_INCREMENT PRIMARY KEY, user_id INT NOT NULL, board_day_id INT NULL, message TEXT NOT NULL, status VARCHAR(20) NOT NULL DEFAULT 'inviata', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE, FOREIGN KEY (board_day_id) REFERENCES board_days(id) ON DELETE SET NULL)",
+            "CREATE TABLE IF NOT EXISTS notifications (id INT AUTO_INCREMENT PRIMARY KEY, user_id INT NOT NULL, message TEXT NOT NULL, status VARCHAR(20) NOT NULL DEFAULT 'inviata', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE)",
             'CREATE TABLE IF NOT EXISTS app_settings (setting_key VARCHAR(100) PRIMARY KEY, setting_value VARCHAR(255) NOT NULL)'
         ];
     }
@@ -174,19 +174,26 @@ class InstallerService
 
     private function ensureNotificationsSchema(PDO $pdo): void
     {
+        $this->dropForeignKeyIfExists($pdo, 'notifications', 'board_day_id');
+
         $columns = $pdo->query('SHOW COLUMNS FROM notifications')->fetchAll(PDO::FETCH_ASSOC);
         foreach ($columns as $column) {
-            if ((string) ($column['Field'] ?? '') === 'board_day_id' && strtoupper((string) ($column['Null'] ?? 'NO')) !== 'YES') {
-                $fkStmt = $pdo->query("SELECT CONSTRAINT_NAME FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'notifications' AND COLUMN_NAME = 'board_day_id' AND REFERENCED_TABLE_NAME = 'board_days' LIMIT 1");
-                $fkName = (string) ($fkStmt?->fetchColumn() ?: '');
-                if ($fkName !== '') {
-                    $safeFkName = str_replace('`', '``', $fkName);
-                    $pdo->exec("ALTER TABLE notifications DROP FOREIGN KEY `{$safeFkName}`");
-                }
-                $pdo->exec('ALTER TABLE notifications MODIFY board_day_id INT NULL');
-                $pdo->exec('ALTER TABLE notifications ADD CONSTRAINT notifications_ibfk_2 FOREIGN KEY (board_day_id) REFERENCES board_days(id) ON DELETE SET NULL');
+            if ((string) ($column['Field'] ?? '') === 'board_day_id') {
+                $pdo->exec('ALTER TABLE notifications DROP COLUMN board_day_id');
                 break;
             }
+        }
+    }
+
+    private function dropForeignKeyIfExists(PDO $pdo, string $tableName, string $columnName): void
+    {
+        $stmt = $pdo->prepare("SELECT CONSTRAINT_NAME FROM information_schema.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ? AND REFERENCED_TABLE_NAME IS NOT NULL");
+        $stmt->execute([$tableName, $columnName]);
+
+        foreach ($stmt->fetchAll(PDO::FETCH_COLUMN) as $fkName) {
+            $safeTableName = str_replace('`', '``', $tableName);
+            $safeFkName = str_replace('`', '``', (string) $fkName);
+            $pdo->exec("ALTER TABLE `{$safeTableName}` DROP FOREIGN KEY `{$safeFkName}`");
         }
     }
 
@@ -224,13 +231,13 @@ class InstallerService
     private function seed(PDO $pdo): void
     {
         try {
-            $pdo->exec("INSERT IGNORE INTO day_types (id, name, code, color_hex, is_locked) VALUES (1,'feriale','feriale','#FFFFFF',1),(2,'prefestivo','prefestivo','#FF9090',1),(3,'festivo','festivo','#FF0000',1)");
+            $pdo->exec("INSERT IGNORE INTO day_types (id, name, code, color_hex, is_locked) VALUES (1,'feriale','feriale','#FFFFFF',1),(2,'prefestivo','prefestivo','#FF9090',1),(3,'festivo','festivo','#FF0000',1),(4,'chiuso','chiuso','#A0A0A0',1),(5,'Orario continuato','orario_continuato','#FF0000',1)");
             $adminHash = password_hash('admin', PASSWORD_DEFAULT);
             $userHash = password_hash('user', PASSWORD_DEFAULT);
             $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES ('admin','System','Admin','{$adminHash}','admin','','attivo')");
             $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES ('user','System','User','{$userHash}','user','','attivo')");
-            $pdo->exec("INSERT IGNORE INTO app_settings (setting_key, setting_value) VALUES ('program_name','serBAR'),('program_author','Michele Olimpi'),('program_version','V00.00')");
-            $pdo->exec("INSERT IGNORE INTO daily_shift_config(id, day_type_id, start_time, end_time, closes_bar, priority) VALUES (1,1,'15:00:00','20:00:00',0,1),(2,1,'20:00:00','23:00:00',1,2),(3,2,'15:00:00','20:00:00',0,1),(4,2,'20:00:00','23:00:00',1,2),(5,3,'08:00:00','12:00:00',1,1),(6,3,'15:00:00','20:00:00',0,2),(7,3,'20:00:00','23:00:00',1,3)");
+            $pdo->exec("INSERT IGNORE INTO app_settings (setting_key, setting_value) VALUES ('program_name','serBAR'),('program_author','Michele Olimpi'),('program_version','V00.00'),('login_info1','ACLI Grassina'),('login_info2','Gestione turni')");
+            $pdo->exec("INSERT IGNORE INTO daily_shift_config(id, day_type_id, start_time, end_time, closes_bar, priority) VALUES (1,1,'15:00:00','20:00:00',0,1),(2,1,'20:00:00','23:00:00',1,2),(3,2,'15:00:00','20:00:00',0,1),(4,2,'20:00:00','23:00:00',1,2),(5,3,'08:00:00','12:00:00',1,1),(6,3,'15:00:00','20:00:00',0,2),(7,3,'20:00:00','23:00:00',1,3),(8,4,'00:00:00','00:00:00',0,1),(9,5,'08:00:00','23:00:00',1,1)");
             $this->seedCalendarDays($pdo);
         } catch (Throwable $e) {
             throw new \RuntimeException('Errore popolamento dati iniziali: ' . $e->getMessage(), 0, $e);

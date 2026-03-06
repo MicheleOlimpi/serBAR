@@ -39,19 +39,6 @@ $statusBadgeMap = [
         </select>
       </div>
 
-      <div class="col-md-4">
-        <label class="form-label">Turno (opzionale)</label>
-        <select name="board_day_id" class="form-select">
-          <option value="">Nessun turno</option>
-          <?php foreach ($boardDays as $day): ?>
-            <?php $label = $day['day_date'] . ' - ' . sprintf('%02d/%04d', $day['month'], $day['year']); ?>
-            <option value="<?= (int) $day['id'] ?>" <?= $isEditing && (int) $editingRow['board_day_id'] === (int) $day['id'] ? 'selected' : '' ?>>
-              <?= htmlspecialchars($label) ?>
-            </option>
-          <?php endforeach; ?>
-        </select>
-      </div>
-
       <div class="col-md-2">
         <label class="form-label">Stato</label>
         <select name="status" class="form-select" required>
@@ -83,7 +70,6 @@ $statusBadgeMap = [
         <th>ID</th>
         <th>Creata il</th>
         <th>Utente</th>
-        <th>Turno</th>
         <th>Messaggio</th>
         <th>Stato</th>
         <th>Azioni</th>
@@ -91,7 +77,6 @@ $statusBadgeMap = [
     </thead>
     <tbody>
       <?php foreach ($notifications as $n): ?>
-        <?php $turno = $n['day_date'] ? $n['day_date'] : '-'; ?>
         <?php
           $createdAtFormatted = (string) $n['created_at'];
           if (!empty($n['created_at'])) {
@@ -106,7 +91,6 @@ $statusBadgeMap = [
           <td><?= (int) $n['id'] ?></td>
           <td><?= htmlspecialchars($createdAtFormatted) ?></td>
           <td><?= htmlspecialchars((string) $n['username']) ?></td>
-          <td><?= htmlspecialchars($turno) ?></td>
           <td><?= htmlspecialchars((string) $n['message']) ?></td>
           <td>
             <div class="d-flex align-items-center gap-2">
