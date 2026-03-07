@@ -13,16 +13,16 @@ $adminNavItems = [
     'users' => ['label' => 'Utenti', 'href' => '?action=users'],
     'day_types' => ['label' => 'Tipi giorno', 'href' => '?action=day_types'],
     'shift_config' => ['label' => 'Turni giornalieri', 'href' => '?action=shift_config'],
-    'calendar' => ['label' => 'Calendario', 'href' => '?action=calendar'],
+    'calendar' => ['label' => 'Calendario', 'href' => '?action=calendar', 'icon' => 'fa-calendar-days'],
     'notifications' => ['label' => 'Segnalazioni', 'href' => '?action=notifications'],
-    'setup' => ['label' => 'Setup', 'href' => '?action=setup'],
-    'information' => ['label' => 'Informazioni', 'href' => '?action=information'],
+    'setup' => ['label' => 'Setup', 'href' => '?action=setup', 'icon' => 'fa-gear'],
+    'information' => ['label' => 'Informazioni', 'href' => '?action=information', 'icon' => 'fa-circle-info'],
 ];
 $consultationNavItems = [
     'dashboard' => ['label' => 'dashboard', 'href' => './'],
     'lista_volontari' => ['label' => 'Lista Volontari', 'href' => '?action=dashboard#elenco-telefonico'],
     'segnalazione' => ['label' => 'Segnalazione', 'href' => '?action=segnalazione'],
-    'information' => ['label' => 'Informazioni', 'href' => '?action=information'],
+    'information' => ['label' => 'Informazioni', 'href' => '?action=information', 'icon' => 'fa-message'],
 ];
 ?>
 <!doctype html>
@@ -53,7 +53,9 @@ $consultationNavItems = [
           <?php foreach ($adminNavItems as $action => $item): ?>
             <?php $isActive = $currentAction === $action || ($action === 'dashboard' && ($currentAction === '' || $currentAction === 'dashboard')); ?>
             <li class="nav-item">
-              <a class="nav-link <?= $isActive ? 'active' : '' ?>" href="<?= $item['href'] ?>"><?= htmlspecialchars($item['label']) ?></a>
+              <a class="nav-link <?= $isActive ? 'active' : '' ?>" href="<?= $item['href'] ?>">
+                <?php if (!empty($item['icon'])): ?><i class="fa-solid <?= htmlspecialchars($item['icon']) ?> me-1"></i><?php endif; ?><?= htmlspecialchars($item['label']) ?>
+              </a>
             </li>
           <?php endforeach; ?>
         </ul>
@@ -72,7 +74,9 @@ $consultationNavItems = [
           <?php foreach ($consultationNavItems as $action => $item): ?>
             <?php $isActive = $currentAction === $action || ($action === 'dashboard' && ($currentAction === '' || $currentAction === 'dashboard')); ?>
             <li class="nav-item">
-              <a class="nav-link <?= $isActive ? 'active' : '' ?>" href="<?= $item['href'] ?>"><?= htmlspecialchars($item['label']) ?></a>
+              <a class="nav-link <?= $isActive ? 'active' : '' ?>" href="<?= $item['href'] ?>">
+                <?php if (!empty($item['icon'])): ?><i class="fa-solid <?= htmlspecialchars($item['icon']) ?> me-1"></i><?php endif; ?><?= htmlspecialchars($item['label']) ?>
+              </a>
             </li>
           <?php endforeach; ?>
         </ul>
