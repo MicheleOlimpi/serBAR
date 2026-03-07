@@ -1,5 +1,5 @@
-<h4>Setup interfaccia consultazione</h4>
-<p class="text-muted">Queste opzioni sono già salvabili ma non sono ancora applicate nelle funzionalità di consultazione.</p>
+<h4>SETUP SISTEMA</h4>
+<p class="text-muted">Configura le opzioni dell'interfaccia di consultazione e i testi mostrati nella finestra di login.</p>
 
 <?php if (!empty($saved)): ?>
   <div class="alert alert-success">Impostazioni salvate correttamente.</div>
@@ -18,6 +18,34 @@
     <label class="form-check-label" for="consultation_directory_enabled">
       Abilita elenco telefonico nell'interfaccia di consultazione
     </label>
+  </div>
+
+  <hr>
+
+  <h5 class="mb-3">Opzioni finestra di login</h5>
+
+  <div class="mb-3">
+    <label class="form-label" for="login_info1">Testo login_info1</label>
+    <input
+      class="form-control"
+      type="text"
+      id="login_info1"
+      name="login_info1"
+      maxlength="255"
+      value="<?= htmlspecialchars((string) ($settings['login_info1'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
+    >
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="login_info2">Testo login_info2</label>
+    <input
+      class="form-control"
+      type="text"
+      id="login_info2"
+      name="login_info2"
+      maxlength="255"
+      value="<?= htmlspecialchars((string) ($settings['login_info2'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
+    >
   </div>
 
   <div>
