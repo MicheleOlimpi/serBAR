@@ -10,7 +10,8 @@ use PDOException;
 class BarRepository
 {
     private const NOTIFICATION_STATUSES = ['inviata', 'letto', 'in_corso', 'chiuso'];
-    private const SETUP_KEYS = ['consultation_notifications_enabled', 'consultation_directory_enabled'];
+    private const SETUP_BOOLEAN_KEYS = ['consultation_notifications_enabled', 'consultation_directory_enabled'];
+    private const SETUP_TEXT_KEYS = ['login_info1', 'login_info2'];
     private const PROGRAM_INFO_KEYS = ['program_name', 'program_author', 'program_version'];
     private const LOGIN_INFO_KEYS = ['login_info1', 'login_info2'];
     private const NON_DELETABLE_DAY_TYPE_CODES = ['feriale', 'prefestivo', 'festivo'];
@@ -234,6 +235,8 @@ class BarRepository
         $defaults = [
             'consultation_notifications_enabled' => '1',
             'consultation_directory_enabled' => '1',
+            'login_info1' => 'ACLI Grassina',
+            'login_info2' => 'Gestione turni',
         ];
 
         $stmt = $this->pdo->query('SELECT setting_key, setting_value FROM app_settings');
@@ -243,8 +246,13 @@ class BarRepository
 
         foreach ($stmt->fetchAll() as $row) {
             $key = (string) ($row['setting_key'] ?? '');
-            if (in_array($key, self::SETUP_KEYS, true)) {
+            if (in_array($key, self::SETUP_BOOLEAN_KEYS, true)) {
                 $defaults[$key] = (string) ($row['setting_value'] ?? '1');
+                continue;
+            }
+
+            if (in_array($key, self::SETUP_TEXT_KEYS, true)) {
+                $defaults[$key] = trim((string) ($row['setting_value'] ?? ''));
             }
         }
 
@@ -300,9 +308,13 @@ class BarRepository
     {
         $upsert = $this->pdo->prepare('INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value=VALUES(setting_value)');
 
-        foreach (self::SETUP_KEYS as $settingKey) {
+        foreach (self::SETUP_BOOLEAN_KEYS as $settingKey) {
             $value = !empty($data[$settingKey]) ? '1' : '0';
             $upsert->execute([$settingKey, $value]);
+        }
+
+        foreach (self::SETUP_TEXT_KEYS as $settingKey) {
+            $upsert->execute([$settingKey, trim((string) ($data[$settingKey] ?? ''))]);
         }
     }
 
