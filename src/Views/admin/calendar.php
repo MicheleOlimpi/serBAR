@@ -1,72 +1,136 @@
-<h4>Calendario annuale ricorrenze</h4>
+<?php $currentColor = htmlspecialchars((string) ($editing['color_hex'] ?? '#FFFFFF')); ?>
+<h4>SETUP CALENDARIO</h4>
+<p class="text-muted">Gestione tipologie giorno (tabella <code>day_types</code>).</p>
 
-<p class="text-muted mb-3">Modifica rapida di ricorrenza, santo, tipologia giorno e campo speciale (senza aggiunta o cancellazione record).</p>
+<form method="post" class="row g-2 mb-3">
+  <input type="hidden" name="id" value="<?= (int) ($editing['id'] ?? 0) ?>">
+  <input type="hidden" name="color_hex" id="colorHexInput" value="<?= $currentColor ?>">
 
-<form method="get" class="mb-3 d-flex gap-2">
-  <input type="hidden" name="action" value="calendar">
-  <input type="month" name="month" class="form-control" style="max-width: 220px" value="<?= htmlspecialchars((string) ($_GET['month'] ?? '')) ?>">
-  <button class="btn btn-outline-primary btn-sm">Filtra</button>
-</form>
-
-<form method="post">
-  <div class="table-responsive">
-    <table class="table table-sm align-middle">
-      <thead>
-        <tr>
-          <th>Giorno</th>
-          <th>Ricorrenza</th>
-          <th>Santo</th>
-          <th>Tipologia giorno</th>
-          <th>Speciale</th>
-          <th class="text-end">Azione</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php foreach ($days as $d): ?>
-          <?php $id = (int) $d['id']; ?>
-          <tr>
-            <td class="fw-semibold"><?= htmlspecialchars((string) date('d/m', strtotime((string) $d['day_date']))) ?></td>
-            <td>
-              <input
-                name="row[<?= $id ?>][recurrence_name]"
-                class="form-control form-control-sm"
-                value="<?= htmlspecialchars((string) ($d['recurrence_name'] ?? '')) ?>"
-              >
-            </td>
-            <td>
-              <input
-                name="row[<?= $id ?>][santo]"
-                class="form-control form-control-sm"
-                value="<?= htmlspecialchars((string) ($d['santo'] ?? '')) ?>"
-              >
-            </td>
-            <td>
-              <select name="row[<?= $id ?>][day_type_id]" class="form-select form-select-sm">
-                <option value="">Nessuno</option>
-                <?php foreach ($types as $t): ?>
-                  <option value="<?= (int) $t['id'] ?>" <?= (int) $d['day_type_id'] === (int) $t['id'] ? 'selected' : '' ?>>
-                    <?= htmlspecialchars((string) $t['name']) ?>
-                  </option>
-                <?php endforeach; ?>
-              </select>
-            </td>
-            <td class="text-center">
-              <input
-                type="checkbox"
-                class="form-check-input"
-                name="row[<?= $id ?>][is_special]"
-                value="1"
-                <?= !empty($d['is_special']) ? 'checked' : '' ?>
-              >
-            </td>
-            <td class="text-end">
-              <button class="btn btn-sm btn-outline-primary" type="submit" name="save_id" value="<?= $id ?>">Salva</button>
-            </td>
-          </tr>
-        <?php endforeach; ?>
-      </tbody>
-    </table>
+  <div class="col-md-4"><input name="name" class="form-control" placeholder="nome" required value="<?= htmlspecialchars((string) ($editing['name'] ?? '')) ?>"></div>
+  <div class="col-md-3"><input name="code" class="form-control" placeholder="codice" required value="<?= htmlspecialchars((string) ($editing['code'] ?? '')) ?>"></div>
+  <div class="col-md-2">
+    <button
+      type="button"
+      class="btn btn-outline-secondary w-100"
+      data-bs-toggle="modal"
+      data-bs-target="#colorPickerModal"
+      id="openColorPickerBtn"
+      style="border-width:2px"
+    >
+      Colore
+    </button>
+  </div>
+  <div class="col-md-3 d-flex gap-2">
+    <button class="btn btn-success"><?= $editing ? 'Aggiorna' : 'Aggiungi' ?></button>
+    <?php if ($editing): ?><a class="btn btn-outline-secondary" href="?action=calendar">Annulla</a><?php endif; ?>
   </div>
 </form>
 
+<table class="table table-striped">
+  <tr><th>Nome</th><th>Codice</th><th>Colore</th><th>Azioni</th></tr>
+  <?php foreach ($types as $t): ?>
+    <tr>
+      <td><?= htmlspecialchars((string) $t['name']) ?></td>
+      <td><?= htmlspecialchars((string) $t['code']) ?></td>
+      <td>
+        <span class="d-inline-block rounded border" style="width:28px;height:28px;background-color: <?= htmlspecialchars((string) ($t['color_hex'] ?? '#FFFFFF')) ?>"></span>
+        <small class="text-muted ms-1"><?= htmlspecialchars((string) ($t['color_hex'] ?? '#FFFFFF')) ?></small>
+      </td>
+      <td class="d-flex gap-2">
+        <a class="btn btn-sm btn-outline-primary" href="?action=calendar&edit=<?= (int) $t['id'] ?>">Modifica</a>
+        <?php if (!(int) $t['is_locked'] && !in_array(strtolower((string) $t['code']), ['feriale', 'prefestivo', 'festivo'], true)): ?>
+          <button
+            type="button"
+            class="btn btn-sm btn-danger js-delete-day-type"
+            data-delete-url="?action=calendar&delete=<?= (int) $t['id'] ?>"
+            data-day-type-name="<?= htmlspecialchars((string) $t['name']) ?>"
+            data-bs-toggle="modal"
+            data-bs-target="#deleteDayTypeModal"
+          >
+            Elimina
+          </button>
+        <?php else: ?>
+          <span class="badge bg-secondary">Non eliminabile</span>
+        <?php endif; ?>
+      </td>
+    </tr>
+  <?php endforeach; ?>
+</table>
+
+<div class="modal fade" id="colorPickerModal" tabindex="-1" aria-labelledby="colorPickerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="colorPickerModalLabel">Scegli il colore del tipo giorno</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+      </div>
+      <div class="modal-body">
+        <label for="colorPickerInput" class="form-label">Colore</label>
+        <input type="color" class="form-control form-control-color" id="colorPickerInput" value="<?= $currentColor ?>" title="Scegli colore">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annulla</button>
+        <button type="button" class="btn btn-primary" id="confirmColorBtn" data-bs-dismiss="modal">Conferma</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteDayTypeModal" tabindex="-1" aria-labelledby="deleteDayTypeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteDayTypeModalLabel">Conferma eliminazione</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+      </div>
+      <div class="modal-body d-flex align-items-start gap-3">
+        <i class="fa-solid fa-circle-exclamation text-warning fs-3 mt-1" aria-hidden="true"></i>
+        <p class="mb-0" id="deleteDayTypeMessage">Sei sicuro di voler eliminare questa tipologia di giorno?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">No</button>
+        <a href="#" class="btn btn-danger" id="confirmDeleteDayTypeBtn">Sì, elimina</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <a class="btn btn-outline-dark" href="./">Indietro</a>
+
+<script>
+  (() => {
+    const hiddenInput = document.getElementById('colorHexInput');
+    const pickerInput = document.getElementById('colorPickerInput');
+    const confirmBtn = document.getElementById('confirmColorBtn');
+    const openBtn = document.getElementById('openColorPickerBtn');
+    const deleteButtons = document.querySelectorAll('.js-delete-day-type');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteDayTypeBtn');
+    const deleteMessage = document.getElementById('deleteDayTypeMessage');
+
+    const paintButton = (color) => {
+      openBtn.style.backgroundColor = color;
+      openBtn.style.borderColor = color;
+      openBtn.style.color = '#fff';
+    };
+
+    pickerInput.addEventListener('input', () => paintButton(pickerInput.value));
+    confirmBtn.addEventListener('click', () => {
+      hiddenInput.value = pickerInput.value;
+      paintButton(pickerInput.value);
+    });
+
+    deleteButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        if (!confirmDeleteBtn || !deleteMessage) {
+          return;
+        }
+        const deleteUrl = button.dataset.deleteUrl || '#';
+        const dayTypeName = button.dataset.dayTypeName || 'questa tipologia di giorno';
+        confirmDeleteBtn.setAttribute('href', deleteUrl);
+        deleteMessage.textContent = `Sei sicuro di voler eliminare "${dayTypeName}"?`;
+      });
+    });
+
+    paintButton(hiddenInput.value);
+  })();
+</script>

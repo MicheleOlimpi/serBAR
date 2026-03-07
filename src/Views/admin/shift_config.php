@@ -42,9 +42,52 @@
       <td><?= (int) $shift['priority'] ?></td>
       <td class="d-flex gap-2">
         <a class="btn btn-sm btn-outline-primary" href="?action=shift_config&edit=<?= (int) $shift['id'] ?>">Modifica</a>
-        <a class="btn btn-sm btn-danger" href="?action=shift_config&delete=<?= (int) $shift['id'] ?>" onclick="return confirm('Eliminare questo turno giornaliero?')">Elimina</a>
+        <button
+          type="button"
+          class="btn btn-sm btn-danger js-delete-daily-shift"
+          data-delete-url="?action=shift_config&delete=<?= (int) $shift['id'] ?>"
+          data-bs-toggle="modal"
+          data-bs-target="#deleteDailyShiftModal"
+        >
+          Elimina
+        </button>
       </td>
     </tr>
   <?php endforeach; ?>
 </table>
 <a class="btn btn-outline-dark mt-2" href="./">Indietro</a>
+
+<div class="modal fade" id="deleteDailyShiftModal" tabindex="-1" aria-labelledby="deleteDailyShiftModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteDailyShiftModalLabel">Conferma eliminazione</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+      </div>
+      <div class="modal-body d-flex align-items-start gap-3">
+        <i class="fa-solid fa-circle-exclamation text-danger fs-3 mt-1" aria-hidden="true"></i>
+        <p class="mb-0">Si è sicuri di eliminare?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">No</button>
+        <a href="#" class="btn btn-danger" id="confirmDeleteDailyShiftBtn">Sì, elimina</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (() => {
+    const deleteButtons = document.querySelectorAll('.js-delete-daily-shift');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteDailyShiftBtn');
+
+    deleteButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        if (!confirmDeleteBtn) {
+          return;
+        }
+        confirmDeleteBtn.setAttribute('href', button.dataset.deleteUrl || '#');
+      });
+    });
+  })();
+</script>

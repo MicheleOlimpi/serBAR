@@ -13,7 +13,7 @@ $adminNavItems = [
     'users' => ['label' => 'Utenti', 'href' => '?action=users'],
     'day_types' => ['label' => 'Tipi giorno', 'href' => '?action=day_types'],
     'shift_config' => ['label' => 'Turni giornalieri', 'href' => '?action=shift_config'],
-    'calendar' => ['label' => 'Calendario', 'href' => '?action=calendar'],
+    'calendar' => ['label' => 'Calendario', 'href' => '?action=calendar', 'icon' => 'fa-regular fa-calendar-days'],
     'notifications' => ['label' => 'Segnalazioni', 'href' => '?action=notifications'],
     'setup' => ['label' => 'Setup', 'href' => '?action=setup'],
     'information' => ['label' => 'Informazioni', 'href' => '?action=information'],
@@ -53,7 +53,10 @@ $consultationNavItems = [
           <?php foreach ($adminNavItems as $action => $item): ?>
             <?php $isActive = $currentAction === $action || ($action === 'dashboard' && ($currentAction === '' || $currentAction === 'dashboard')); ?>
             <li class="nav-item">
-              <a class="nav-link <?= $isActive ? 'active' : '' ?>" href="<?= $item['href'] ?>"><?= htmlspecialchars($item['label']) ?></a>
+              <a class="nav-link <?= $isActive ? 'active' : '' ?>" href="<?= $item['href'] ?>">
+                <?php if (!empty($item['icon'])): ?><i class="<?= htmlspecialchars((string) $item['icon']) ?> me-1"></i><?php endif; ?>
+                <?= htmlspecialchars($item['label']) ?>
+              </a>
             </li>
           <?php endforeach; ?>
         </ul>

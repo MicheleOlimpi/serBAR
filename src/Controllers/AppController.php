@@ -249,23 +249,21 @@ class AppController
         $this->guardAdmin();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $calendarDayId = (int) ($_POST['save_id'] ?? 0);
-            $rowData = $_POST['row'][$calendarDayId] ?? null;
-            if ($calendarDayId > 0) {
-                $this->repo->updateCalendarDayDetails(
-                    $calendarDayId,
-                    trim((string) ($rowData['recurrence_name'] ?? '')),
-                    trim((string) ($rowData['santo'] ?? '')),
-                    (int) ($rowData['day_type_id'] ?? 0),
-                    isset($rowData['is_special'])
-                );
-            }
+            $this->repo->saveDayType($_POST);
             View::redirect('?action=calendar');
         }
 
+        if (isset($_GET['delete'])) {
+            $this->repo->deleteDayType((int) $_GET['delete']);
+            View::redirect('?action=calendar');
+        }
+
+        $editingId = isset($_GET['edit']) ? (int) $_GET['edit'] : 0;
+        $editing = $editingId > 0 ? $this->repo->dayTypeById($editingId) : null;
+
         View::render('admin/calendar', [
-            'days' => $this->repo->calendarDays($_GET['month'] ?? null),
             'types' => $this->repo->dayTypes(),
+            'editing' => $editing,
         ]);
     }
 
