@@ -1,6 +1,6 @@
-<h4>Calendario annuale ricorrenze</h4>
+<h4>CALENDARIO</h4>
 
-<p class="text-muted mb-3">Modifica rapida di ricorrenza, santo, tipologia giorno e campo speciale (senza aggiunta o cancellazione record).</p>
+<p class="text-muted mb-3">Modifica rapida di ricorrenze, santi, tipologie giorno e giorni speciali.</p>
 
 <form method="get" class="mb-3 d-flex gap-2">
   <input type="hidden" name="action" value="calendar">
@@ -13,11 +13,11 @@
     <table class="table table-sm align-middle">
       <thead>
         <tr>
-          <th>Giorno</th>
-          <th>Ricorrenza</th>
-          <th>Santo</th>
-          <th>Tipologia giorno</th>
-          <th>Speciale</th>
+          <th>GIORNO</th>
+          <th>RICORRENZE</th>
+          <th>SANTO</th>
+          <th>TIPO GIORNO</th>
+          <th>SPECIALE</th>
           <th class="text-end">Azione</th>
         </tr>
       </thead>
