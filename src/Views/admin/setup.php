@@ -8,7 +8,7 @@
 <form method="post" class="card card-body bg-white border-0 shadow-sm mb-3" style="max-width: 720px;">
   <?php $consultationEnabled = !empty($settings['consultation_interface_enabled']) && $settings['consultation_interface_enabled'] === '1'; ?>
 
-  <h5 class="mb-3">Interfaccia di cosnultazione</h5>
+  <h5 class="mb-3">Interfaccia di consultazione</h5>
   
   <div class="form-check form-switch mb-3">
     <input class="form-check-input" type="checkbox" role="switch" id="consultation_interface_enabled" name="consultation_interface_enabled" <?= $consultationEnabled ? 'checked' : '' ?>>
