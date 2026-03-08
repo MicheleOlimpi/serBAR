@@ -58,7 +58,6 @@ $statusLabels = [
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body p-4">
         <h5 class="card-title mb-3">TURNI PUBBLICATI</h5>
-        <p class="text-muted small">Scegli mese/anno dalla lista in ordine decrescente.</p>
 
         <?php if (empty($boards)): ?>
           <div class="alert alert-info mb-0">Nessun turno disponibile al momento.</div>
