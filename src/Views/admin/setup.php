@@ -6,18 +6,29 @@
 <?php endif; ?>
 
 <form method="post" class="card card-body bg-white border-0 shadow-sm mb-3" style="max-width: 720px;">
+  <?php $consultationEnabled = !empty($settings['consultation_interface_enabled']) && $settings['consultation_interface_enabled'] === '1'; ?>
+
   <div class="form-check form-switch mb-3">
-    <input class="form-check-input" type="checkbox" role="switch" id="consultation_notifications_enabled" name="consultation_notifications_enabled" <?= !empty($settings['consultation_notifications_enabled']) && $settings['consultation_notifications_enabled'] === '1' ? 'checked' : '' ?>>
-    <label class="form-check-label" for="consultation_notifications_enabled">
-      Abilita segnalazioni nell'interfaccia di consultazione
+    <input class="form-check-input" type="checkbox" role="switch" id="consultation_interface_enabled" name="consultation_interface_enabled" <?= $consultationEnabled ? 'checked' : '' ?>>
+    <label class="form-check-label" for="consultation_interface_enabled">
+      Abilita interfaccia di consultazione
     </label>
   </div>
 
   <div class="form-check form-switch mb-3">
-    <input class="form-check-input" type="checkbox" role="switch" id="consultation_directory_enabled" name="consultation_directory_enabled" <?= !empty($settings['consultation_directory_enabled']) && $settings['consultation_directory_enabled'] === '1' ? 'checked' : '' ?>>
+    <input class="form-check-input" type="checkbox" role="switch" id="consultation_notifications_enabled" name="consultation_notifications_enabled" <?= !empty($settings['consultation_notifications_enabled']) && $settings['consultation_notifications_enabled'] === '1' ? 'checked' : '' ?> <?= $consultationEnabled ? '' : 'disabled' ?>>
+    <label class="form-check-label" for="consultation_notifications_enabled">
+      Abilita segnalazioni nell'interfaccia di consultazione
+    </label>
+    <div class="form-text">Disponibile solo con interfaccia di consultazione attiva (funzionalità non ancora sviluppata).</div>
+  </div>
+
+  <div class="form-check form-switch mb-3">
+    <input class="form-check-input" type="checkbox" role="switch" id="consultation_directory_enabled" name="consultation_directory_enabled" <?= !empty($settings['consultation_directory_enabled']) && $settings['consultation_directory_enabled'] === '1' ? 'checked' : '' ?> <?= $consultationEnabled ? '' : 'disabled' ?>>
     <label class="form-check-label" for="consultation_directory_enabled">
       Abilita elenco telefonico nell'interfaccia di consultazione
     </label>
+    <div class="form-text">Disponibile solo con interfaccia di consultazione attiva (funzionalità non ancora sviluppata).</div>
   </div>
 
   <hr>
