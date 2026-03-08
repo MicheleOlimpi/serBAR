@@ -10,7 +10,7 @@ use PDOException;
 class BarRepository
 {
     private const NOTIFICATION_STATUSES = ['inviata', 'letto', 'in_corso', 'chiuso'];
-    private const SETUP_BOOLEAN_KEYS = ['consultation_notifications_enabled', 'consultation_directory_enabled'];
+    private const SETUP_BOOLEAN_KEYS = ['consultation_interface_enabled', 'consultation_notifications_enabled', 'consultation_directory_enabled'];
     private const SETUP_TEXT_KEYS = ['login_info1', 'login_info2'];
     private const PROGRAM_INFO_KEYS = ['program_name', 'program_author', 'program_version'];
     private const LOGIN_INFO_KEYS = ['login_info1', 'login_info2'];
@@ -233,6 +233,7 @@ class BarRepository
     public function setupSettings(): array
     {
         $defaults = [
+            'consultation_interface_enabled' => '1',
             'consultation_notifications_enabled' => '1',
             'consultation_directory_enabled' => '1',
             'login_info1' => 'ACLI Grassina',

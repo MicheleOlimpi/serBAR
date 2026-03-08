@@ -22,6 +22,18 @@ class AppController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user = $this->repo->findUserByUsername(trim($_POST['username'] ?? ''));
             if ($user && $user['status'] === 'attivo' && password_verify($_POST['password'] ?? '', $user['password_hash'])) {
+                if (($user['role'] ?? '') !== 'admin') {
+                    $setupSettings = $this->repo->setupSettings();
+                    if (($setupSettings['consultation_interface_enabled'] ?? '1') !== '1') {
+                        View::render('auth/login', [
+                            'error' => 'Interfaccia di consultazione disabilitata.',
+                            'loginInfo1' => $loginInfo['login_info1'] ?? '',
+                            'loginInfo2' => $loginInfo['login_info2'] ?? '',
+                        ]);
+                        return;
+                    }
+                }
+
                 Auth::login($user);
                 View::redirect('./');
             }
@@ -74,6 +86,12 @@ class AppController
             return;
         }
 
+        $setupSettings = $this->repo->setupSettings();
+        if (($setupSettings['consultation_interface_enabled'] ?? '1') !== '1') {
+            Auth::logout();
+            View::redirect('?action=login');
+        }
+
         $boards = $this->repo->boardsForConsultation();
         $selectedBoardId = (int) ($_GET['board_id'] ?? ($boards[0]['id'] ?? 0));
         $selectedBoard = null;
@@ -109,6 +127,7 @@ class AppController
             'notifications' => $this->repo->consultationNotifications(),
             'greeting' => $greeting,
             'username' => (string) (Auth::user()['username'] ?? ''),
+            'setupSettings' => $setupSettings,
         ]);
     }
 
@@ -120,8 +139,14 @@ class AppController
             View::redirect('./');
         }
 
+        $setupSettings = $this->repo->setupSettings();
+        if (($setupSettings['consultation_interface_enabled'] ?? '1') !== '1' || ($setupSettings['consultation_directory_enabled'] ?? '1') !== '1') {
+            View::redirect('./');
+        }
+
         View::render('consultation/lista_volontari', [
             'directoryUsers' => $this->repo->consultationDirectory(),
+            'setupSettings' => $setupSettings,
         ]);
     }
 
@@ -316,8 +341,11 @@ class AppController
         $this->guard();
 
         if (!Auth::isAdmin()) {
+            $setupSettings = $this->repo->setupSettings();
+
             View::render('consultation/information', [
                 'programInfo' => $this->repo->programInfoSettings(),
+                'setupSettings' => $setupSettings,
             ]);
 
             return;
@@ -356,6 +384,11 @@ class AppController
             View::redirect('./');
         }
 
+        $setupSettings = $this->repo->setupSettings();
+        if (($setupSettings['consultation_interface_enabled'] ?? '1') !== '1' || ($setupSettings['consultation_notifications_enabled'] ?? '1') !== '1') {
+            View::redirect('./');
+        }
+
         $error = '';
         $message = '';
 
@@ -373,6 +406,7 @@ class AppController
             'error' => $error,
             'message' => $message,
             'sent' => isset($_GET['sent']),
+            'setupSettings' => $setupSettings,
         ]);
     }
 

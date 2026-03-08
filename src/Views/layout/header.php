@@ -20,10 +20,18 @@ $adminNavItems = [
 ];
 $consultationNavItems = [
     'dashboard' => ['label' => 'dashboard', 'href' => './'],
-    'lista_volontari' => ['label' => 'Lista Volontari', 'href' => '?action=lista_volontari', 'icon' => 'fa-users'],
-    'segnalazione' => ['label' => 'Segnalazione', 'href' => '?action=segnalazione', 'icon' => 'fa-message'],
     'information' => ['label' => 'Informazioni', 'href' => '?action=information', 'icon' => 'fa-circle-info'],
 ];
+
+if ($u && !Auth::isAdmin()) {
+    $consultationEnabled = ($setupSettings['consultation_interface_enabled'] ?? '1') === '1';
+    if ($consultationEnabled && ($setupSettings['consultation_directory_enabled'] ?? '1') === '1') {
+        $consultationNavItems['lista_volontari'] = ['label' => 'Lista Volontari', 'href' => '?action=lista_volontari', 'icon' => 'fa-users'];
+    }
+    if ($consultationEnabled && ($setupSettings['consultation_notifications_enabled'] ?? '1') === '1') {
+        $consultationNavItems['segnalazione'] = ['label' => 'Segnalazione', 'href' => '?action=segnalazione', 'icon' => 'fa-message'];
+    }
+}
 ?>
 <!doctype html>
 <html lang="it">
