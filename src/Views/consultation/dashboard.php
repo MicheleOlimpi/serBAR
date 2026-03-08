@@ -20,6 +20,15 @@ $formatBoardLabel = static function (int $month, int $year) use ($monthNames): s
     return $monthLabel . ' ' . $year;
 };
 
+$formatWeekdayLabel = static function (string $weekdayName): string {
+    $weekdayName = trim($weekdayName);
+    if ($weekdayName === '') {
+        return '-';
+    }
+
+    return function_exists('mb_substr') ? mb_substr($weekdayName, 0, 3) : substr($weekdayName, 0, 3);
+};
+
 $selectedBoardShifts = [];
 if (!empty($selectedBoard)) {
     $selectedBoardId = (int) ($selectedBoard['id'] ?? 0);
@@ -41,11 +50,7 @@ foreach ($selectedBoardShifts as $shift) {
         }
     }
 
-    $weekdayLabel = '-';
-    $weekdayName = trim((string) ($shift['weekday_name'] ?? ''));
-    if ($weekdayName !== '') {
-        $weekdayLabel = $weekdayName;
-    }
+    $weekdayLabel = $formatWeekdayLabel((string) ($shift['weekday_name'] ?? ''));
 
     $startTime = trim((string) ($shift['start_time'] ?? ''));
     $startTime = $startTime !== '' ? substr($startTime, 0, 5) : '-';
