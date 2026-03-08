@@ -20,7 +20,7 @@ $adminNavItems = [
 ];
 $consultationNavItems = [
     'dashboard' => ['label' => 'dashboard', 'href' => './'],
-    'lista_volontari' => ['label' => 'Lista Volontari', 'href' => '?action=dashboard#elenco-telefonico', 'icon' => 'fa-users'],
+    'lista_volontari' => ['label' => 'Lista Volontari', 'href' => '?action=lista_volontari', 'icon' => 'fa-users'],
     'segnalazione' => ['label' => 'Segnalazione', 'href' => '?action=segnalazione', 'icon' => 'fa-message'],
     'information' => ['label' => 'Informazioni', 'href' => '?action=information', 'icon' => 'fa-circle-info'],
 ];

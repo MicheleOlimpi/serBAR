@@ -51,6 +51,7 @@ $routes = [
     'setup' => 'setup',
     'information' => 'information',
     'segnalazione' => 'segnalazione',
+    'lista_volontari' => 'listaVolontari',
     'license' => 'license',
 ];
 

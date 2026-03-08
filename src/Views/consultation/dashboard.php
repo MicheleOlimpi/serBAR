@@ -50,56 +50,15 @@ $statusLabels = [
     <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
       <div>
         <h3 class="mb-2">DASHBOARD</h3>
-        <p class="text-muted mb-0">Visualizza i turni pubblicati, l'elenco telefonico e tutte le segnalazioni inviate dagli utenti.</p>
-      </div>
-    <div class="d-flex flex-wrap gap-2">
-        <a class="btn btn-outline-secondary" href="#elenco-telefonico">Elenco telefonico utenti</a>
+        <p class="text-muted mb-0">Visualizza i turni pubblicati e tutte le segnalazioni inviate dagli utenti.</p>
       </div>
     </div>
   </div>
 </div>
 
-<div class="card border-0 shadow-sm mb-4" id="elenco-telefonico">
+<div class="card border-0 shadow-sm mb-4">
   <div class="card-body p-4">
-    <h5 class="card-title mb-3">Elenco telefonico utenti</h5>
-    <p class="text-muted small">Elenco in sola lettura ordinato alfabeticamente per cognome e nome.</p>
-
-    <?php if (empty($directoryUsers)): ?>
-      <div class="alert alert-info mb-0">Nessun utente disponibile in rubrica.</div>
-    <?php else: ?>
-      <div class="table-responsive">
-        <table class="table table-sm align-middle mb-0">
-          <thead class="table-light">
-            <tr>
-              <th>Cognome</th>
-              <th>Nome</th>
-              <th>Telefono</th>
-              <th class="text-end">Azione</th>
-            </tr>
-          </thead>
-          <tbody>
-            <?php foreach ($directoryUsers as $directoryUser): ?>
-              <?php $rawPhone = trim((string) ($directoryUser['phone'] ?? '')); ?>
-              <?php $callPhone = preg_replace('/[^0-9+]/', '', $rawPhone); ?>
-              <tr>
-                <td><?= htmlspecialchars((string) $directoryUser['last_name']) ?></td>
-                <td><?= htmlspecialchars((string) $directoryUser['first_name']) ?></td>
-                <td><?= htmlspecialchars($rawPhone !== '' ? $rawPhone : '-') ?></td>
-                <td class="text-end">
-                  <?php if ($callPhone !== ''): ?>
-                    <a class="btn btn-sm btn-outline-success" href="tel:<?= htmlspecialchars($callPhone) ?>">
-                      <i class="fa-solid fa-phone me-1"></i>Chiama
-                    </a>
-                  <?php else: ?>
-                    <button class="btn btn-sm btn-outline-secondary" type="button" disabled>Chiama</button>
-                  <?php endif; ?>
-                </td>
-              </tr>
-            <?php endforeach; ?>
-          </tbody>
-        </table>
-      </div>
-    <?php endif; ?>
+    <h5 class="card-title mb-0"><?= htmlspecialchars((string) $greeting) ?> <?= htmlspecialchars((string) $username) ?>, benvenuto.</h5>
   </div>
 </div>
 
