@@ -30,6 +30,43 @@ if (!empty($selectedBoard)) {
     }
 }
 
+$groupedBoardShifts = [];
+foreach ($selectedBoardShifts as $shift) {
+    $dayNumber = '-';
+    if (!empty($shift['day_date'])) {
+        try {
+            $dayNumber = (new DateTimeImmutable((string) $shift['day_date']))->format('d');
+        } catch (Exception) {
+            $dayNumber = (string) $shift['day_date'];
+        }
+    }
+
+    $weekdayShort = '-';
+    $weekdayName = trim((string) ($shift['weekday_name'] ?? ''));
+    if ($weekdayName !== '') {
+        $weekdayShort = function_exists('mb_substr')
+            ? mb_substr($weekdayName, 0, 2)
+            : substr($weekdayName, 0, 2);
+    }
+
+    $startTime = trim((string) ($shift['start_time'] ?? ''));
+    $startTime = $startTime !== '' ? substr($startTime, 0, 5) : '-';
+
+    $groupKey = $dayNumber . '|' . $weekdayShort;
+    if (!isset($groupedBoardShifts[$groupKey])) {
+        $groupedBoardShifts[$groupKey] = [
+            'day_number' => $dayNumber,
+            'weekday_short' => $weekdayShort,
+            'shifts' => [],
+        ];
+    }
+
+    $groupedBoardShifts[$groupKey]['shifts'][] = [
+        'start_time' => $startTime,
+        'volunteers' => trim((string) ($shift['volunteers'] ?? '')),
+    ];
+}
+
 $statusClassMap = [
     'inviata' => 'text-bg-secondary',
     'letto' => 'text-bg-info',
@@ -80,48 +117,35 @@ $statusLabels = [
                 <h6 class="fw-semibold mb-2">Tabellone <?= htmlspecialchars($selectedBoardTitle) ?></h6>
               <?php endif; ?>
 
-              <?php if (empty($selectedBoardShifts)): ?>
+              <?php if (empty($groupedBoardShifts)): ?>
                 <div class="alert alert-info mb-0">Nessun turno disponibile per il mese selezionato.</div>
               <?php else: ?>
-                <div class="table-responsive border rounded">
-                  <table class="table table-sm align-middle mb-0">
-                    <thead class="table-light">
-                      <tr>
-                        <th>N°</th>
-                        <th>Giorno</th>
-                        <th>Inizio</th>
-                        <th>Volontari</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <?php foreach ($selectedBoardShifts as $s): ?>
-                        <?php
-                          $dayNumber = '-';
-                          if (!empty($s['day_date'])) {
-                              try {
-                                  $dayNumber = (new DateTimeImmutable((string) $s['day_date']))->format('d');
-                              } catch (Exception) {
-                                  $dayNumber = (string) $s['day_date'];
-                              }
-                          }
-
-                          $weekdayShort = '-';
-                          $weekdayName = trim((string) ($s['weekday_name'] ?? ''));
-                          if ($weekdayName !== '') {
-                              $weekdayShort = function_exists('mb_substr')
-                                  ? mb_substr($weekdayName, 0, 3)
-                                  : substr($weekdayName, 0, 3);
-                          }
-                        ?>
-                        <tr>
-                          <td><?= htmlspecialchars($dayNumber) ?></td>
-                          <td><?= htmlspecialchars($weekdayShort) ?></td>
-                          <td><?= htmlspecialchars((string) ($s['start_time'] ?: '-')) ?></td>
-                          <td><?= htmlspecialchars(trim((string) ($s['volunteers'] ?? '')) !== '' ? (string) $s['volunteers'] : '-') ?></td>
-                        </tr>
-                      <?php endforeach; ?>
-                    </tbody>
-                  </table>
+                <div class="vstack gap-3">
+                  <?php foreach ($groupedBoardShifts as $group): ?>
+                    <div class="border rounded overflow-hidden">
+                      <div class="bg-light px-3 py-2 fw-semibold">
+                        <?= htmlspecialchars($group['day_number']) ?> - <?= htmlspecialchars($group['weekday_short']) ?>
+                      </div>
+                      <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0">
+                          <thead>
+                            <tr>
+                              <th>Inizio</th>
+                              <th>Volontari</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <?php foreach ($group['shifts'] as $groupShift): ?>
+                              <tr>
+                                <td><?= htmlspecialchars($groupShift['start_time']) ?></td>
+                                <td><?= htmlspecialchars($groupShift['volunteers'] !== '' ? $groupShift['volunteers'] : '-') ?></td>
+                              </tr>
+                            <?php endforeach; ?>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  <?php endforeach; ?>
                 </div>
               <?php endif; ?>
             </div>
