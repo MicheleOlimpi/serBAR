@@ -57,7 +57,7 @@ $statusLabels = [
   <div class="col-12 col-xl-7">
     <div class="card border-0 shadow-sm h-100">
       <div class="card-body p-4">
-        <h5 class="card-title mb-3">Turni pubblicati</h5>
+        <h5 class="card-title mb-3">TURNI PUBBLICATI</h5>
         <p class="text-muted small">Scegli mese/anno dalla lista in ordine decrescente.</p>
 
         <?php if (empty($boards)): ?>
@@ -135,7 +135,7 @@ $statusLabels = [
   <div class="col-12 col-xl-5">
     <div class="card border-0 shadow-sm">
       <div class="card-body p-4">
-        <h5 class="card-title mb-3">Segnalazioni di tutti gli utenti</h5>
+        <h5 class="card-title mb-3">SEGNALAZIONI</h5>
         <?php if (empty($notifications)): ?>
           <div class="alert alert-info mb-0">Non ci sono ancora segnalazioni.</div>
         <?php else: ?>
