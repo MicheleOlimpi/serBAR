@@ -115,11 +115,6 @@ $statusLabels = [
             </div>
 
             <div class="col-12 col-lg-8">
-              <?php if (!empty($selectedBoard)): ?>
-                <?php $selectedBoardTitle = $formatBoardLabel((int) $selectedBoard['month'], (int) $selectedBoard['year']); ?>
-                <h6 class="fw-semibold mb-2">Tabellone <?= htmlspecialchars($selectedBoardTitle) ?></h6>
-              <?php endif; ?>
-
               <?php if (empty($groupedBoardShifts)): ?>
                 <div class="alert alert-info mb-0">Nessun turno disponibile per il mese selezionato.</div>
               <?php else: ?>
