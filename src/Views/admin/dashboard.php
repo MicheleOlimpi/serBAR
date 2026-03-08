@@ -30,6 +30,15 @@ $statusBadgeMap = [
 
 ?>
 <h1 class="h3 mb-3">DASHBOARD</h1>
+<div class="card border-0 shadow-sm mb-3">
+  <div class="card-body">
+    <?php if (($notificationCount ?? 0) > 0): ?>
+      <p class="mb-0"><?= htmlspecialchars((string) ($greeting ?? '')) ?> <?= htmlspecialchars((string) ($username ?? '')) ?>, benvenuto. Ci sono <?= (int) ($notificationCount ?? 0) ?> segnalazioni da verificare.</p>
+    <?php else: ?>
+      <p class="mb-0">Non ci sono segnalazioni da verificare.</p>
+    <?php endif; ?>
+  </div>
+</div>
 <div class="row">
   <div class="col-md-6 mb-3">
     <div class="card h-100">
