@@ -128,12 +128,6 @@ $statusLabels = [
                         </div>
                         <div class="table-responsive flex-grow-1">
                           <table class="table table-sm align-middle mb-0">
-                            <thead>
-                              <tr>
-                                <th>Inizio</th>
-                                <th>Volontari</th>
-                              </tr>
-                            </thead>
                             <tbody>
                               <?php foreach ($group['shifts'] as $groupShift): ?>
                                 <tr>
@@ -167,7 +161,7 @@ $statusLabels = [
             <table class="table table-sm align-middle mb-0">
               <thead class="table-light">
                 <tr>
-                  <th>Data invio</th>
+                  <th>Data</th>
                   <th>Utente</th>
                   <th>Testo (prime 20)</th>
                   <th>Stato</th>
