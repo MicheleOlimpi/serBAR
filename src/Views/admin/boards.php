@@ -19,7 +19,7 @@ $monthNames = [
 ];
 ?>
 
-<h4>Creazione tabellone turni</h4>
+<h4>GESTIONE TABELLONI</h4>
 <form method="post" class="row g-2 mb-3">
   <input type="hidden" name="create_board" value="1">
   <div class="col-md-3">
