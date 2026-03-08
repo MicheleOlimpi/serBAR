@@ -45,16 +45,7 @@ $statusLabels = [
 ];
 ?>
 
-<div class="card border-0 shadow-sm mb-4">
-  <div class="card-body p-4">
-    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
-      <div>
-        <h3 class="mb-2">DASHBOARD</h3>
-        <p class="text-muted mb-0">Visualizza i turni pubblicati e tutte le segnalazioni inviate dagli utenti.</p>
-      </div>
-    </div>
-  </div>
-</div>
+<h1 class="h3 mb-4">DASHBOARD</h1>
 
 <div class="card border-0 shadow-sm mb-4">
   <div class="card-body p-4">
@@ -124,14 +115,6 @@ $statusLabels = [
   </div>
 
   <div class="col-12 col-xl-5">
-    <div class="card border-0 shadow-sm mb-4">
-      <div class="card-body p-4">
-        <h5 class="card-title mb-2">Invio segnalazioni</h5>
-        <p class="text-muted mb-3">Puoi inviare una segnalazione libera dalla voce <strong>Segnalazione</strong> nella barra di navigazione.</p>
-        <a class="btn btn-outline-primary" href="?action=segnalazione">Vai a Segnalazione</a>
-      </div>
-    </div>
-
     <div class="card border-0 shadow-sm">
       <div class="card-body p-4">
         <h5 class="card-title mb-3">Segnalazioni di tutti gli utenti</h5>
