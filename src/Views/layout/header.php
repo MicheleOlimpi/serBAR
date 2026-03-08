@@ -14,15 +14,15 @@ $adminNavItems = [
     'day_types' => ['label' => 'Tipi giorno', 'href' => '?action=day_types'],
     'shift_config' => ['label' => 'Turni giornalieri', 'href' => '?action=shift_config'],
     'calendar' => ['label' => 'Calendario', 'href' => '?action=calendar', 'icon' => 'fa-calendar-days'],
-    'notifications' => ['label' => 'Segnalazioni', 'href' => '?action=notifications'],
+    'notifications' => ['label' => 'Segnalazioni', 'href' => '?action=notifications', 'icon' => 'fa-message'],
     'setup' => ['label' => 'Setup', 'href' => '?action=setup', 'icon' => 'fa-gear'],
     'information' => ['label' => 'Informazioni', 'href' => '?action=information', 'icon' => 'fa-circle-info'],
 ];
 $consultationNavItems = [
     'dashboard' => ['label' => 'dashboard', 'href' => './'],
     'lista_volontari' => ['label' => 'Lista Volontari', 'href' => '?action=dashboard#elenco-telefonico'],
-    'segnalazione' => ['label' => 'Segnalazione', 'href' => '?action=segnalazione'],
-    'information' => ['label' => 'Informazioni', 'href' => '?action=information', 'icon' => 'fa-message'],
+    'segnalazione' => ['label' => 'Segnalazione', 'href' => '?action=segnalazione', 'icon' => 'fa-message'],
+    'information' => ['label' => 'Informazioni', 'href' => '?action=information', 'icon' => 'fa-circle-info'],
 ];
 ?>
 <!doctype html>
