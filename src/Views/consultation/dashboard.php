@@ -88,19 +88,37 @@ $statusLabels = [
                   <table class="table table-sm align-middle mb-0">
                     <thead class="table-light">
                       <tr>
-                        <th>Data</th>
+                        <th>N°</th>
                         <th>Giorno</th>
-                        <th>Tipo</th>
-                        <th>Note</th>
+                        <th>Inizio</th>
+                        <th>Volontari</th>
                       </tr>
                     </thead>
                     <tbody>
                       <?php foreach ($selectedBoardShifts as $s): ?>
+                        <?php
+                          $dayNumber = '-';
+                          if (!empty($s['day_date'])) {
+                              try {
+                                  $dayNumber = (new DateTimeImmutable((string) $s['day_date']))->format('d');
+                              } catch (Exception) {
+                                  $dayNumber = (string) $s['day_date'];
+                              }
+                          }
+
+                          $weekdayShort = '-';
+                          $weekdayName = trim((string) ($s['weekday_name'] ?? ''));
+                          if ($weekdayName !== '') {
+                              $weekdayShort = function_exists('mb_substr')
+                                  ? mb_substr($weekdayName, 0, 3)
+                                  : substr($weekdayName, 0, 3);
+                          }
+                        ?>
                         <tr>
-                          <td><?= htmlspecialchars($s['day_date']) ?></td>
-                          <td><?= htmlspecialchars($s['weekday_name']) ?></td>
-                          <td><?= htmlspecialchars((string) $s['day_type_name']) ?></td>
-                          <td><?= htmlspecialchars((string) $s['notes']) ?></td>
+                          <td><?= htmlspecialchars($dayNumber) ?></td>
+                          <td><?= htmlspecialchars($weekdayShort) ?></td>
+                          <td><?= htmlspecialchars((string) ($s['start_time'] ?: '-')) ?></td>
+                          <td><?= htmlspecialchars(trim((string) ($s['volunteers'] ?? '')) !== '' ? (string) $s['volunteers'] : '-') ?></td>
                         </tr>
                       <?php endforeach; ?>
                     </tbody>

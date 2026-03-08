@@ -544,12 +544,12 @@ class BarRepository
                     b.year,
                     bd.day_date,
                     bd.weekday_name,
-                    dt.name AS day_type_name,
-                    bd.notes
+                    bds.start_time,
+                    bds.volunteers
                 FROM boards b
                 JOIN board_days bd ON bd.board_id = b.id
-                LEFT JOIN day_types dt ON dt.id = bd.day_type_id
-                ORDER BY b.year DESC, b.month DESC, bd.day_date';
+                LEFT JOIN board_day_shifts bds ON bds.board_day_id = bd.id
+                ORDER BY b.year DESC, b.month DESC, bd.day_date, bds.priority ASC, bds.start_time ASC';
 
         return $this->pdo->query($sql)->fetchAll();
     }
