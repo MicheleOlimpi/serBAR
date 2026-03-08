@@ -47,6 +47,15 @@ foreach ($selectedBoardShifts as $shift) {
         $weekdayShort = function_exists('mb_substr')
             ? mb_substr($weekdayName, 0, 2)
             : substr($weekdayName, 0, 2);
+        $weekdayShort = function_exists('mb_strtoupper')
+            ? mb_strtoupper($weekdayShort)
+            : strtoupper($weekdayShort);
+    }
+
+    $dayTypeColor = '#f8f9fa';
+    $rawDayTypeColor = trim((string) ($shift['day_type_color'] ?? ''));
+    if (preg_match('/^#[0-9a-fA-F]{6}$/', $rawDayTypeColor) === 1) {
+        $dayTypeColor = $rawDayTypeColor;
     }
 
     $startTime = trim((string) ($shift['start_time'] ?? ''));
@@ -57,6 +66,7 @@ foreach ($selectedBoardShifts as $shift) {
         $groupedBoardShifts[$groupKey] = [
             'day_number' => $dayNumber,
             'weekday_short' => $weekdayShort,
+            'day_type_color' => $dayTypeColor,
             'shifts' => [],
         ];
     }
@@ -123,7 +133,7 @@ $statusLabels = [
                 <div class="vstack gap-3">
                   <?php foreach ($groupedBoardShifts as $group): ?>
                     <div class="border rounded overflow-hidden">
-                      <div class="bg-light px-3 py-2 fw-semibold">
+                      <div class="px-3 py-2 fw-semibold" style="background-color: <?= htmlspecialchars($group['day_type_color']) ?>;">
                         <?= htmlspecialchars($group['day_number']) ?> - <?= htmlspecialchars($group['weekday_short']) ?>
                       </div>
                       <div class="table-responsive">
