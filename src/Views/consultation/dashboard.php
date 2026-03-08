@@ -41,22 +41,20 @@ foreach ($selectedBoardShifts as $shift) {
         }
     }
 
-    $weekdayShort = '-';
+    $weekdayLabel = '-';
     $weekdayName = trim((string) ($shift['weekday_name'] ?? ''));
     if ($weekdayName !== '') {
-        $weekdayShort = function_exists('mb_substr')
-            ? mb_substr($weekdayName, 0, 2)
-            : substr($weekdayName, 0, 2);
+        $weekdayLabel = $weekdayName;
     }
 
     $startTime = trim((string) ($shift['start_time'] ?? ''));
     $startTime = $startTime !== '' ? substr($startTime, 0, 5) : '-';
 
-    $groupKey = $dayNumber . '|' . $weekdayShort;
+    $groupKey = $dayNumber . '|' . $weekdayLabel;
     if (!isset($groupedBoardShifts[$groupKey])) {
         $groupedBoardShifts[$groupKey] = [
             'day_number' => $dayNumber,
-            'weekday_short' => $weekdayShort,
+            'weekday_label' => $weekdayLabel,
             'shifts' => [],
         ];
     }
@@ -123,26 +121,29 @@ $statusLabels = [
                 <div class="vstack gap-3">
                   <?php foreach ($groupedBoardShifts as $group): ?>
                     <div class="border rounded overflow-hidden">
-                      <div class="bg-light px-3 py-2 fw-semibold">
-                        <?= htmlspecialchars($group['day_number']) ?> - <?= htmlspecialchars($group['weekday_short']) ?>
-                      </div>
-                      <div class="table-responsive">
-                        <table class="table table-sm align-middle mb-0">
-                          <thead>
-                            <tr>
-                              <th>Inizio</th>
-                              <th>Volontari</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <?php foreach ($group['shifts'] as $groupShift): ?>
+                      <div class="d-flex">
+                        <div class="bg-light border-end d-flex flex-column justify-content-center align-items-center px-3 py-2 text-center" style="min-width: 84px;">
+                          <span class="fs-4 fw-bold lh-1"><?= htmlspecialchars($group['day_number']) ?></span>
+                          <span class="small text-uppercase"><?= htmlspecialchars($group['weekday_label']) ?></span>
+                        </div>
+                        <div class="table-responsive flex-grow-1">
+                          <table class="table table-sm align-middle mb-0">
+                            <thead>
                               <tr>
-                                <td><?= htmlspecialchars($groupShift['start_time']) ?></td>
-                                <td><?= htmlspecialchars($groupShift['volunteers'] !== '' ? $groupShift['volunteers'] : '-') ?></td>
+                                <th>Inizio</th>
+                                <th>Volontari</th>
                               </tr>
-                            <?php endforeach; ?>
-                          </tbody>
-                        </table>
+                            </thead>
+                            <tbody>
+                              <?php foreach ($group['shifts'] as $groupShift): ?>
+                                <tr>
+                                  <td><?= htmlspecialchars($groupShift['start_time']) ?></td>
+                                  <td><?= htmlspecialchars($groupShift['volunteers'] !== '' ? $groupShift['volunteers'] : '-') ?></td>
+                                </tr>
+                              <?php endforeach; ?>
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
                     </div>
                   <?php endforeach; ?>
