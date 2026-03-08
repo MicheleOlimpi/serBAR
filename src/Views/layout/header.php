@@ -9,8 +9,8 @@ $assetBasePath = rtrim(str_replace('\\', '/', dirname((string) ($_SERVER['SCRIPT
 $assetBasePath = $assetBasePath === '' ? '.' : $assetBasePath;
 $adminNavItems = [
     'dashboard' => ['label' => 'Dashboard', 'href' => './'],
-    'boards' => ['label' => 'Tabelloni', 'href' => '?action=boards'],
-    'users' => ['label' => 'Utenti', 'href' => '?action=users'],
+    'boards' => ['label' => 'Tabelloni', 'href' => '?action=boards', 'icon' => 'fa-table'],
+    'users' => ['label' => 'Utenti', 'href' => '?action=users', 'icon' => 'fa-user'],
     'day_types' => ['label' => 'Tipi giorno', 'href' => '?action=day_types'],
     'shift_config' => ['label' => 'Turni giornalieri', 'href' => '?action=shift_config'],
     'calendar' => ['label' => 'Calendario', 'href' => '?action=calendar', 'icon' => 'fa-calendar-days'],
@@ -20,7 +20,7 @@ $adminNavItems = [
 ];
 $consultationNavItems = [
     'dashboard' => ['label' => 'dashboard', 'href' => './'],
-    'lista_volontari' => ['label' => 'Lista Volontari', 'href' => '?action=dashboard#elenco-telefonico'],
+    'lista_volontari' => ['label' => 'Lista Volontari', 'href' => '?action=dashboard#elenco-telefonico', 'icon' => 'fa-users'],
     'segnalazione' => ['label' => 'Segnalazione', 'href' => '?action=segnalazione', 'icon' => 'fa-message'],
     'information' => ['label' => 'Informazioni', 'href' => '?action=information', 'icon' => 'fa-circle-info'],
 ];
