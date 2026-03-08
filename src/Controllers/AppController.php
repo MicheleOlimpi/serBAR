@@ -49,11 +49,27 @@ class AppController
         $this->guard();
         if (Auth::isAdmin()) {
             $boards = array_slice($this->repo->boards(), 0, 12);
-            $notifications = array_slice($this->repo->notifications(), 0, 20);
+            $allNotifications = $this->repo->notifications();
+            $notifications = array_slice($allNotifications, 0, 20);
+            $notificationCount = count($allNotifications);
+            $minutesFromMidnight = ((int) date('H') * 60) + (int) date('i');
+
+            if ($minutesFromMidnight <= 300) {
+                $greeting = "E' tardissimo";
+            } elseif ($minutesFromMidnight <= 720) {
+                $greeting = 'Buongiorno';
+            } elseif ($minutesFromMidnight <= 1080) {
+                $greeting = 'Buon pomeriggio';
+            } else {
+                $greeting = 'Buonasera';
+            }
 
             View::render('admin/dashboard', [
                 'boards' => $boards,
                 'notifications' => $notifications,
+                'greeting' => $greeting,
+                'username' => (string) (Auth::user()['username'] ?? ''),
+                'notificationCount' => $notificationCount,
             ]);
             return;
         }
