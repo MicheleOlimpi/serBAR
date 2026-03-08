@@ -9,12 +9,12 @@ $assetBasePath = rtrim(str_replace('\\', '/', dirname((string) ($_SERVER['SCRIPT
 $assetBasePath = $assetBasePath === '' ? '.' : $assetBasePath;
 $adminNavItems = [
     'dashboard' => ['label' => 'Dashboard', 'href' => './'],
-    'boards' => ['label' => 'Tabelloni', 'href' => '?action=boards', 'icon' => 'fa-table'],
-    'users' => ['label' => 'Utenti', 'href' => '?action=users', 'icon' => 'fa-user'],
-    'day_types' => ['label' => 'Tipi giorno', 'href' => '?action=day_types'],
+    'boards' => ['label' => 'GESTIONE TABELLONI', 'href' => '?action=boards', 'icon' => 'fa-table'],
+    'users' => ['label' => 'GESTIONE UTENTI', 'href' => '?action=users', 'icon' => 'fa-user'],
+    'day_types' => ['label' => 'TIPI GIORNO', 'href' => '?action=day_types'],
     'shift_config' => ['label' => 'Turni giornalieri', 'href' => '?action=shift_config'],
     'calendar' => ['label' => 'Calendario', 'href' => '?action=calendar', 'icon' => 'fa-calendar-days'],
-    'notifications' => ['label' => 'Segnalazioni', 'href' => '?action=notifications', 'icon' => 'fa-message'],
+    'notifications' => ['label' => 'GESTIONE SEGNALAZIONI', 'href' => '?action=notifications', 'icon' => 'fa-message'],
     'setup' => ['label' => 'Setup', 'href' => '?action=setup', 'icon' => 'fa-gear'],
     'information' => ['label' => 'Informazioni', 'href' => '?action=information', 'icon' => 'fa-circle-info'],
 ];

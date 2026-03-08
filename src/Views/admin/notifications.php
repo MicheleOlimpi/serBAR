@@ -17,7 +17,7 @@ $statusBadgeMap = [
 ];
 ?>
 
-<h4>Gestione segnalazioni</h4>
+<h4>GESTIONE SEGNALAZIONI</h4>
 
 <div class="card mb-3">
   <div class="card-body">
