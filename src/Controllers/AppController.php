@@ -77,6 +77,17 @@ class AppController
         $boards = $this->repo->boardsForConsultation();
         $selectedBoardId = (int) ($_GET['board_id'] ?? ($boards[0]['id'] ?? 0));
         $selectedBoard = null;
+        $minutesFromMidnight = ((int) date('H') * 60) + (int) date('i');
+
+        if ($minutesFromMidnight <= 300) {
+            $greeting = "E' tardissimo";
+        } elseif ($minutesFromMidnight <= 720) {
+            $greeting = 'buongiorno';
+        } elseif ($minutesFromMidnight <= 1080) {
+            $greeting = 'Buon pomeriggio';
+        } else {
+            $greeting = 'Buonasera';
+        }
 
         foreach ($boards as $board) {
             if ((int) $board['id'] === $selectedBoardId) {
@@ -96,6 +107,20 @@ class AppController
             'selectedBoardId' => $selectedBoardId,
             'shifts' => $this->repo->consultationShifts(),
             'notifications' => $this->repo->consultationNotifications(),
+            'greeting' => $greeting,
+            'username' => (string) (Auth::user()['username'] ?? ''),
+        ]);
+    }
+
+    public function listaVolontari(): void
+    {
+        $this->guard();
+
+        if (Auth::isAdmin()) {
+            View::redirect('./');
+        }
+
+        View::render('consultation/lista_volontari', [
             'directoryUsers' => $this->repo->consultationDirectory(),
         ]);
     }
