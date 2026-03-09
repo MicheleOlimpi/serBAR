@@ -55,8 +55,6 @@
     </tr>
   <?php endforeach; ?>
 </table>
-<a class="btn btn-outline-dark mt-2" href="./">Indietro</a>
-
 
 <div class="modal fade" id="deleteShiftModal" tabindex="-1" aria-labelledby="deleteShiftModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
