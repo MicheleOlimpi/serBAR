@@ -15,6 +15,8 @@ $monthNames = [
   12 => 'Dicembre',
 ];
 $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) ($board['month'] ?? 0));
+$readOnlyView = isset($_GET['generated']);
+$canEditBoard = Auth::isAdmin() && !$readOnlyView;
 ?>
 <h4>TABELLONE <?= htmlspecialchars($monthName) ?> <?= (int) ($board['year'] ?? 0) ?></h4>
 <style>
@@ -42,7 +44,7 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
   .day-type-selector { max-width: 140px; }
   .day-number { font-size: 1.75rem; font-weight: 700; line-height: 1; }
 </style>
-<?php if (Auth::isAdmin()): ?><form method="post"><?php endif; ?>
+<?php if ($canEditBoard): ?><form method="post"><?php endif; ?>
 <table class="table table-sm table-bordered bg-white">
 <tr><th>Giorno</th><th>Turni giornalieri</th><th>Annotazioni</th><?php if(!Auth::isAdmin()):?><th>Segnala</th><?php endif; ?></tr>
 <?php foreach($days as $d): $shifts = $dayShifts[$d['id']] ?? []; ?>
@@ -57,7 +59,7 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
     <?php if (!empty($d['recurrence_name'])): ?><div class="day-meta mt-1"><?= htmlspecialchars((string) $d['recurrence_name']) ?></div><?php endif; ?>
     <?php if (!empty($d['santo'])): ?><div class="day-meta"><?= htmlspecialchars((string) $d['santo']) ?></div><?php endif; ?>
     <div class="day-meta mt-2">
-      <?php if (Auth::isAdmin()): ?>
+      <?php if ($canEditBoard): ?>
         <select class="form-select form-select-sm day-type-selector" name="day[<?= $d['id'] ?>][day_type_id]">
           <?php foreach($dayTypes as $t): ?><option value="<?= $t['id'] ?>" <?= $d['day_type_id']==$t['id']?'selected':'' ?>><?= htmlspecialchars($t['name']) ?></option><?php endforeach; ?>
         </select>
@@ -73,7 +75,7 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
   <?php else: ?>
     <?php foreach ($shifts as $shift): ?>
       <div class="border rounded p-2 mb-2">
-        <?php if (Auth::isAdmin()): ?>
+        <?php if ($canEditBoard): ?>
           <div class="shift-grid">
             <div>
               <div class="small fw-semibold">
@@ -108,13 +110,13 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
     <?php endforeach; ?>
   <?php endif; ?>
 </td>
-<td><?php if(Auth::isAdmin()): ?><input class="form-control form-control-sm" name="day[<?= $d['id'] ?>][notes]" value="<?= htmlspecialchars((string)$d['notes']) ?>"><?php else: ?><?= htmlspecialchars((string)$d['notes']) ?><?php endif; ?></td>
+<td><?php if($canEditBoard): ?><input class="form-control form-control-sm" name="day[<?= $d['id'] ?>][notes]" value="<?= htmlspecialchars((string)$d['notes']) ?>"><?php else: ?><?= htmlspecialchars((string)$d['notes']) ?><?php endif; ?></td>
 <?php if(!Auth::isAdmin()): ?><td><form method="post"><input type="hidden" name="report_day" value="<?= $d['id'] ?>"><input name="message" class="form-control form-control-sm" placeholder="Segnalazione"><button class="btn btn-sm btn-warning mt-1">Invia</button></form></td><?php endif; ?>
 </tr>
 <?php endforeach; ?>
 </table>
 
-<?php if (Auth::isAdmin()): ?>
+<?php if ($canEditBoard): ?>
   <datalist id="users-list">
     <?php foreach ($activeUsers as $activeUser): ?>
       <option value="<?= htmlspecialchars(trim($activeUser['first_name'] . ' ' . $activeUser['last_name'])) ?>"></option>
@@ -171,4 +173,4 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
   <button class="btn btn-success">Salva modifiche</button>
 </form>
 <?php endif; ?>
-<a class="btn btn-outline-dark" href="./">Indietro</a>
+<?php if (!$readOnlyView): ?><a class="btn btn-outline-dark" href="./">Indietro</a><?php endif; ?>

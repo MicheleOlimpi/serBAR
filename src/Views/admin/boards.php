@@ -41,7 +41,7 @@ $monthNames = [
 <tr><td><?= ($monthNames[(int) $b['month']] ?? sprintf('%02d', $b['month'])) . ' ' . $b['year'] ?></td><td>
 <a class="btn btn-sm btn-primary" href="?action=board_edit&id=<?= $b['id'] ?>">MODIFICA</a>
 <a class="btn btn-sm btn-secondary" href="?action=board_edit&id=<?= $b['id'] ?>&print=1" target="_blank">STAMPA</a>
-<button type="button" class="btn btn-sm btn-info text-white" disabled>GENERA CARTELLONE</button>
+<a class="btn btn-sm btn-info text-white" href="?action=board_edit&id=<?= $b['id'] ?>&generated=1" target="_blank" rel="noopener">GENERA CARTELLONE</a>
 <button
   type="button"
   class="btn btn-sm btn-danger js-delete-board"

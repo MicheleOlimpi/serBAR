@@ -176,7 +176,9 @@ class AppController
         if ($boardId < 1) {
             View::redirect('./');
         }
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::isAdmin()) {
+        $generatedBoardView = isset($_GET['generated']);
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::isAdmin() && !$generatedBoardView) {
             foreach ($_POST['day'] ?? [] as $dayId => $dayData) {
                 $dayId = (int) $dayId;
                 $dayTypeId = (int) ($dayData['day_type_id'] ?? 0);
@@ -213,6 +215,7 @@ class AppController
             'dayTypes' => $this->repo->dayTypes(),
             'dayShifts' => $this->repo->boardDayShiftsMap($boardId),
             'activeUsers' => $this->repo->userDisplayNames(),
+            'hideNavbar' => $generatedBoardView,
         ]);
     }
 
