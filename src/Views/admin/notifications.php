@@ -68,11 +68,11 @@ $statusBadgeMap = [
     <thead>
       <tr>
         <th>ID</th>
-        <th>Creata il</th>
-        <th>Utente</th>
-        <th>Messaggio</th>
-        <th>Stato</th>
-        <th>Azioni</th>
+        <th>CREATA IL</th>
+        <th>UTENTE</th>
+        <th>MESSAGGIO</th>
+        <th>STATO</th>
+        <th>AZIONI</th>
       </tr>
     </thead>
     <tbody>
@@ -123,8 +123,6 @@ $statusBadgeMap = [
     </tbody>
   </table>
 </div>
-
-<a class="btn btn-outline-dark" href="./">Indietro</a>
 
 <div class="modal fade" id="deleteNotificationModal" tabindex="-1" aria-labelledby="deleteNotificationModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
