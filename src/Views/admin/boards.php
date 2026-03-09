@@ -39,8 +39,8 @@ $monthNames = [
 <table class="table table-striped"><tr><th>Tabellone</th><th>Azioni</th></tr>
 <?php foreach($boards as $b): ?>
 <tr><td><?= ($monthNames[(int) $b['month']] ?? sprintf('%02d', $b['month'])) . ' ' . $b['year'] ?></td><td>
-<a class="btn btn-sm btn-primary" href="?action=board_edit&id=<?= $b['id'] ?>">Edita</a>
-<a class="btn btn-sm btn-secondary" href="?action=board_edit&id=<?= $b['id'] ?>&print=1" target="_blank">Stampa/PDF</a>
+<a class="btn btn-sm btn-primary" href="?action=board_edit&id=<?= $b['id'] ?>">MODIFICA</a>
+<a class="btn btn-sm btn-secondary" href="?action=board_edit&id=<?= $b['id'] ?>&print=1" target="_blank">STAMPA</a>
 <button
   type="button"
   class="btn btn-sm btn-danger js-delete-board"
@@ -49,7 +49,7 @@ $monthNames = [
   data-bs-toggle="modal"
   data-bs-target="#deleteBoardModal"
 >
-  Elimina
+  ELIMINA
 </button>
 </td></tr>
 <?php endforeach; ?>
@@ -67,7 +67,7 @@ $monthNames = [
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
       </div>
       <div class="modal-body">
-        Sei sicuro di voler eliminare il tabellone <strong id="deleteBoardName"></strong>?
+        Sei sicuro di voler eliminare il tabellone? <strong id="deleteBoardName"></strong>?
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
