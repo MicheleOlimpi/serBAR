@@ -57,9 +57,9 @@ Il file viene caricato con riferimento relativo così l'app continua a funzionar
 4. Se il DB non è configurato/disponibile, comparirà l'interfaccia di installazione.
 5. La configurazione DB viene salvata in `config/app.php`.
 
-## Credenziali seed
-- `admin` / `admin`
-- `user` / `user` (ruolo user)
+## CREDENZIALI POST INSTALLAZIONE
+- username: admin password:admin per l'account amministrativo
+- username: user password:user per l'account utente standard
 
 ## FUNZIONI PRINCIPALI
 - Installazione guidata DB, creazione schema e pagina di riepilogo finale
