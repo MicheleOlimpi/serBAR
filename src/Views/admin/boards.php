@@ -55,7 +55,6 @@ $monthNames = [
 </td></tr>
 <?php endforeach; ?>
 </table>
-<a class="btn btn-outline-dark" href="./">Indietro</a>
 
 <div class="modal fade" id="deleteBoardModal" tabindex="-1" aria-labelledby="deleteBoardModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -68,7 +67,7 @@ $monthNames = [
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
       </div>
       <div class="modal-body">
-        Sei sicuro di voler eliminare il tabellone? <strong id="deleteBoardName"></strong>?
+        Sei sicuro di voler eliminare il tabellone <strong id="deleteBoardName"></strong>?
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
