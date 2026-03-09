@@ -41,6 +41,7 @@ $monthNames = [
 <tr><td><?= ($monthNames[(int) $b['month']] ?? sprintf('%02d', $b['month'])) . ' ' . $b['year'] ?></td><td>
 <a class="btn btn-sm btn-primary" href="?action=board_edit&id=<?= $b['id'] ?>">MODIFICA</a>
 <a class="btn btn-sm btn-secondary" href="?action=board_edit&id=<?= $b['id'] ?>&print=1" target="_blank">STAMPA</a>
+<button type="button" class="btn btn-sm btn-info text-white" disabled>GENERA CARTELLONE</button>
 <button
   type="button"
   class="btn btn-sm btn-danger js-delete-board"
@@ -57,11 +58,11 @@ $monthNames = [
 <a class="btn btn-outline-dark" href="./">Indietro</a>
 
 <div class="modal fade" id="deleteBoardModal" tabindex="-1" aria-labelledby="deleteBoardModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title d-flex align-items-center gap-2" id="deleteBoardModalLabel">
-          <i class="fa-solid fa-triangle-exclamation text-warning" aria-hidden="true"></i>
+          <i class="fa-solid fa-triangle-exclamation text-danger" aria-hidden="true"></i>
           Conferma eliminazione tabellone
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
