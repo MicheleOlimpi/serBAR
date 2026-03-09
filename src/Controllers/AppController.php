@@ -216,6 +216,32 @@ class AppController
         ]);
     }
 
+    public function generateBoard(): void
+    {
+        $this->guardAdmin();
+
+        $boardId = (int) ($_GET['id'] ?? 0);
+        if ($boardId < 1) {
+            View::redirect('?action=boards');
+        }
+
+        $board = $this->repo->board($boardId);
+        if ($board === null) {
+            View::redirect('?action=boards');
+        }
+
+        $days = $this->repo->boardDays($boardId);
+        foreach ($days as $day) {
+            $this->repo->syncBoardDayShifts((int) $day['id'], (int) $day['day_type_id']);
+        }
+
+        View::renderPlain('admin/board_generate', [
+            'board' => $board,
+            'days' => $days,
+            'dayShifts' => $this->repo->boardDayShiftsMap($boardId),
+        ]);
+    }
+
     public function users(): void
     {
         $this->guardAdmin();

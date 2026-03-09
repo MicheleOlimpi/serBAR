@@ -20,4 +20,11 @@ class View
         header('Location: ' . $path);
         exit;
     }
+
+    public static function renderPlain(string $template, array $data = []): void
+    {
+        extract($data);
+        $file = __DIR__ . '/../Views/' . $template . '.php';
+        include $file;
+    }
 }

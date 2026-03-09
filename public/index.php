@@ -43,6 +43,7 @@ $routes = [
     'logout' => 'logout',
     'boards' => 'boards',
     'board_edit' => 'boardEdit',
+    'board_generate' => 'generateBoard',
     'users' => 'users',
     'day_types' => 'dayTypes',
     'shift_config' => 'shiftConfig',
