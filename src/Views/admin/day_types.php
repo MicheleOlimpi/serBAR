@@ -93,8 +93,6 @@
   </div>
 </div>
 
-<a class="btn btn-outline-dark" href="./">Indietro</a>
-
 <script>
   (() => {
     const hiddenInput = document.getElementById('colorHexInput');
