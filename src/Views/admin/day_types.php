@@ -25,7 +25,7 @@
 </form>
 
 <table class="table table-striped">
-  <tr><th>Nome</th><th>Codice</th><th>Colore</th><th>Azioni</th></tr>
+  <tr><th>NOME</th><th>CODICE</th><th>COLORE</th><th>&nbsp</th></tr>
   <?php foreach ($types as $t): ?>
     <tr>
       <td><?= htmlspecialchars((string) $t['name']) ?></td>
@@ -93,7 +93,6 @@
   </div>
 </div>
 
-<a class="btn btn-outline-dark" href="./">Indietro</a>
 
 <script>
   (() => {
