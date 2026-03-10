@@ -14,7 +14,7 @@
       <thead>
         <tr>
           <th>GIORNO</th>
-          <th>RICORRENZE</th>
+          <th>RICORRENZA</th>
           <th>SANTO</th>
           <th>TIPO GIORNO</th>
           <th>SPECIALE</th>
