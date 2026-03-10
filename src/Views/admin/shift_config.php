@@ -32,7 +32,7 @@
 </form>
 
 <table class="table table-striped">
-  <tr><th>Tipo giorno</th><th>Inizio</th><th>Fine</th><th>Chiusura bar</th><th>Priorità</th><th>Azioni</th></tr>
+  <tr><th>TIPO GIORNO</th><th>INIZIO</th><th>FINE</th><th>CHIUSURA BAR</th><th>PRIORITÀ</th><th>&nbsp</th></tr>
   <?php foreach($shifts as $shift): ?>
     <tr>
       <td><?= htmlspecialchars($shift['day_type_name']) ?></td>
@@ -55,7 +55,6 @@
     </tr>
   <?php endforeach; ?>
 </table>
-<a class="btn btn-outline-dark mt-2" href="./">Indietro</a>
 
 
 <div class="modal fade" id="deleteShiftModal" tabindex="-1" aria-labelledby="deleteShiftModalLabel" aria-hidden="true">
