@@ -1,4 +1,4 @@
-<h4>Turni giornalieri per tipo giorno</h4>
+<h4>TURNI GIORNALIERI</h4>
 
 <?php if (!empty($error)): ?>
   <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
