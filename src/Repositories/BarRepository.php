@@ -70,7 +70,7 @@ class BarRepository
                 $data['last_name'],
                 $data['first_name'],
                 password_hash($data['password'], PASSWORD_DEFAULT),
-                $data['role'],
+                in_array((string) ($data['role'] ?? 'user'), ['admin', 'user', 'supervisor'], true) ? (string) $data['role'] : 'user',
                 (string) ($data['phone'] ?? ''),
                 $data['status'],
             ]);
@@ -81,7 +81,7 @@ class BarRepository
         $lastName = trim($lastName);
         $firstName = trim($firstName);
         $phone = trim($phone);
-        $role = $role === 'admin' ? 'admin' : 'user';
+        $role = in_array($role, ['admin', 'user', 'supervisor'], true) ? $role : 'user';
         $status = $status === 'inattivo' ? 'inattivo' : 'attivo';
 
         if ($id < 1 || $lastName === '' || $firstName === '') {
