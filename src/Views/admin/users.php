@@ -9,7 +9,7 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
   <div class="col"><input name="first_name" class="form-control" placeholder="nome" required></div>
   <div class="col"><input name="phone" class="form-control" placeholder="telefono"></div>
   <div class="col"><input type="password" name="password" class="form-control" placeholder="password" required></div>
-  <div class="col"><select name="role" class="form-select"><option value="admin">admin</option><option value="user" selected>user</option></select></div>
+  <div class="col"><select name="role" class="form-select"><option value="admin">admin</option><option value="user" selected>user</option><option value="supervisor">supervisor</option></select></div>
   <div class="col">
     <select name="status" class="form-select js-status-select" data-active-class="text-success" data-inactive-class="text-danger">
       <option value="attivo" selected>attivo</option>
@@ -44,6 +44,7 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
             <select name="role" class="form-select form-select-sm">
               <option value="admin" <?= $u['role'] === 'admin' ? 'selected' : '' ?>>admin</option>
               <option value="user" <?= $u['role'] === 'user' ? 'selected' : '' ?>>user</option>
+              <option value="supervisor" <?= $u['role'] === 'supervisor' ? 'selected' : '' ?>>supervisor</option>
             </select>
             <select name="status" class="form-select form-select-sm js-status-select" data-active-class="text-success" data-inactive-class="text-danger">
               <option value="attivo" <?= $u['status'] === 'attivo' ? 'selected' : '' ?>>attivo</option>
