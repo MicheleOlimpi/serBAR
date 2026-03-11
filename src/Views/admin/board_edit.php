@@ -108,7 +108,7 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
     <?php endforeach; ?>
   <?php endif; ?>
 </td>
-<td><?php if(Auth::isAdmin()): ?><input class="form-control form-control-sm" name="day[<?= $d['id'] ?>][notes]" value="<?= htmlspecialchars((string)$d['notes']) ?>"><?php else: ?><?= htmlspecialchars((string)$d['notes']) ?><?php endif; ?></td>
+<td><?php if(Auth::isAdmin()): ?><input class="form-control form-control-sm" name="day[<?= $d['id'] ?>][notes]" value="<?= htmlspecialchars((string)$d['notes']) ?>" placeholder="annotazioni"><?php else: ?><?= htmlspecialchars((string)$d['notes']) ?><?php endif; ?></td>
 <?php if(!Auth::isAdmin()): ?><td><form method="post"><input type="hidden" name="report_day" value="<?= $d['id'] ?>"><input name="message" class="form-control form-control-sm" placeholder="Segnalazione"><button class="btn btn-sm btn-warning mt-1">Invia</button></form></td><?php endif; ?>
 </tr>
 <?php endforeach; ?>
