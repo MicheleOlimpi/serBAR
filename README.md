@@ -64,8 +64,9 @@ Il file viene caricato con riferimento relativo così l'app continua a funzionar
 5. La configurazione DB viene salvata in `config/app.php`.
 
 ## CREDENZIALI POST INSTALLAZIONE
-- username: admin password:admin per l'account amministrativo
-- username: user password:user per l'account utente standard
+- username: admin password:admin per l'account amministrativo per configurazione, gestione turni e consultazione
+- username: user password:user per l'account utente standard solo per consultazione
+- username: supervisor password:supervisor per l'account di gestione turni
 
 ## FUNZIONI PRINCIPALI
 - Installazione guidata DB, creazione schema e pagina di riepilogo finale
