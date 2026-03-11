@@ -35,6 +35,17 @@
 
   <hr>
 
+  <h5 class="mb-3">Interfaccia al pubblico</h5>
+
+  <div class="form-check form-switch mb-3">
+    <input class="form-check-input" type="checkbox" role="switch" id="public_interface_enabled" name="public_interface_enabled" <?= !empty($settings['public_interface_enabled']) && $settings['public_interface_enabled'] === '1' ? 'checked' : '' ?>>
+    <label class="form-check-label" for="public_interface_enabled">
+      Abilita interfaccia al pubblico
+    </label>
+  </div>
+
+  <hr>
+
   <h5 class="mb-3">Finestra di login</h5>
 
   <div class="mb-3">
