@@ -34,7 +34,7 @@ $monthNames = [
     <label class="form-label">Anno</label>
     <input type="text" name="year" class="form-control" inputmode="numeric" pattern="\d{4}" maxlength="4" value="<?= $defaultYear ?>" required>
   </div>
-  <div class="col-md-2"><button class="btn btn-success">Crea</button></div>
+  <div class="col-md-2"><button class="btn btn-success">GENERA</button></div>
 </form>
 <table class="table table-striped"><tr><th>Tabellone</th><th>Azioni</th></tr>
 <?php foreach($boards as $b): ?>
