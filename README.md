@@ -20,6 +20,12 @@ Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le va
 Il file viene caricato con riferimento relativo così l'app continua a funzionare anche quando è pubblicata in una sottocartella del dominio.
 
 ## Novità recenti
+- **Nuovo ruolo `supervisor`**:
+  - aggiunto nella gestione utenti in area admin;
+  - abilitato l'accesso alle funzionalità amministrative come alternativa al ruolo `admin`.
+- **Modali più personalizzabili**:
+  - introdotte variabili CSS dedicate (`--modal-icon-color`, `--modal-icon-size`) per icone delle finestre di conferma;
+  - uniformata la resa visiva delle modali nelle sezioni principali di amministrazione.
 - **Gestione segnalazioni potenziata**:
   - aggiunta una pagina dedicata alla **segnalazione libera** in area consultazione;
   - migliorata la UI di gestione segnalazioni lato admin;
@@ -63,7 +69,7 @@ Il file viene caricato con riferimento relativo così l'app continua a funzionar
 
 ## FUNZIONI PRINCIPALI
 - Installazione guidata DB, creazione schema e pagina di riepilogo finale
-- Login/logout con ruoli
+- Login/logout con ruoli (`admin`, `supervisor`, `user`)
 - Dashboard amministratore
 - CRUD utenti (password hash), tipo giorno, numero turni, calendario annuale
 - Creazione/modifica/eliminazione tabelloni mensili
