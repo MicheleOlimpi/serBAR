@@ -27,6 +27,8 @@
   --modal-title-size: 1.125rem;
   --modal-title-weight: 600;
   --modal-title-line-height: 1.3;
+  --form-placeholder-color: #64748b;          // CUSTOMIZZAZIONE PLACEHOLDER CAMPI FORM
+  --form-placeholder-opacity: 1;
 }
 
 /*
@@ -82,4 +84,12 @@
   font-weight: var(--modal-title-weight);
   line-height: var(--modal-title-line-height);
   text-transform: uppercase;
+}
+
+input::placeholder,
+textarea::placeholder,
+.form-control::placeholder,
+.form-select::placeholder {
+  color: var(--form-placeholder-color);
+  opacity: var(--form-placeholder-opacity);
 }
