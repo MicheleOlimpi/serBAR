@@ -65,7 +65,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
       </div>
       <div class="modal-body d-flex align-items-center gap-2">
-        <i class="fa-solid fa-circle-exclamation text-danger fs-3"></i>
+        <i class="fa-solid fa-circle-exclamation modal-icon"></i>
         <span>Si è sicuri di eliminare.</span>
       </div>
       <div class="modal-footer">

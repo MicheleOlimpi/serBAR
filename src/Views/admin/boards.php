@@ -61,7 +61,7 @@ $monthNames = [
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title d-flex align-items-center gap-2" id="deleteBoardModalLabel">
-          <i class="fa-solid fa-triangle-exclamation text-danger" aria-hidden="true"></i>
+          <i class="fa-solid fa-triangle-exclamation modal-icon" aria-hidden="true"></i>
           Conferma eliminazione tabellone
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>

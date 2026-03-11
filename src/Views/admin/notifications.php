@@ -129,7 +129,7 @@ $statusBadgeMap = [
     <div class="modal-content">
       <div class="modal-header border-0 pb-0">
         <h5 class="modal-title d-flex align-items-center gap-2" id="deleteNotificationModalLabel">
-          <i class="fa-solid fa-circle-exclamation text-danger" aria-hidden="true"></i>
+          <i class="fa-solid fa-circle-exclamation modal-icon" aria-hidden="true"></i>
           Conferma eliminazione segnalazione
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>

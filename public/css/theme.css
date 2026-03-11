@@ -21,6 +21,8 @@
   --board-day-weekday-size: 0.9rem;
   --board-day-weekday-weight: 600;
   --board-day-weekday-line-height: 1.2;
+  --modal-icon-color: var(--bs-danger);
+  --modal-icon-size: 1.75rem;
 }
 
 /*
@@ -62,4 +64,10 @@
   font-size: var(--board-day-weekday-size);
   font-weight: var(--board-day-weekday-weight);
   line-height: var(--board-day-weekday-line-height);
+}
+
+
+.modal-icon {
+  color: var(--modal-icon-color);
+  font-size: var(--modal-icon-size);
 }

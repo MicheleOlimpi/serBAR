@@ -18,7 +18,12 @@ class Auth
 
     public static function isAdmin(): bool
     {
-        return self::check() && ($_SESSION['user']['role'] ?? '') === 'admin';
+        if (!self::check()) {
+            return false;
+        }
+
+        $role = (string) ($_SESSION['user']['role'] ?? '');
+        return in_array($role, ['admin', 'supervisor'], true);
     }
 
     public static function login(array $user): void
