@@ -81,4 +81,5 @@
   font-size: var(--modal-title-size);
   font-weight: var(--modal-title-weight);
   line-height: var(--modal-title-line-height);
+  text-transform: uppercase;
 }
