@@ -23,6 +23,10 @@
   --board-day-weekday-line-height: 1.2;
   --modal-icon-color: var(--bs-danger);
   --modal-icon-size: 1.75rem;
+  --modal-title-color: var(--bs-dark);
+  --modal-title-size: 1.125rem;
+  --modal-title-weight: 600;
+  --modal-title-line-height: 1.3;
 }
 
 /*
@@ -70,4 +74,11 @@
 .modal-icon {
   color: var(--modal-icon-color);
   font-size: var(--modal-icon-size);
+}
+
+.modal-title {
+  color: var(--modal-title-color);
+  font-size: var(--modal-title-size);
+  font-weight: var(--modal-title-weight);
+  line-height: var(--modal-title-line-height);
 }

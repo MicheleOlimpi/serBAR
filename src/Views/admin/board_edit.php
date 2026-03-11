@@ -84,14 +84,14 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
               <input id="volunteers-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][volunteers]" value="<?= htmlspecialchars((string) ($shift['volunteers'] ?? '')) ?>" placeholder="Es. M. Rossi A. Bianchi">
               <div class="input-group input-group-sm volunteer-picker" data-target="volunteers-<?= (int) $shift['id'] ?>">
                 <input type="text" class="form-control" list="users-list" placeholder="Aggiungi dalla lista utenti">
-                <button class="btn btn-outline-secondary" type="button">Aggiungi</button>
+                <button class="btn btn-outline-secondary" type="button" aria-label="Aggiungi volontario"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i></button>
               </div>
             </div>
             <div>
               <input id="responsabile-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][responsabile_chiusura]" value="<?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?? '')) ?>" <?= empty($shift['closes_bar']) ? 'readonly' : '' ?>>
               <div class="input-group input-group-sm responsible-picker" data-target="responsabile-<?= (int) $shift['id'] ?>">
                 <input type="text" class="form-control" list="users-list" placeholder="Seleziona utente" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?>>
-                <button class="btn btn-outline-secondary" type="button" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?>>Imposta</button>
+                <button class="btn btn-outline-secondary" type="button" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?> aria-label="Imposta responsabile"><i class="fa-solid fa-circle-plus" aria-hidden="true"></i></button>
               </div>
             </div>
           </div>
