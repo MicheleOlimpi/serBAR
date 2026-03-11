@@ -82,7 +82,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
       </div>
       <div class="modal-body d-flex align-items-start gap-3">
-        <i class="fa-solid fa-circle-exclamation text-danger fs-3 mt-1" aria-hidden="true"></i>
+        <i class="fa-solid fa-circle-exclamation modal-icon mt-1" aria-hidden="true"></i>
         <p class="mb-0" id="deleteDayTypeMessage">Sei sicuro di voler eliminare questa tipologia di giorno?</p>
       </div>
       <div class="modal-footer">
