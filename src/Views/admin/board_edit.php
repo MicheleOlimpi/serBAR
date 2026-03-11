@@ -44,7 +44,7 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
 </style>
 <?php if (Auth::isAdmin()): ?><form method="post"><?php endif; ?>
 <table class="table table-sm table-bordered bg-white">
-<tr><th>Giorno</th><th>Turni giornalieri</th><th>Annotazioni</th><?php if(!Auth::isAdmin()):?><th>Segnala</th><?php endif; ?></tr>
+<tr><?php if(!Auth::isAdmin()):?><th>Segnala</th><?php endif; ?></tr>
 <?php foreach($days as $d): $shifts = $dayShifts[$d['id']] ?? []; ?>
 <?php if ($shifts !== []): usort($shifts, static function (array $left, array $right): int {
   return [(int) ($left['priority'] ?? 0), (string) ($left['start_time'] ?? '')] <=> [(int) ($right['priority'] ?? 0), (string) ($right['start_time'] ?? '')];
