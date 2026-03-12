@@ -30,7 +30,7 @@
   --form-placeholder-color: #64748b;
   --form-placeholder-opacity: 0.5;
   --navbar-bg: #0f172a;
-  --navbar-color: #f8fafc;
+  --navbar-color: #8c8c8c;
   --navbar-hover-color: #ffffff;
   --navbar-active-color: #ffffff;
   --navbar-brand-color: #ffffff;
@@ -39,9 +39,9 @@
   --navbar-logout-color: #f8fafc;
   --navbar-logout-border-color: rgba(248, 250, 252, 0.55);
   --volunteer-picker-placeholder-color: #64748b;
-  --volunteer-picker-placeholder-opacity: 0.5;
+  --volunteer-picker-placeholder-opacity: 1;
   --responsible-picker-placeholder-color: #64748b;
-  --responsible-picker-placeholder-opacity: 0.5;
+  --responsible-picker-placeholder-opacity: 1;
 }
 
 /*
