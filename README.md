@@ -20,6 +20,11 @@ Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le va
 Il file viene caricato con riferimento relativo così l'app continua a funzionare anche quando è pubblicata in una sottocartella del dominio.
 
 ## Novità recenti
+- **Interfaccia admin tabelloni aggiornata**:
+  - aggiunta una vista tabellone generata a schermo intero per una consultazione più immediata;
+  - migliorata la navigazione nell'elenco tabelloni con accesso rapido alla nuova vista.
+- **Modale eliminazione utenti (area admin) migliorata**:
+  - conferma di eliminazione centrata e resa più chiara nella gestione utenti.
 - **Nuovo ruolo `supervisor`**:
   - aggiunto nella gestione utenti in area admin;
   - abilitato l'accesso alle funzionalità amministrative come alternativa al ruolo `admin`.
