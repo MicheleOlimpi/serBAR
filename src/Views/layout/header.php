@@ -46,7 +46,7 @@ if ($u && !Auth::isAdmin()) {
 </head>
 <body class="bg-light">
 <?php if (!$isLoginPage && !$isBoardGenerateView): ?>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+<nav class="navbar navbar-expand-lg app-navbar mb-4">
   <div class="container-fluid">
     <a class="navbar-brand" href="./"><img src="./serBAR-landscape.svg" alt="Logo serBAR" class="app-brand-logo"></a>
 
@@ -69,8 +69,8 @@ if ($u && !Auth::isAdmin()) {
           <?php endforeach; ?>
         </ul>
         <div class="d-flex align-items-center gap-2">
-          <span class="text-white"><?= htmlspecialchars($u['username']) ?></span>
-          <a class="btn btn-sm btn-outline-light" href="?action=logout">Logout</a>
+          <span class="app-navbar-user"><?= htmlspecialchars($u['username']) ?></span>
+          <a class="btn btn-sm app-navbar-logout" href="?action=logout">Logout</a>
         </div>
       </div>
     <?php elseif ($u): ?>
@@ -90,8 +90,8 @@ if ($u && !Auth::isAdmin()) {
           <?php endforeach; ?>
         </ul>
         <div class="d-flex align-items-center gap-2">
-          <span class="text-white"><?= htmlspecialchars($u['username']) ?></span>
-          <a class="btn btn-sm btn-outline-light" href="?action=logout">Logout</a>
+          <span class="app-navbar-user"><?= htmlspecialchars($u['username']) ?></span>
+          <a class="btn btn-sm app-navbar-logout" href="?action=logout">Logout</a>
         </div>
       </div>
     <?php endif; ?>
