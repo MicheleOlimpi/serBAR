@@ -1,4 +1,4 @@
-<?php use App\Core\Auth; $print = isset($_GET['print']); if($print): ?><script>window.onload=()=>window.print()</script><?php endif; ?>
+<?php use App\Core\Auth; $print = isset($_GET['print']); $generate = isset($_GET['generate']) && $_GET['generate'] === '1'; if($print): ?><script>window.onload=()=>window.print()</script><?php endif; ?>
 <?php
 $monthNames = [
   1 => 'Gennaio',
@@ -16,7 +16,9 @@ $monthNames = [
 ];
 $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) ($board['month'] ?? 0));
 ?>
+<?php if (!$generate): ?>
 <h4>TABELLONE <?= htmlspecialchars($monthName) ?> <?= (int) ($board['year'] ?? 0) ?></h4>
+<?php endif; ?>
 <style>
   .day-cell { min-width: 170px; }
   .shift-grid {
@@ -41,30 +43,52 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
   .day-meta { font-size: 0.82rem; line-height: 1.3; }
   .day-type-selector { max-width: 140px; }
   .day-number { font-size: 1.75rem; font-weight: 700; line-height: 1; }
+
+  .board-generated-wrap { width: 100vw; min-height: 100vh; }
+  .board-generated-table { width: 100%; margin: 0; border-collapse: collapse; }
+  .board-generated-table td { border: 1px solid #dee2e6; vertical-align: top; padding: .5rem; }
+  .board-generated-day { width: 200px; }
+  .board-generated-day .day-number { font-size: 2rem; }
+  .board-generated-shift-row {
+    display: grid;
+    grid-template-columns: 110px 1fr auto;
+    gap: .75rem;
+    align-items: start;
+    padding: .25rem 0;
+  }
+  .board-generated-shift-row + .board-generated-shift-row { border-top: 1px dashed #dee2e6; }
+  @media (max-width: 767.98px) {
+    .board-generated-shift-row { grid-template-columns: 1fr; }
+  }
 </style>
-<?php if (Auth::isAdmin()): ?><form method="post"><?php endif; ?>
-<table class="table table-sm table-bordered bg-white">
+<?php if (Auth::isAdmin() && !$generate): ?><form method="post"><?php endif; ?>
+<div class="<?= $generate ? 'board-generated-wrap' : '' ?>">
+<table class="<?= $generate ? 'board-generated-table bg-white' : 'table table-sm table-bordered bg-white' ?>">
+<?php if (!$generate): ?>
 <tr><?php if(!Auth::isAdmin()):?><th>Segnala</th><?php endif; ?></tr>
+<?php endif; ?>
 <?php foreach($days as $d): $shifts = $dayShifts[$d['id']] ?? []; ?>
 <?php if ($shifts !== []): usort($shifts, static function (array $left, array $right): int {
   return [(int) ($left['priority'] ?? 0), (string) ($left['start_time'] ?? '')] <=> [(int) ($right['priority'] ?? 0), (string) ($right['start_time'] ?? '')];
 }); endif; ?>
 <tr>
-<td class="day-cell">
+<td class="<?= $generate ? 'board-generated-day' : 'day-cell' ?>">
   <div class="day-badge" style="background-color: <?= htmlspecialchars((string) ($d['day_type_color'] ?? '#6c757d')) ?>;">
     <div class="day-number"><?= (int) date('j', strtotime($d['day_date'])) ?></div>
     <div class="day-weekday mt-2"><?= htmlspecialchars($d['weekday_name']) ?></div>
-    <?php if (!empty($d['recurrence_name'])): ?><div class="day-meta mt-1"><?= htmlspecialchars((string) $d['recurrence_name']) ?></div><?php endif; ?>
-    <?php if (!empty($d['santo'])): ?><div class="day-meta"><?= htmlspecialchars((string) $d['santo']) ?></div><?php endif; ?>
-    <div class="day-meta mt-2">
-      <?php if (Auth::isAdmin()): ?>
-        <select class="form-select form-select-sm day-type-selector" name="day[<?= $d['id'] ?>][day_type_id]">
-          <?php foreach($dayTypes as $t): ?><option value="<?= $t['id'] ?>" <?= $d['day_type_id']==$t['id']?'selected':'' ?>><?= htmlspecialchars($t['name']) ?></option><?php endforeach; ?>
-        </select>
-      <?php else: ?>
-        <strong><?= htmlspecialchars((string) ($d['day_type_name'] ?? '-')) ?></strong>
-      <?php endif; ?>
-    </div>
+    <div class="day-meta mt-1"><?= htmlspecialchars((string) ($d['recurrence_name'] ?: '--')) ?></div>
+    <div class="day-meta"><?= htmlspecialchars((string) ($d['santo'] ?: '--')) ?></div>
+    <?php if (!$generate): ?>
+      <div class="day-meta mt-2">
+        <?php if (Auth::isAdmin()): ?>
+          <select class="form-select form-select-sm day-type-selector" name="day[<?= $d['id'] ?>][day_type_id]">
+            <?php foreach($dayTypes as $t): ?><option value="<?= $t['id'] ?>" <?= $d['day_type_id']==$t['id']?'selected':'' ?>><?= htmlspecialchars($t['name']) ?></option><?php endforeach; ?>
+          </select>
+        <?php else: ?>
+          <strong><?= htmlspecialchars((string) ($d['day_type_name'] ?? '-')) ?></strong>
+        <?php endif; ?>
+      </div>
+    <?php endif; ?>
   </div>
 </td>
 <td>
@@ -72,8 +96,8 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
     <span class="text-muted">Nessun turno configurato per questo tipo giorno.</span>
   <?php else: ?>
     <?php foreach ($shifts as $shift): ?>
-      <div class="border rounded p-2 mb-2">
-        <?php if (Auth::isAdmin()): ?>
+      <div class="<?= $generate ? 'board-generated-shift-row' : 'border rounded p-2 mb-2' ?>">
+        <?php if (!$generate && Auth::isAdmin()): ?>
           <div class="shift-grid">
             <div>
               <div class="small fw-semibold">
@@ -101,20 +125,23 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
           </div>
           <div><?= nl2br(htmlspecialchars((string) ($shift['volunteers'] ?: '-'))) ?></div>
           <?php if (!empty($shift['closes_bar'])): ?>
-            <div class="small text-muted mt-1">Responsabile chiusura: <?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?: '-')) ?></div>
+            <div><?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?: '--')) ?></div>
           <?php endif; ?>
         <?php endif; ?>
       </div>
     <?php endforeach; ?>
   <?php endif; ?>
 </td>
+<?php if (!$generate): ?>
 <td><?php if(Auth::isAdmin()): ?><input class="form-control form-control-sm" name="day[<?= $d['id'] ?>][notes]" value="<?= htmlspecialchars((string)$d['notes']) ?>" placeholder="annotazioni"><?php else: ?><?= htmlspecialchars((string)$d['notes']) ?><?php endif; ?></td>
 <?php if(!Auth::isAdmin()): ?><td><form method="post"><input type="hidden" name="report_day" value="<?= $d['id'] ?>"><input name="message" class="form-control form-control-sm" placeholder="Segnalazione"><button class="btn btn-sm btn-warning mt-1">Invia</button></form></td><?php endif; ?>
+<?php endif; ?>
 </tr>
 <?php endforeach; ?>
 </table>
+</div>
 
-<?php if (Auth::isAdmin()): ?>
+<?php if (Auth::isAdmin() && !$generate): ?>
   <datalist id="users-list">
     <?php foreach ($activeUsers as $activeUser): ?>
       <option value="<?= htmlspecialchars(trim($activeUser['first_name'] . ' ' . $activeUser['last_name'])) ?>"></option>
@@ -171,4 +198,6 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
   <button class="btn btn-success">Salva modifiche</button>
 </form>
 <?php endif; ?>
+<?php if (!$generate): ?>
 <a class="btn btn-outline-dark" href="./">Indietro</a>
+<?php endif; ?>
