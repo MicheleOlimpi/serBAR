@@ -15,20 +15,20 @@
   --bs-border-radius-sm: 0.5rem;
   --bs-border-radius-lg: 1rem;
   --bs-focus-ring-color: rgba(59, 130, 246, 0.35);
-  --board-day-number-size: 1.9rem;             // CUSTOMIZZAZIONE TABELLONE
+  --board-day-number-size: 1.9rem;
   --board-day-number-weight: 700;
   --board-day-number-line-height: 1.1;
   --board-day-weekday-size: 0.9rem;
   --board-day-weekday-weight: 600;
   --board-day-weekday-line-height: 1.2;
-  --modal-icon-color: var(--bs-danger);        // CUSTOMIZZAZIONE DELLE FINESTRE MODALI
+  --modal-icon-color: var(--bs-danger);
   --modal-icon-size: 1.75rem;
   --modal-title-color: var(--bs-dark);
   --modal-title-size: 1.125rem;
   --modal-title-weight: 600;
   --modal-title-line-height: 1.3;
-  --form-placeholder-color: #64748b;          // CUSTOMIZZAZIONE PLACEHOLDER CAMPI FORM
-  --form-placeholder-opacity: 1;
+  --form-placeholder-color: #64748b;
+  --form-placeholder-opacity: 0.5;
 }
 
 /*
