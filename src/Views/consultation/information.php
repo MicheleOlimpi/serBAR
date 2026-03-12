@@ -2,6 +2,17 @@
 
 <div class="card shadow-sm mb-4">
   <div class="card-body">
+    <h2 class="h5">Informazioni client</h2>
+    <ul class="mb-0">
+      <li><strong>Dispositivo:</strong> <?= htmlspecialchars((string) ($clientInfo['device'] ?? 'Non disponibile')) ?></li>
+      <li><strong>Sistema operativo:</strong> <?= htmlspecialchars((string) ($clientInfo['os'] ?? 'Non disponibile')) ?></li>
+      <li><strong>Browser:</strong> <?= htmlspecialchars((string) ($clientInfo['browser'] ?? 'Non disponibile')) ?></li>
+    </ul>
+  </div>
+</div>
+
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
     <h2 class="h5">Informazioni sul programma</h2>
     <ul class="mb-0">
       <li><strong>Nome programma:</strong> <?= htmlspecialchars((string) ($programInfo['program_name'] ?? 'serBAR')) ?></li>
