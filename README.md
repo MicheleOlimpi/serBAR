@@ -3,7 +3,7 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/MicheleOlimpi/serBAR)
 
 
-# ACLI servizio BAR
+# serBAR
 
 Applicazione PHP 8 (PSR-4) con MariaDB per la gestione dei turni di servizio BAR in un circolo di volontari.
 Viene gestita anche la comunicazione di eventuali messaggi sullo stile di un software di ticketing.<br>
