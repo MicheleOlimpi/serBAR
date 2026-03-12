@@ -88,7 +88,7 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
 <a class="btn btn-outline-dark" href="./">Indietro</a>
 
 <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title d-flex align-items-center gap-2" id="deleteUserModalLabel">
