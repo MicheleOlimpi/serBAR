@@ -57,9 +57,13 @@ foreach ($selectedBoardShifts as $shift) {
 
     $groupKey = $dayNumber . '|' . $weekdayLabel;
     if (!isset($groupedBoardShifts[$groupKey])) {
+        $dayTypeColor = trim((string) ($shift['day_type_color'] ?? ''));
+        $hasValidDayTypeColor = preg_match('/^#[0-9a-fA-F]{6}$/', $dayTypeColor) === 1;
+
         $groupedBoardShifts[$groupKey] = [
             'day_number' => $dayNumber,
             'weekday_label' => $weekdayLabel,
+            'day_type_color' => $hasValidDayTypeColor ? strtolower($dayTypeColor) : null,
             'shifts' => [],
         ];
     }
@@ -120,9 +124,10 @@ $statusLabels = [
               <?php else: ?>
                 <div class="vstack gap-3">
                   <?php foreach ($groupedBoardShifts as $group): ?>
+                    <?php $dayBadgeStyle = !empty($group['day_type_color']) ? 'background-color: ' . $group['day_type_color'] . ';' : ''; ?>
                     <div class="border rounded overflow-hidden">
                       <div class="d-flex">
-                        <div class="bg-light border-end d-flex flex-column justify-content-center align-items-center px-3 py-2 text-center" style="min-width: 84px;">
+                        <div class="border-end d-flex flex-column justify-content-center align-items-center px-3 py-2 text-center" style="min-width: 84px; <?= htmlspecialchars($dayBadgeStyle) ?>">
                           <span class="fs-4 fw-bold lh-1"><?= htmlspecialchars($group['day_number']) ?></span>
                           <span class="small text-uppercase"><?= htmlspecialchars($group['weekday_label']) ?></span>
                         </div>
