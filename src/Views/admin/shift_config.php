@@ -66,7 +66,7 @@
       </div>
       <div class="modal-body d-flex align-items-center gap-2">
         <i class="fa-solid fa-circle-exclamation modal-icon"></i>
-        <span>Si è sicuri di eliminare.</span>
+        <span>Si è sicuri di voler eliminare il tipo di giorno?</span>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">No</button>
