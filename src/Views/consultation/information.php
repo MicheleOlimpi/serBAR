@@ -26,6 +26,6 @@
   <div class="card-body">
     <h2 class="h5">Licenza del programma</h2>
     <p class="mb-3">Apri una nuova finestra per visualizzare la licenza contenuta nel file <code>LICENSE</code>.</p>
-    <a href="?action=license" target="_blank" rel="noopener" class="btn btn-primary">Apri licenza</a>
+    <a href="?action=license" target="_blank" rel="noopener" class="btn btn-primary">MOSTRA LICENZA</a>
   </div>
 </div>
