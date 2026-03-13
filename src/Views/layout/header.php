@@ -9,7 +9,7 @@ $isBoardGenerateView = $currentAction === 'board_edit' && isset($_GET['generate'
 $assetBasePath = rtrim(str_replace('\\', '/', dirname((string) ($_SERVER['SCRIPT_NAME'] ?? '/'))), '/');
 $assetBasePath = $assetBasePath === '' ? '.' : $assetBasePath;
 $adminNavItems = [
-    'dashboard' => ['label' => 'Dashboard', 'href' => './'],
+    'dashboard' => ['label' => 'Dashboard', 'href' => './', 'icon' => 'fa-gauge'],
     'boards' => ['label' => 'Tabelloni', 'href' => '?action=boards', 'icon' => 'fa-table'],
     'users' => ['label' => 'Utenti', 'href' => '?action=users', 'icon' => 'fa-user'],
     'day_types' => ['label' => 'Tipi giorno', 'href' => '?action=day_types'],
@@ -20,7 +20,7 @@ $adminNavItems = [
     'information' => ['label' => 'Informazioni', 'href' => '?action=information', 'icon' => 'fa-circle-info'],
 ];
 $consultationNavItems = [
-    'dashboard' => ['label' => 'dashboard', 'href' => './'],
+    'dashboard' => ['label' => 'Dashboard', 'href' => './', 'icon' => 'fa-gauge'],
     'information' => ['label' => 'Informazioni', 'href' => '?action=information', 'icon' => 'fa-circle-info'],
 ];
 
