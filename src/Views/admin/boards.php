@@ -99,25 +99,27 @@ $monthNames = [
 </div>
 
 <script>
-  const deleteBoardNameElement = document.getElementById('deleteBoardName');
-  const confirmDeleteBoardBtn = document.getElementById('confirmDeleteBoardBtn');
+  document.addEventListener('DOMContentLoaded', () => {
+    const deleteBoardNameElement = document.getElementById('deleteBoardName');
+    const confirmDeleteBoardBtn = document.getElementById('confirmDeleteBoardBtn');
 
-  document.querySelectorAll('.js-delete-board').forEach((button) => {
-    button.addEventListener('click', () => {
-      if (deleteBoardNameElement) {
-        deleteBoardNameElement.textContent = button.dataset.boardName || '';
-      }
-      if (confirmDeleteBoardBtn) {
-        confirmDeleteBoardBtn.setAttribute('href', button.dataset.deleteUrl || '#');
-      }
+    document.querySelectorAll('.js-delete-board').forEach((button) => {
+      button.addEventListener('click', () => {
+        if (deleteBoardNameElement) {
+          deleteBoardNameElement.textContent = button.dataset.boardName || '';
+        }
+        if (confirmDeleteBoardBtn) {
+          confirmDeleteBoardBtn.setAttribute('href', button.dataset.deleteUrl || '#');
+        }
+      });
     });
-  });
 
-  <?php if ($boardAlreadyExists): ?>
-  const boardExistsModalElement = document.getElementById('boardExistsModal');
-  if (boardExistsModalElement && typeof bootstrap !== 'undefined') {
-    const boardExistsModal = new bootstrap.Modal(boardExistsModalElement);
-    boardExistsModal.show();
-  }
-  <?php endif; ?>
+    <?php if ($boardAlreadyExists): ?>
+    const boardExistsModalElement = document.getElementById('boardExistsModal');
+    if (boardExistsModalElement && typeof bootstrap !== 'undefined') {
+      const boardExistsModal = new bootstrap.Modal(boardExistsModalElement);
+      boardExistsModal.show();
+    }
+    <?php endif; ?>
+  });
 </script>
