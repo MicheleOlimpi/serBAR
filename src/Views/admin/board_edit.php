@@ -43,6 +43,7 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
   .day-meta { font-size: 0.82rem; line-height: 1.3; }
   .day-type-selector { max-width: 140px; }
   .day-number { font-size: 1.75rem; font-weight: 700; line-height: 1; }
+  .responsible-section-hidden { display: none; }
 
   .board-generated-wrap { width: 100vw; min-height: 100vh; }
   .board-generated-table { width: 100%; margin: 0; border-collapse: collapse; }
@@ -111,8 +112,8 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
                 <button class="btn btn-outline-success" type="button" aria-label="Aggiungi volontario"><i class="fa-solid fa-circle-plus text-success" aria-hidden="true"></i></button>
               </div>
             </div>
-            <div>
-              <input id="responsabile-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][responsabile_chiusura]" value="<?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?? '')) ?>" <?= empty($shift['closes_bar']) ? 'readonly' : '' ?>placeholder="Chiusura">
+            <div class="responsible-section <?= empty($shift['closes_bar']) ? 'responsible-section-hidden' : '' ?>">
+              <input id="responsabile-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][responsabile_chiusura]" value="<?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?? '')) ?>" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?> placeholder="Chiusura">
               <div class="input-group input-group-sm responsible-picker" data-target="responsabile-<?= (int) $shift['id'] ?>">
                 <input type="text" class="form-control responsible-picker-input" list="users-list" placeholder="Seleziona chiusura" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?>>
                 <button class="btn btn-outline-success" type="button" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?> aria-label="Imposta responsabile"><i class="fa-solid fa-circle-plus text-success" aria-hidden="true"></i></button>
