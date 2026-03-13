@@ -11,7 +11,7 @@ class BarRepository
 {
     private const NOTIFICATION_STATUSES = ['inviata', 'letto', 'in_corso', 'chiuso'];
     private const SETUP_BOOLEAN_KEYS = ['consultation_interface_enabled', 'consultation_notifications_enabled', 'consultation_directory_enabled', 'public_interface_enabled'];
-    private const SETUP_TEXT_KEYS = ['login_info1', 'login_info2'];
+    private const SETUP_TEXT_KEYS = ['login_info1', 'login_info2', 'public_interface_passkey'];
     private const PROGRAM_INFO_KEYS = ['program_name', 'program_author', 'program_version'];
     private const LOGIN_INFO_KEYS = ['login_info1', 'login_info2'];
     private const NON_DELETABLE_DAY_TYPE_CODES = ['feriale', 'prefestivo', 'festivo'];
@@ -239,6 +239,7 @@ class BarRepository
             'public_interface_enabled' => '0',
             'login_info1' => 'ACLI Grassina',
             'login_info2' => 'Gestione turni',
+            'public_interface_passkey' => '',
         ];
 
         $stmt = $this->pdo->query('SELECT setting_key, setting_value FROM app_settings');
@@ -315,8 +316,19 @@ class BarRepository
             $upsert->execute([$settingKey, $value]);
         }
 
+        $publicInterfaceEnabled = !empty($data['public_interface_enabled']);
+
         foreach (self::SETUP_TEXT_KEYS as $settingKey) {
-            $upsert->execute([$settingKey, trim((string) ($data[$settingKey] ?? ''))]);
+            $value = trim((string) ($data[$settingKey] ?? ''));
+
+            if ($settingKey === 'public_interface_passkey') {
+                $value = substr($value, 0, 10);
+                if (!$publicInterfaceEnabled) {
+                    $value = '';
+                }
+            }
+
+            $upsert->execute([$settingKey, $value]);
         }
     }
 

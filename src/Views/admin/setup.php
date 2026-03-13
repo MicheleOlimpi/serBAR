@@ -44,6 +44,20 @@
     </label>
   </div>
 
+  <div class="mb-3">
+    <label class="form-label" for="public_interface_passkey">Passkey</label>
+    <input
+      class="form-control"
+      type="text"
+      id="public_interface_passkey"
+      name="public_interface_passkey"
+      maxlength="10"
+      value="<?= htmlspecialchars((string) ($settings['public_interface_passkey'] ?? ''), ENT_QUOTES, 'UTF-8') ?>"
+      <?= !empty($settings['public_interface_enabled']) && $settings['public_interface_enabled'] === '1' ? '' : 'disabled' ?>
+    >
+    <div class="form-text">Massimo 10 caratteri. Disponibile solo con interfaccia al pubblico attiva.</div>
+  </div>
+
   <hr>
 
   <h5 class="mb-3">Finestra di login</h5>
@@ -77,3 +91,23 @@
     <a class="btn btn-outline-dark" href="./">Indietro</a>
   </div>
 </form>
+
+<script>
+  const publicInterfaceToggle = document.getElementById('public_interface_enabled');
+  const publicInterfacePasskey = document.getElementById('public_interface_passkey');
+
+  const togglePublicInterfacePasskey = () => {
+    if (!publicInterfaceToggle || !publicInterfacePasskey) {
+      return;
+    }
+
+    publicInterfacePasskey.disabled = !publicInterfaceToggle.checked;
+  };
+
+  if (publicInterfaceToggle) {
+    publicInterfaceToggle.addEventListener('change', togglePublicInterfacePasskey);
+  }
+
+  togglePublicInterfacePasskey();
+</script>
+

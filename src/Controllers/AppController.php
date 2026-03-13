@@ -153,20 +153,37 @@ class AppController
     public function boards(): void
     {
         $this->guardAdmin();
+        $boardAlreadyExists = false;
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_board'])) {
             $month = max(1, min(12, (int) ($_POST['month'] ?? 0)));
             $year = (int) ($_POST['year'] ?? 0);
             if ($year < 1970 || $year > 2100) {
                 $year = (int) date('Y');
             }
-            $id = $this->repo->createBoard($month, $year);
-            $this->boardService->generate($id, $month, $year);
+
+            try {
+                $id = $this->repo->createBoard($month, $year);
+                $this->boardService->generate($id, $month, $year);
+                View::redirect('?action=boards');
+            } catch (\PDOException $e) {
+                if ((string) $e->getCode() === '23000') {
+                    $boardAlreadyExists = true;
+                } else {
+                    throw $e;
+                }
+            }
         }
+
         if (isset($_GET['delete'])) {
             $this->repo->deleteBoard((int) $_GET['delete']);
             View::redirect('?action=boards');
         }
-        View::render('admin/boards', ['boards' => $this->repo->boards()]);
+
+        View::render('admin/boards', [
+            'boards' => $this->repo->boards(),
+            'boardAlreadyExists' => $boardAlreadyExists,
+        ]);
     }
 
     public function boardEdit(): void
