@@ -199,6 +199,3 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
   <button class="btn btn-success">Salva modifiche</button>
 </form>
 <?php endif; ?>
-<?php if (!$generate): ?>
-<a class="btn btn-outline-dark" href="./">Indietro</a>
-<?php endif; ?>
