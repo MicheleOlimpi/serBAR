@@ -6,6 +6,7 @@ $u = Auth::user();
 $currentAction = (string) ($_GET['action'] ?? 'dashboard');
 $isLoginPage = $currentAction === 'login';
 $isBoardGenerateView = $currentAction === 'board_edit' && isset($_GET['generate']) && $_GET['generate'] === '1';
+$isBoardEditView = $currentAction === 'board_edit' && !$isBoardGenerateView;
 $assetBasePath = rtrim(str_replace('\\', '/', dirname((string) ($_SERVER['SCRIPT_NAME'] ?? '/'))), '/');
 $assetBasePath = $assetBasePath === '' ? '.' : $assetBasePath;
 $adminNavItems = [
@@ -97,4 +98,4 @@ $consultationNavItems['information'] = ['label' => 'Informazioni', 'href' => '?a
   </div>
 </nav>
 <?php endif; ?>
-<div class="<?= $isBoardGenerateView ? 'container-fluid p-0' : 'container pb-5' ?><?= $isLoginPage ? ' min-vh-100 d-flex align-items-center justify-content-center' : '' ?>">
+<div class="<?= $isBoardGenerateView ? 'container-fluid p-0' : ($isBoardEditView ? 'container-fluid pb-5 px-3' : 'container pb-5') ?><?= $isLoginPage ? ' min-vh-100 d-flex align-items-center justify-content-center' : '' ?>"<?= $isBoardEditView ? ' style="width: 90vw; max-width: 90vw;"' : '' ?>>
