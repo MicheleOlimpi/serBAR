@@ -3,6 +3,8 @@ $currentMonth = (int) date('n');
 $currentYear = (int) date('Y');
 $defaultMonth = $currentMonth < 12 ? $currentMonth + 1 : 1;
 $defaultYear = $currentMonth < 12 ? $currentYear : $currentYear + 1;
+$boardAlreadyExists = !empty($boardAlreadyExists);
+
 $monthNames = [
     1 => 'Gennaio',
     2 => 'Febbraio',
@@ -56,6 +58,25 @@ $monthNames = [
 <?php endforeach; ?>
 </table>
 
+
+
+<div class="modal fade" id="boardExistsModal" tabindex="-1" aria-labelledby="boardExistsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title d-flex align-items-center gap-2" id="boardExistsModalLabel">
+          <i class="fa-solid fa-circle-xmark text-danger" aria-hidden="true"></i>
+          tabellone già esistente!
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="deleteBoardModal" tabindex="-1" aria-labelledby="deleteBoardModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -91,4 +112,12 @@ $monthNames = [
       }
     });
   });
+
+  <?php if ($boardAlreadyExists): ?>
+  const boardExistsModalElement = document.getElementById('boardExistsModal');
+  if (boardExistsModalElement && typeof bootstrap !== 'undefined') {
+    const boardExistsModal = new bootstrap.Modal(boardExistsModalElement);
+    boardExistsModal.show();
+  }
+  <?php endif; ?>
 </script>
