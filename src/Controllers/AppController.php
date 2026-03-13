@@ -345,6 +345,7 @@ class AppController
 
             View::render('consultation/information', [
                 'programInfo' => $this->repo->programInfoSettings(),
+                'clientInfo' => $this->clientInfo(),
                 'setupSettings' => $setupSettings,
             ]);
 
@@ -374,6 +375,79 @@ class AppController
                 'php_version' => PHP_VERSION,
             ],
         ]);
+    }
+
+    private function clientInfo(): array
+    {
+        $userAgent = trim((string) ($_SERVER['HTTP_USER_AGENT'] ?? ''));
+
+        return [
+            'device' => $this->detectClientDevice($userAgent),
+            'os' => $this->detectClientOs($userAgent),
+            'browser' => $this->detectClientBrowser($userAgent),
+        ];
+    }
+
+    private function detectClientDevice(string $userAgent): string
+    {
+        if ($userAgent === '') {
+            return 'Non disponibile';
+        }
+
+        return preg_match('/android|iphone|ipad|ipod|mobile|windows phone/i', $userAgent) === 1
+            ? 'Smartphone'
+            : 'Computer';
+    }
+
+    private function detectClientOs(string $userAgent): string
+    {
+        if ($userAgent === '') {
+            return 'Non disponibile';
+        }
+
+        $osPatterns = [
+            '/windows nt 10\.0/i' => 'Windows 10/11',
+            '/windows nt 6\.3/i' => 'Windows 8.1',
+            '/windows nt 6\.2/i' => 'Windows 8',
+            '/windows nt 6\.1/i' => 'Windows 7',
+            '/android\s([\d\.]+)/i' => 'Android',
+            '/iphone os\s([\d_]+)/i' => 'iOS',
+            '/ipad; cpu os\s([\d_]+)/i' => 'iPadOS',
+            '/mac os x\s([\d_]+)/i' => 'macOS',
+            '/linux/i' => 'Linux',
+        ];
+
+        foreach ($osPatterns as $pattern => $label) {
+            if (preg_match($pattern, $userAgent, $matches) === 1) {
+                $version = isset($matches[1]) ? str_replace('_', '.', (string) $matches[1]) : '';
+                return trim($label . ($version !== '' ? ' ' . $version : ''));
+            }
+        }
+
+        return 'Non disponibile';
+    }
+
+    private function detectClientBrowser(string $userAgent): string
+    {
+        if ($userAgent === '') {
+            return 'Non disponibile';
+        }
+
+        $browserPatterns = [
+            '/edg\/([\d\.]+)/i' => 'Microsoft Edge',
+            '/opr\/([\d\.]+)/i' => 'Opera',
+            '/chrome\/([\d\.]+)/i' => 'Google Chrome',
+            '/firefox\/([\d\.]+)/i' => 'Mozilla Firefox',
+            '/version\/([\d\.]+).*safari/i' => 'Safari',
+        ];
+
+        foreach ($browserPatterns as $pattern => $label) {
+            if (preg_match($pattern, $userAgent, $matches) === 1) {
+                return trim($label . ' ' . ((string) ($matches[1] ?? '')));
+            }
+        }
+
+        return 'Non disponibile';
     }
 
     public function segnalazione(): void
