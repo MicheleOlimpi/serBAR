@@ -19,10 +19,7 @@ $adminNavItems = [
     'setup' => ['label' => 'Setup', 'href' => '?action=setup', 'icon' => 'fa-gear'],
     'information' => ['label' => 'Informazioni', 'href' => '?action=information', 'icon' => 'fa-circle-info'],
 ];
-$consultationNavItems = [
-    'dashboard' => ['label' => 'Dashboard', 'href' => './', 'icon' => 'fa-gauge'],
-    'information' => ['label' => 'Informazioni', 'href' => '?action=information', 'icon' => 'fa-circle-info'],
-];
+$consultationNavItems['dashboard'] = ['label' => 'dashboard', 'href' => './', 'icon' => 'fa-gauge'];
 
 if ($u && !Auth::isAdmin()) {
     $consultationEnabled = ($setupSettings['consultation_interface_enabled'] ?? '1') === '1';
@@ -33,6 +30,8 @@ if ($u && !Auth::isAdmin()) {
         $consultationNavItems['segnalazione'] = ['label' => 'Segnalazione', 'href' => '?action=segnalazione', 'icon' => 'fa-message'];
     }
 }
+
+$consultationNavItems['information'] = ['label' => 'Informazioni', 'href' => '?action=information', 'icon' => 'fa-circle-info'];    
 ?>
 <!doctype html>
 <html lang="it">
