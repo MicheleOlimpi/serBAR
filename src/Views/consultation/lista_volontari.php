@@ -1,14 +1,11 @@
 <div class="card border-0 shadow-sm mb-4">
   <div class="card-body p-4">
     <h3 class="mb-2">LISTA VOLONTARI</h3>
-    <p class="text-muted mb-0">Elenco telefonico utenti in sola lettura ordinato alfabeticamente per cognome e nome.</p>
   </div>
 </div>
 
 <div class="card border-0 shadow-sm" id="elenco-telefonico">
   <div class="card-body p-4">
-    <h5 class="card-title mb-3">Elenco telefonico utenti</h5>
-
     <?php if (empty($directoryUsers)): ?>
       <div class="alert alert-info mb-0">Nessun utente disponibile in rubrica.</div>
     <?php else: ?>
