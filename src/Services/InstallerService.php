@@ -52,6 +52,7 @@ class InstallerService
             }
             $this->ensureCalendarColumns($pdo);
             $this->ensureDayTypesSchema($pdo);
+            $this->ensureWeekdayTypesSchema($pdo);
             $this->ensureUsersColumns($pdo);
             $this->ensureDailyShiftConfigSchema($pdo);
             $this->ensureBoardDaysSchema($pdo);
@@ -70,6 +71,7 @@ class InstallerService
             "CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50) UNIQUE, last_name VARCHAR(100), first_name VARCHAR(100), password_hash VARCHAR(255), role VARCHAR(20) NOT NULL DEFAULT 'user', phone VARCHAR(30) NOT NULL DEFAULT '', status VARCHAR(20) NOT NULL DEFAULT 'attivo', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)",
             "CREATE TABLE IF NOT EXISTS day_types (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(50) NOT NULL, code VARCHAR(50) NOT NULL, color_hex CHAR(7) NOT NULL DEFAULT '#FFFFFF', is_locked TINYINT(1) NOT NULL DEFAULT 0)",
             'CREATE TABLE IF NOT EXISTS daily_shift_config (id INT AUTO_INCREMENT PRIMARY KEY, day_type_id INT NOT NULL, start_time TIME NOT NULL, end_time TIME NOT NULL, closes_bar TINYINT(1) NOT NULL DEFAULT 0, priority INT NOT NULL DEFAULT 1, UNIQUE KEY uq_daily_shift_day_type_priority (day_type_id, priority), FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE CASCADE)',
+            'CREATE TABLE IF NOT EXISTS weekday_types (id INT AUTO_INCREMENT PRIMARY KEY, weekday_number TINYINT UNSIGNED NOT NULL, weekday_name VARCHAR(30) NOT NULL, day_type_id INT NOT NULL, UNIQUE KEY uq_weekday_number (weekday_number), UNIQUE KEY uq_weekday_name (weekday_name), FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE CASCADE)',
             'CREATE TABLE IF NOT EXISTS calendar_days (id INT AUTO_INCREMENT PRIMARY KEY, day_date DATE NOT NULL UNIQUE, recurrence_name VARCHAR(255) NULL, santo VARCHAR(255) NULL, is_holiday TINYINT(1) NOT NULL DEFAULT 0, is_special TINYINT(1) NOT NULL DEFAULT 0, day_type_id INT NULL, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE SET NULL)',
             'CREATE TABLE IF NOT EXISTS boards (id INT AUTO_INCREMENT PRIMARY KEY, month INT NOT NULL, year INT NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, UNIQUE KEY uq_board (month, year))',
             'CREATE TABLE IF NOT EXISTS board_days (id INT AUTO_INCREMENT PRIMARY KEY, board_id INT NOT NULL, day_date DATE NOT NULL, weekday_name VARCHAR(30) NOT NULL, recurrence_name VARCHAR(255) NULL, day_type_id INT NULL, notes TEXT NULL, FOREIGN KEY (board_id) REFERENCES boards(id) ON DELETE CASCADE, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE SET NULL)',
@@ -92,6 +94,21 @@ class InstallerService
         $stmt = $pdo->query("SHOW COLUMNS FROM day_types LIKE 'color_hex'");
         if ($stmt === false || !$stmt->fetch()) {
             $pdo->exec("ALTER TABLE day_types ADD COLUMN color_hex CHAR(7) NOT NULL DEFAULT '#FFFFFF' AFTER code");
+        }
+    }
+
+    private function ensureWeekdayTypesSchema(PDO $pdo): void
+    {
+        $pdo->exec('CREATE TABLE IF NOT EXISTS weekday_types (id INT AUTO_INCREMENT PRIMARY KEY, weekday_number TINYINT UNSIGNED NOT NULL, weekday_name VARCHAR(30) NOT NULL, day_type_id INT NOT NULL, UNIQUE KEY uq_weekday_number (weekday_number), UNIQUE KEY uq_weekday_name (weekday_name), FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE CASCADE)');
+
+        $indexRows = $pdo->query("SHOW INDEX FROM weekday_types WHERE Key_name='uq_weekday_number'")->fetchAll(PDO::FETCH_ASSOC);
+        if ($indexRows === []) {
+            $pdo->exec('CREATE UNIQUE INDEX uq_weekday_number ON weekday_types (weekday_number)');
+        }
+
+        $indexRows = $pdo->query("SHOW INDEX FROM weekday_types WHERE Key_name='uq_weekday_name'")->fetchAll(PDO::FETCH_ASSOC);
+        if ($indexRows === []) {
+            $pdo->exec('CREATE UNIQUE INDEX uq_weekday_name ON weekday_types (weekday_name)');
         }
     }
 
@@ -232,6 +249,7 @@ class InstallerService
     {
         try {
             $pdo->exec("INSERT IGNORE INTO day_types (id, name, code, color_hex, is_locked) VALUES (1,'feriale','feriale','#FFFFFF',1),(2,'prefestivo','prefestivo','#FF9090',1),(3,'festivo','festivo','#FF0000',1),(4,'chiuso','chiuso','#A0A0A0',1),(5,'Orario continuato','orario_continuato','#FF0000',1)");
+            $pdo->exec("INSERT IGNORE INTO weekday_types (weekday_number, weekday_name, day_type_id) SELECT v.weekday_number, v.weekday_name, dt.id FROM (SELECT 1 AS weekday_number, 'Lunedì' AS weekday_name, 'feriale' AS day_type_code UNION ALL SELECT 2, 'Martedì', 'feriale' UNION ALL SELECT 3, 'Mercoledì', 'feriale' UNION ALL SELECT 4, 'Giovedì', 'feriale' UNION ALL SELECT 5, 'Venerdì', 'feriale' UNION ALL SELECT 6, 'Sabato', 'prefestivo' UNION ALL SELECT 7, 'Domenica', 'festivo') AS v JOIN day_types dt ON dt.code = v.day_type_code");
             $adminHash = password_hash('admin', PASSWORD_DEFAULT);
             $userHash = password_hash('user', PASSWORD_DEFAULT);
             $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES ('admin','System','Admin','{$adminHash}','admin','','attivo')");

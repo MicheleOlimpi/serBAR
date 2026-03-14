@@ -21,6 +21,7 @@ class BoardService
         $feriale = $this->idByCode('feriale');
         $prefestivo = $this->idByCode('prefestivo');
         $festivo = $this->idByCode('festivo');
+        $weekdayTypeMap = $this->weekdayTypeMap($feriale);
         $stmtCal = $this->pdo->prepare('SELECT day_date, recurrence_name, day_type_id FROM calendar_days WHERE MONTH(day_date) = ? ORDER BY day_date DESC');
         $days = [];
 
@@ -49,7 +50,9 @@ class BoardService
             }
 
             $calendarDayTypeId = isset($cal['day_type_id']) ? (int) $cal['day_type_id'] : 0;
-            $type = $calendarDayTypeId > 0 ? $calendarDayTypeId : $feriale;
+            $weekdayNumber = (int) $d->format('N');
+            $defaultType = $weekdayTypeMap[$weekdayNumber] ?? $feriale;
+            $type = $calendarDayTypeId > 0 ? $calendarDayTypeId : $defaultType;
 
             $days[$iso] = [
                 'day_date' => $iso,
@@ -58,9 +61,6 @@ class BoardService
                 'day_type_id' => $type,
             ];
 
-            if ($d->format('N') === '7' && $festivo > 0) {
-                $days[$iso]['day_type_id'] = $festivo;
-            }
         }
 
         $easter = $this->easterSunday($year);
@@ -104,6 +104,42 @@ class BoardService
         $stmt = $this->pdo->prepare('SELECT id FROM day_types WHERE code=? LIMIT 1');
         $stmt->execute([$code]);
         return (int) $stmt->fetchColumn();
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    private function weekdayTypeMap(int $fallbackDayTypeId): array
+    {
+        try {
+            $stmt = $this->pdo->query('SELECT weekday_number, day_type_id FROM weekday_types ORDER BY weekday_number ASC');
+        } catch (\Throwable) {
+            return [];
+        }
+
+        if ($stmt === false) {
+            return [];
+        }
+
+        $map = [];
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $weekdayNumber = (int) ($row['weekday_number'] ?? 0);
+            $dayTypeId = (int) ($row['day_type_id'] ?? 0);
+
+            if ($weekdayNumber < 1 || $weekdayNumber > 7 || $dayTypeId <= 0) {
+                continue;
+            }
+
+            $map[$weekdayNumber] = $dayTypeId;
+        }
+
+        if ($map === []) {
+            for ($weekdayNumber = 1; $weekdayNumber <= 7; $weekdayNumber++) {
+                $map[$weekdayNumber] = $fallbackDayTypeId;
+            }
+        }
+
+        return $map;
     }
 
     private function easterSunday(int $year): \DateTimeImmutable
