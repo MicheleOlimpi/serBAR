@@ -352,6 +352,34 @@ class AppController
         ]);
     }
 
+    public function weekdayClose(): void
+    {
+        $this->guardAdmin();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $entries = [];
+            foreach ($this->repo->weekdayCloseRules() as $rule) {
+                $weekdayCode = strtolower((string) ($rule['weekday_code'] ?? ''));
+                if ($weekdayCode === '') {
+                    continue;
+                }
+
+                $entries[$weekdayCode] = !empty($_POST['weekday_close'][$weekdayCode]) ? 1 : 0;
+            }
+
+            if ($entries !== []) {
+                $this->repo->saveWeekdayCloseRules($entries);
+            }
+
+            View::redirect('?action=weekday_close&saved=1');
+        }
+
+        View::render('admin/weekday_close', [
+            'rules' => $this->repo->weekdayCloseRules(),
+            'saved' => isset($_GET['saved']),
+        ]);
+    }
+
 
     public function information(): void
     {

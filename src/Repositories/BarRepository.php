@@ -332,6 +332,31 @@ class BarRepository
         }
     }
 
+    public function weekdayCloseRules(): array
+    {
+        $sql = 'SELECT wc.weekday_code, wc.is_closed, dt.id AS day_type_id, dt.name AS day_name
+                FROM weekday_close wc
+                JOIN day_types dt ON dt.id = wc.day_type_id
+                ORDER BY wc.weekday_order ASC';
+
+        return $this->pdo->query($sql)->fetchAll();
+    }
+
+    /**
+     * @param array<string,int> $entries
+     */
+    public function saveWeekdayCloseRules(array $entries): void
+    {
+        if ($entries === []) {
+            return;
+        }
+
+        $stmt = $this->pdo->prepare('UPDATE weekday_close SET is_closed=? WHERE weekday_code=?');
+        foreach ($entries as $weekdayCode => $isClosed) {
+            $stmt->execute([$isClosed ? 1 : 0, $weekdayCode]);
+        }
+    }
+
     public function calendarDays(?string $month = null): array
     {
         if ($month) {

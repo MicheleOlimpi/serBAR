@@ -47,6 +47,7 @@ $routes = [
     'day_types' => 'dayTypes',
     'shift_config' => 'shiftConfig',
     'calendar' => 'calendar',
+    'weekday_close' => 'weekdayClose',
     'notifications' => 'notifications',
     'setup' => 'setup',
     'information' => 'information',

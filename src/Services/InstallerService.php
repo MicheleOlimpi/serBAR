@@ -58,6 +58,7 @@ class InstallerService
             $this->ensureBoardDayShiftsSchema($pdo);
             $this->ensureNotificationsSchema($pdo);
             $this->ensureAppSettingsSchema($pdo);
+            $this->ensureWeekdayCloseSchema($pdo);
             $this->removeBoardDayUsersTable($pdo);
         } catch (Throwable $e) {
             throw new \RuntimeException('Errore installazione tabelle: ' . $e->getMessage(), 0, $e);
@@ -75,7 +76,8 @@ class InstallerService
             'CREATE TABLE IF NOT EXISTS board_days (id INT AUTO_INCREMENT PRIMARY KEY, board_id INT NOT NULL, day_date DATE NOT NULL, weekday_name VARCHAR(30) NOT NULL, recurrence_name VARCHAR(255) NULL, day_type_id INT NULL, notes TEXT NULL, FOREIGN KEY (board_id) REFERENCES boards(id) ON DELETE CASCADE, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE SET NULL)',
             'CREATE TABLE IF NOT EXISTS board_day_shifts (id INT AUTO_INCREMENT PRIMARY KEY, board_day_id INT NOT NULL, daily_shift_config_id INT NULL, start_time TIME NOT NULL, end_time TIME NOT NULL, closes_bar TINYINT(1) NOT NULL DEFAULT 0, priority INT NOT NULL DEFAULT 1, volunteers TEXT NULL, responsabile_chiusura VARCHAR(255) NULL, UNIQUE KEY uq_board_day_shift_priority (board_day_id, priority), FOREIGN KEY (board_day_id) REFERENCES board_days(id) ON DELETE CASCADE, FOREIGN KEY (daily_shift_config_id) REFERENCES daily_shift_config(id) ON DELETE SET NULL)',
             "CREATE TABLE IF NOT EXISTS notifications (id INT AUTO_INCREMENT PRIMARY KEY, user_id INT NOT NULL, message TEXT NOT NULL, status VARCHAR(20) NOT NULL DEFAULT 'inviata', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE)",
-            'CREATE TABLE IF NOT EXISTS app_settings (setting_key VARCHAR(100) PRIMARY KEY, setting_value VARCHAR(255) NOT NULL)'
+            'CREATE TABLE IF NOT EXISTS app_settings (setting_key VARCHAR(100) PRIMARY KEY, setting_value VARCHAR(255) NOT NULL)',
+            'CREATE TABLE IF NOT EXISTS weekday_close (id INT AUTO_INCREMENT PRIMARY KEY, weekday_code VARCHAR(20) NOT NULL UNIQUE, weekday_order TINYINT UNSIGNED NOT NULL, day_type_id INT NOT NULL, is_closed TINYINT(1) NOT NULL DEFAULT 0, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE CASCADE)'
         ];
     }
 
@@ -204,6 +206,35 @@ class InstallerService
 
 
 
+    private function ensureWeekdayCloseSchema(PDO $pdo): void
+    {
+        $pdo->exec('CREATE TABLE IF NOT EXISTS weekday_close (id INT AUTO_INCREMENT PRIMARY KEY, weekday_code VARCHAR(20) NOT NULL UNIQUE, weekday_order TINYINT UNSIGNED NOT NULL, day_type_id INT NOT NULL, is_closed TINYINT(1) NOT NULL DEFAULT 0, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE CASCADE)');
+
+        $stmt = $pdo->query("SHOW COLUMNS FROM weekday_close LIKE 'weekday_order'");
+        if ($stmt === false || !$stmt->fetch()) {
+            $pdo->exec('ALTER TABLE weekday_close ADD COLUMN weekday_order TINYINT UNSIGNED NOT NULL DEFAULT 1 AFTER weekday_code');
+        }
+
+        $stmt = $pdo->query("SHOW COLUMNS FROM weekday_close LIKE 'day_type_id'");
+        if ($stmt === false || !$stmt->fetch()) {
+            $pdo->exec('ALTER TABLE weekday_close ADD COLUMN day_type_id INT NOT NULL DEFAULT 1 AFTER weekday_order');
+        }
+
+        $stmt = $pdo->query("SHOW COLUMNS FROM weekday_close LIKE 'is_closed'");
+        if ($stmt === false || !$stmt->fetch()) {
+            $pdo->exec('ALTER TABLE weekday_close ADD COLUMN is_closed TINYINT(1) NOT NULL DEFAULT 0 AFTER day_type_id');
+        }
+
+        $indexStmt = $pdo->query("SHOW INDEX FROM weekday_close WHERE Key_name='uq_weekday_close_code'");
+        if ($indexStmt === false || !$indexStmt->fetch()) {
+            $pdo->exec('ALTER TABLE weekday_close ADD UNIQUE KEY uq_weekday_close_code (weekday_code)');
+        }
+
+        $this->dropForeignKeyIfExists($pdo, 'weekday_close', 'day_type_id');
+        $pdo->exec('ALTER TABLE weekday_close ADD CONSTRAINT fk_weekday_close_day_type FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE CASCADE');
+    }
+
+
     private function removeBoardDayUsersTable(PDO $pdo): void
     {
         $pdo->exec('DROP TABLE IF EXISTS board_day_users');
@@ -238,9 +269,29 @@ class InstallerService
             $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES ('user','System','User','{$userHash}','user','','attivo')");
             $pdo->exec("INSERT IGNORE INTO app_settings (setting_key, setting_value) VALUES ('program_name','serBAR'),('program_author','Michele Olimpi'),('program_version','V00.00'),('login_info1','ACLI Grassina'),('login_info2','Gestione turni')");
             $pdo->exec("INSERT IGNORE INTO daily_shift_config(id, day_type_id, start_time, end_time, closes_bar, priority) VALUES (1,1,'15:00:00','20:00:00',0,1),(2,1,'20:00:00','23:00:00',1,2),(3,2,'15:00:00','20:00:00',0,1),(4,2,'20:00:00','23:00:00',1,2),(5,3,'08:00:00','12:00:00',1,1),(6,3,'15:00:00','20:00:00',0,2),(7,3,'20:00:00','23:00:00',1,3),(8,4,'00:00:00','00:00:00',0,1),(9,5,'08:00:00','23:00:00',1,1)");
+            $this->seedWeekdayClose($pdo);
             $this->seedCalendarDays($pdo);
         } catch (Throwable $e) {
             throw new \RuntimeException('Errore popolamento dati iniziali: ' . $e->getMessage(), 0, $e);
+        }
+    }
+
+    private function seedWeekdayClose(PDO $pdo): void
+    {
+        $ferialeTypeId = 1;
+        $rows = [
+            ['monday', 1],
+            ['tuesday', 2],
+            ['wednesday', 3],
+            ['thursday', 4],
+            ['friday', 5],
+            ['saturday', 6],
+            ['sunday', 7],
+        ];
+
+        $stmt = $pdo->prepare('INSERT IGNORE INTO weekday_close (weekday_code, weekday_order, day_type_id, is_closed) VALUES (?, ?, ?, 0)');
+        foreach ($rows as [$weekdayCode, $weekdayOrder]) {
+            $stmt->execute([$weekdayCode, $weekdayOrder, $ferialeTypeId]);
         }
     }
 
