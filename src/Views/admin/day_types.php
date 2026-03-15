@@ -35,20 +35,24 @@
         <small class="text-muted ms-1"><?= htmlspecialchars((string) ($t['color_hex'] ?? '#FFFFFF')) ?></small>
       </td>
       <td class="d-flex gap-2">
-        <a class="btn btn-sm btn-outline-primary" href="?action=day_types&edit=<?= (int) $t['id'] ?>">Modifica</a>
+        <a class="btn btn-sm btn-outline-primary" href="?action=day_types&edit=<?= (int) $t['id'] ?>" aria-label="Modifica" title="Modifica">
+          <i class="fa-solid fa-pen" aria-hidden="true"></i>
+        </a>
         <?php if (!(int) $t['is_locked'] && !in_array(strtolower((string) $t['code']), ['feriale', 'prefestivo', 'festivo'], true)): ?>
           <button
             type="button"
-            class="btn btn-sm btn-danger js-delete-day-type"
+            class="btn btn-sm btn-danger js-delete-day-type" aria-label="Elimina" title="Elimina"
             data-delete-url="?action=day_types&delete=<?= (int) $t['id'] ?>"
             data-day-type-name="<?= htmlspecialchars((string) $t['name']) ?>"
             data-bs-toggle="modal"
             data-bs-target="#deleteDayTypeModal"
           >
-            Elimina
+            <i class="fa-solid fa-trash" aria-hidden="true"></i>
           </button>
         <?php else: ?>
-          <span class="badge bg-secondary">Non eliminabile</span>
+          <button type="button" class="btn btn-sm btn-secondary" disabled aria-label="Non eliminabile" title="Non eliminabile">
+            <i class="fa-solid fa-trash" aria-hidden="true"></i>
+          </button>
         <?php endif; ?>
       </td>
     </tr>
