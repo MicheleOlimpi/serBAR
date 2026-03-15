@@ -14,12 +14,12 @@ $assetBasePath = $assetBasePath === '' ? '.' : $assetBasePath;
 $adminNavItems = [
     'dashboard' => ['label' => 'Dashboard', 'href' => './', 'icon' => 'fa-gauge'],
     'boards' => ['label' => 'Tabelloni', 'href' => '?action=boards', 'icon' => 'fa-table'],
+    'notifications' => ['label' => 'Segnalazioni', 'href' => '?action=notifications', 'icon' => 'fa-message'],
     'users' => ['label' => 'Utenti', 'href' => '?action=users', 'icon' => 'fa-user'],
     'day_types' => ['label' => 'Tipi giorno', 'href' => '?action=day_types', 'icon' => 'fa-calendar-day'],
     'shift_config' => ['label' => 'Turni giornalieri', 'href' => '?action=shift_config', 'icon' => 'fa-clock-rotate-left'],
     'calendar' => ['label' => 'Calendario', 'href' => '?action=calendar', 'icon' => 'fa-calendar-days'],
     'weekday_close' => ['label' => 'Giorni chiusura', 'href' => '?action=weekday_close', 'icon' => 'fa-calendar-xmark'],
-    'notifications' => ['label' => 'Segnalazioni', 'href' => '?action=notifications', 'icon' => 'fa-message'],
     'setup' => ['label' => 'Setup', 'href' => '?action=setup', 'icon' => 'fa-gear'],
     'information' => ['label' => 'Informazioni', 'href' => '?action=information', 'icon' => 'fa-circle-info'],
 ];
