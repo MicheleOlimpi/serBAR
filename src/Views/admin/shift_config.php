@@ -41,15 +41,15 @@
       <td><?= !empty($shift['closes_bar']) ? 'Sì' : 'No' ?></td>
       <td><?= (int) $shift['priority'] ?></td>
       <td class="d-flex gap-2">
-        <a class="btn btn-sm btn-outline-primary" href="?action=shift_config&edit=<?= (int) $shift['id'] ?>">Modifica</a>
+        <a class="btn btn-sm btn-outline-primary" href="?action=shift_config&edit=<?= (int) $shift['id'] ?>" aria-label="Modifica" title="Modifica"><i class="fa-solid fa-pen" aria-hidden="true"></i></a>
         <button
           type="button"
-          class="btn btn-sm btn-danger js-shift-delete-btn"
+          class="btn btn-sm btn-danger js-shift-delete-btn" aria-label="Elimina" title="Elimina"
           data-bs-toggle="modal"
           data-bs-target="#deleteShiftModal"
           data-delete-url="?action=shift_config&delete=<?= (int) $shift['id'] ?>"
         >
-          Elimina
+          <i class="fa-solid fa-trash" aria-hidden="true"></i>
         </button>
       </td>
     </tr>
