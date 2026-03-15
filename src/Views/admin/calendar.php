@@ -60,7 +60,7 @@
               >
             </td>
             <td class="text-end">
-              <button class="btn btn-sm btn-outline-primary" type="submit" name="save_id" value="<?= $id ?>">Salva</button>
+              <button class="btn btn-sm btn-outline-primary" type="submit" name="save_id" value="<?= $id ?>" aria-label="Salva" title="Salva"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i></button>
             </td>
           </tr>
         <?php endforeach; ?>
