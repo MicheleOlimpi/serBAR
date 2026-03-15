@@ -40,18 +40,23 @@ class InstallController
                     'db' => $cfg['database'],
                     'host' => $cfg['host'],
                     'port' => $cfg['port'],
+                    'isInstallView' => true,
                 ]);
                 return;
             } catch (\Throwable $e) {
                 View::render('install/index', [
                     'error' => $e->getMessage(),
                     'defaults' => $cfg,
+                    'isInstallView' => true,
                 ]);
                 return;
             }
         }
 
-        View::render('install/index', ['defaults' => $defaults]);
+        View::render('install/index', [
+            'defaults' => $defaults,
+            'isInstallView' => true,
+        ]);
     }
 
     private function loadDefaultsFromConfig(): array
