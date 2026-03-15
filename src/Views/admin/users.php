@@ -21,9 +21,9 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
 
 <table class="table table-striped align-middle">
   <tr>
-    <th>Username</th>
-    <th>Modifica dati</th>
-    <th>Cambio password</th>
+    <th>USERNAME</th>
+    <th>DATI</th>
+    <th></th>
     <th></th>
   </tr>
   <?php foreach($users as $u): ?>
