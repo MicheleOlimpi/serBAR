@@ -396,7 +396,21 @@ class BarRepository
     public function boardDays(int $boardId): array
     {
         $stmt = $this->pdo->prepare(
-            "SELECT bd.*, dt.name day_type_name, dt.color_hex day_type_color, c.santo
+            "SELECT
+                bd.*,
+                CASE DAYOFWEEK(bd.day_date)
+                    WHEN 1 THEN 'Domenica'
+                    WHEN 2 THEN 'Lunedì'
+                    WHEN 3 THEN 'Martedì'
+                    WHEN 4 THEN 'Mercoledì'
+                    WHEN 5 THEN 'Giovedì'
+                    WHEN 6 THEN 'Venerdì'
+                    WHEN 7 THEN 'Sabato'
+                    ELSE ''
+                END AS weekday_name,
+                dt.name day_type_name,
+                dt.color_hex day_type_color,
+                c.santo
             FROM board_days bd
             LEFT JOIN day_types dt ON dt.id = bd.day_type_id
             LEFT JOIN (
