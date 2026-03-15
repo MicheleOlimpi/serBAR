@@ -107,15 +107,24 @@ $statusBadgeMap = [
             </div>
           </td>
           <td>
-            <a class="btn btn-sm btn-outline-primary" href="?action=notifications&edit=<?= (int) $n['id'] ?>">Modifica</a>
+            <a
+              class="btn btn-sm btn-outline-primary"
+              href="?action=notifications&edit=<?= (int) $n['id'] ?>"
+              aria-label="Modifica"
+              title="Modifica"
+            >
+              <i class="fa-solid fa-pen" aria-hidden="true"></i>
+            </a>
             <button
               type="button"
               class="btn btn-sm btn-outline-danger js-delete-notification"
               data-delete-url="?action=notifications&delete=<?= (int) $n['id'] ?>"
               data-bs-toggle="modal"
               data-bs-target="#deleteNotificationModal"
+              aria-label="Elimina"
+              title="Elimina"
             >
-              Elimina
+              <i class="fa-solid fa-trash" aria-hidden="true"></i>
             </button>
           </td>
         </tr>
