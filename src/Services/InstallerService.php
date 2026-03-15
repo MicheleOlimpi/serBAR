@@ -10,13 +10,22 @@ use Throwable;
 
 class InstallerService
 {
-    public function install(array $cfg): void
+    public function install(array $cfg, ?callable $progressCallback = null): void
     {
+        $progress = static function (?callable $callback, string $message): void {
+            if ($callback !== null) {
+                $callback($message);
+            }
+        };
+
+        $progress($progressCallback, 'Verifica connessione al server database...');
         $pdo = $this->verifyServerConnection($cfg);
+        $progress($progressCallback, 'Creazione database applicativo se non presente...');
         $this->createDatabaseIfMissing($pdo, $cfg['database']);
+        $progress($progressCallback, 'Selezione database applicativo...');
         $this->selectDatabase($pdo, $cfg['database']);
-        $this->installSchema($pdo);
-        $this->seed($pdo);
+        $this->installSchema($pdo, $progressCallback);
+        $this->seed($pdo, $progressCallback);
     }
 
     private function verifyServerConnection(array $cfg): PDO
@@ -44,11 +53,19 @@ class InstallerService
         $pdo->exec("USE `{$safeName}`");
     }
 
-    private function installSchema(PDO $pdo): void
+    private function installSchema(PDO $pdo, ?callable $progressCallback = null): void
     {
         try {
+            if ($progressCallback !== null) {
+                $progressCallback('Creazione tabelle database...');
+            }
+
             foreach ($this->schema() as $sql) {
                 $pdo->exec($sql);
+            }
+
+            if ($progressCallback !== null) {
+                $progressCallback('Aggiornamento schema e vincoli...');
             }
             $this->ensureCalendarColumns($pdo);
             $this->ensureDayTypesSchema($pdo);
@@ -259,15 +276,18 @@ class InstallerService
         }
     }
 
-    private function seed(PDO $pdo): void
+    private function seed(PDO $pdo, ?callable $progressCallback = null): void
     {
         try {
+            if ($progressCallback !== null) {
+                $progressCallback('Popolamento dati iniziali...');
+            }
             $pdo->exec("INSERT IGNORE INTO day_types (id, name, code, color_hex, is_locked) VALUES (1,'feriale','feriale','#FFFFFF',1),(2,'prefestivo','prefestivo','#FF9090',1),(3,'festivo','festivo','#FF0000',1),(4,'chiuso','chiuso','#A0A0A0',1),(5,'Orario continuato','orario_continuato','#FF0000',1)");
             $adminHash = password_hash('admin', PASSWORD_DEFAULT);
             $userHash = password_hash('user', PASSWORD_DEFAULT);
             $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES ('admin','System','Admin','{$adminHash}','admin','','attivo')");
             $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES ('user','System','User','{$userHash}','user','','attivo')");
-            $pdo->exec("INSERT IGNORE INTO app_settings (setting_key, setting_value) VALUES ('program_name','serBAR'),('program_author','Michele Olimpi'),('program_version','V00.00'),('login_info1','ACLI Grassina'),('login_info2','Gestione turni')");
+            $pdo->exec("INSERT IGNORE INTO app_settings (setting_key, setting_value) VALUES ('program_name','serBAR'),('program_author','Michele Olimpi'),('program_version','V00.00'),('login_info1','ACLI Grassina'),('login_info2','Gestione turni'),('consultation_directory_enabled','1'),('consultation_interface_enabled','1'),('consultation_notifications_enabled','1'),('public_interface_enabled','1'),('public_interface_passkey','')");
             $pdo->exec("INSERT IGNORE INTO daily_shift_config(id, day_type_id, start_time, end_time, closes_bar, priority) VALUES (1,1,'15:00:00','20:00:00',0,1),(2,1,'20:00:00','23:00:00',1,2),(3,2,'15:00:00','20:00:00',0,1),(4,2,'20:00:00','23:00:00',1,2),(5,3,'08:00:00','12:00:00',1,1),(6,3,'15:00:00','20:00:00',0,2),(7,3,'20:00:00','23:00:00',1,3),(8,4,'00:00:00','00:00:00',0,1),(9,5,'08:00:00','23:00:00',1,1)");
             $this->seedWeekdayClose($pdo);
             $this->seedCalendarDays($pdo);
