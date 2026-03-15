@@ -282,7 +282,7 @@ class InstallerService
             if ($progressCallback !== null) {
                 $progressCallback('Popolamento dati iniziali...');
             }
-            $pdo->exec("INSERT IGNORE INTO day_types (id, name, code, color_hex, is_locked) VALUES (1,'feriale','feriale','#FFFFFF',1),(2,'prefestivo','prefestivo','#FF9090',1),(3,'festivo','festivo','#FF0000',1),(4,'chiuso','chiuso','#A0A0A0',1),(5,'Orario continuato','orario_continuato','#FF0000',1)");
+            $pdo->exec("INSERT IGNORE INTO day_types (id, name, code, color_hex, is_locked) VALUES (1,'feriale','feriale','#FFFFFF',1),(2,'prefestivo','prefestivo','#FF9090',1),(3,'festivo','festivo','#FF0000',1),(4,'chiuso','chiuso','#A0A0A0',1),(5,'Orario continuato','orario_continuato','#59d1d9',1)");
             $adminHash = password_hash('admin', PASSWORD_DEFAULT);
             $userHash = password_hash('user', PASSWORD_DEFAULT);
             $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES ('admin','System','Admin','{$adminHash}','admin','','attivo')");
