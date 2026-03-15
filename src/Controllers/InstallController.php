@@ -10,12 +10,29 @@ use App\Services\InstallerService;
 
 class InstallController
 {
+    private const COMPLETE_SESSION_KEY = 'install_complete_data';
+
     public function __construct(private InstallerService $installer, private string $configPath)
     {
     }
 
     public function handle(): void
     {
+        if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['step'] ?? '') === 'complete') {
+            $completeData = $_SESSION[self::COMPLETE_SESSION_KEY] ?? null;
+            unset($_SESSION[self::COMPLETE_SESSION_KEY]);
+
+            if (is_array($completeData)) {
+                View::render('install/complete', [
+                    'db' => $completeData['db'],
+                    'host' => $completeData['host'],
+                    'port' => $completeData['port'],
+                    'isInstallView' => true,
+                ]);
+                return;
+            }
+        }
+
         $defaults = $this->loadDefaultsFromConfig();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -53,12 +70,17 @@ class InstallController
                     }
                 }
 
-                View::render('install/complete', [
+                if (session_status() !== PHP_SESSION_ACTIVE) {
+                    @session_start();
+                }
+
+                $_SESSION[self::COMPLETE_SESSION_KEY] = [
                     'db' => $cfg['database'],
                     'host' => $cfg['host'],
                     'port' => $cfg['port'],
-                    'isInstallView' => true,
-                ]);
+                ];
+
+                echo '<script>window.location.href = "?action=install&step=complete";</script>';
                 return;
             } catch (\Throwable $e) {
                 View::render('install/index', [
