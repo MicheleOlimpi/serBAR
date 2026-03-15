@@ -20,6 +20,17 @@ Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le va
 Il file viene caricato con riferimento relativo così l'app continua a funzionare anche quando è pubblicata in una sottocartella del dominio.
 
 ## Novità recenti
+- **Installazione guidata migliorata**:
+  - aggiunta una schermata di avanzamento durante il setup iniziale;
+  - introdotto un riepilogo finale più chiaro al termine dell'installazione;
+  - interfaccia di installazione semplificata (navbar nascosta e contenuti centrati).
+- **Nuove impostazioni per interfaccia di consultazione**:
+  - aggiunti parametri dedicati nella configurazione applicativa per controllare la parte pubblica/consultazione.
+- **Gestione giorni di chiusura settimanali (area admin)**:
+  - introdotta una sezione dedicata per impostare i giorni di chiusura ricorrenti;
+  - corretta la visualizzazione dei nomi dei giorni nella pagina di modifica.
+- **Dashboard consultazione più leggibile**:
+  - badge giorno colorato in base al tipo giorno per migliorare la leggibilità immediata.
 - **Interfaccia admin tabelloni aggiornata**:
   - aggiunta una vista tabellone generata a schermo intero per una consultazione più immediata;
   - migliorata la navigazione nell'elenco tabelloni con accesso rapido alla nuova vista.
