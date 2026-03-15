@@ -23,8 +23,7 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
   <tr>
     <th>USERNAME</th>
     <th>DATI</th>
-    <th></th>
-    <th></th>
+    <th>AZIONI</th>
   </tr>
   <?php foreach($users as $u): ?>
     <?php $isProtectedAdmin = strtolower((string) $u['username']) === 'admin'; ?>
@@ -55,8 +54,6 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
             <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>
           </button>
         </form>
-      </td>
-      <td>
         <button
           type="button"
           class="btn btn-sm btn-outline-primary js-change-password"
