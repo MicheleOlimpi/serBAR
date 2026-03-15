@@ -24,12 +24,18 @@ if ($action === 'install') {
 }
 
 if ($config === null) {
-    View::render('install/check', ['error' => 'Database non configurato in config/app.php.']);
+    View::render('install/check', [
+        'error' => 'Database non configurato in config/app.php.',
+        'isInstallView' => true,
+    ]);
     exit;
 }
 
 if (!Database::canConnect($config)) {
-    View::render('install/check', ['error' => 'Database non raggiungibile o non esistente con le impostazioni attuali.']);
+    View::render('install/check', [
+        'error' => 'Database non raggiungibile o non esistente con le impostazioni attuali.',
+        'isInstallView' => true,
+    ]);
     exit;
 }
 

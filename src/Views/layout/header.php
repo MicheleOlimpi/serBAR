@@ -5,6 +5,8 @@ use App\Core\Auth;
 $u = Auth::user();
 $currentAction = (string) ($_GET['action'] ?? 'dashboard');
 $isLoginPage = $currentAction === 'login';
+$isInstallView = (bool) ($isInstallView ?? false);
+$isCenteredLayout = $isLoginPage || $isInstallView;
 $isBoardGenerateView = $currentAction === 'board_edit' && isset($_GET['generate']) && $_GET['generate'] === '1';
 $isBoardEditView = $currentAction === 'board_edit' && !$isBoardGenerateView;
 $assetBasePath = rtrim(str_replace('\\', '/', dirname((string) ($_SERVER['SCRIPT_NAME'] ?? '/'))), '/');
@@ -46,7 +48,7 @@ $consultationNavItems['information'] = ['label' => 'Informazioni', 'href' => '?a
   <link href="<?= htmlspecialchars($assetBasePath . '/css/theme.css') ?>" rel="stylesheet">
 </head>
 <body class="bg-light">
-<?php if (!$isLoginPage && !$isBoardGenerateView): ?>
+<?php if (!$isLoginPage && !$isInstallView && !$isBoardGenerateView): ?>
 <nav class="navbar navbar-expand-lg app-navbar mb-4">
   <div class="container-fluid">
     <a class="navbar-brand" href="./"><img src="./serBAR-landscape.svg" alt="Logo serBAR" class="app-brand-logo"></a>
@@ -99,4 +101,4 @@ $consultationNavItems['information'] = ['label' => 'Informazioni', 'href' => '?a
   </div>
 </nav>
 <?php endif; ?>
-<div class="<?= $isBoardGenerateView ? 'container-fluid p-0' : ($isBoardEditView ? 'container-fluid pb-5 px-3' : 'container pb-5') ?><?= $isLoginPage ? ' min-vh-100 d-flex align-items-center justify-content-center' : '' ?>"<?= $isBoardEditView ? ' style="width: 90vw; max-width: 90vw;"' : '' ?>>
+<div class="<?= $isBoardGenerateView ? 'container-fluid p-0' : ($isBoardEditView ? 'container-fluid pb-5 px-3' : 'container pb-5') ?><?= $isCenteredLayout ? ' min-vh-100 d-flex align-items-center justify-content-center' : '' ?>"<?= $isBoardEditView ? ' style="width: 90vw; max-width: 90vw;"' : '' ?>>
