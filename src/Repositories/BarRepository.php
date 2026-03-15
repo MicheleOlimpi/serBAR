@@ -334,10 +334,19 @@ class BarRepository
 
     public function weekdayCloseRules(): array
     {
-        $sql = 'SELECT wc.weekday_code, wc.is_closed, dt.id AS day_type_id, dt.name AS day_name
+        $sql = "SELECT wc.weekday_code, wc.is_closed, dt.id AS day_type_id, CASE wc.weekday_code
+                    WHEN 'monday' THEN 'Lunedì'
+                    WHEN 'tuesday' THEN 'Martedì'
+                    WHEN 'wednesday' THEN 'Mercoledì'
+                    WHEN 'thursday' THEN 'Giovedì'
+                    WHEN 'friday' THEN 'Venerdì'
+                    WHEN 'saturday' THEN 'Sabato'
+                    WHEN 'sunday' THEN 'Domenica'
+                    ELSE CONCAT(UPPER(LEFT(wc.weekday_code, 1)), SUBSTRING(wc.weekday_code, 2))
+                END AS day_name
                 FROM weekday_close wc
                 JOIN day_types dt ON dt.id = wc.day_type_id
-                ORDER BY wc.weekday_order ASC';
+                ORDER BY wc.weekday_order ASC";
 
         return $this->pdo->query($sql)->fetchAll();
     }
