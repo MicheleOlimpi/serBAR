@@ -28,7 +28,24 @@ class InstallController
             ];
 
             try {
-                $this->installer->install($cfg);
+                @session_write_close();
+                @set_time_limit(0);
+                while (ob_get_level() > 0) {
+                    ob_end_flush();
+                }
+                ob_implicit_flush(true);
+
+                View::render('install/progress', [
+                    'isInstallView' => true,
+                ]);
+
+                $progressCallback = static function (string $message): void {
+                    echo '<script>window.updateInstallProgress(' . json_encode($message, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . ');</script>';
+                    @ob_flush();
+                    flush();
+                };
+
+                $this->installer->install($cfg, $progressCallback);
                 $storedConfig = Config::load($this->configPath);
                 if ($storedConfig !== $cfg) {
                     if (!Config::save($this->configPath, $cfg)) {
