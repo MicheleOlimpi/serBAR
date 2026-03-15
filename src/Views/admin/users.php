@@ -93,7 +93,6 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
     </tr>
   <?php endforeach; ?>
 </table>
-<a class="btn btn-outline-dark" href="./">Indietro</a>
 
 <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
