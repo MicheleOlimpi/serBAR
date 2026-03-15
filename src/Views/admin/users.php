@@ -51,34 +51,42 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
               <option value="inattivo" <?= $u['status'] === 'inattivo' ? 'selected' : '' ?>>inattivo</option>
             </select>
           <?php endif; ?>
-          <button class="btn btn-sm btn-outline-primary">Salva</button>
+          <button class="btn btn-sm btn-outline-primary" aria-label="Salva" title="Salva">
+            <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>
+          </button>
         </form>
       </td>
       <td>
         <button
           type="button"
           class="btn btn-sm btn-outline-primary js-change-password"
+          aria-label="Cambia password"
+          title="Cambia password"
           data-user-id="<?= (int) $u['id'] ?>"
           data-username="<?= htmlspecialchars($u['username']) ?>"
           data-bs-toggle="modal"
           data-bs-target="#changePasswordModal"
         >
-          Cambia password
+          <i class="fa-solid fa-key" aria-hidden="true"></i>
         </button>
       </td>
       <td>
         <?php if ($isProtectedAdmin): ?>
-          <span class="badge text-bg-secondary">Non eliminabile</span>
+          <button type="button" class="btn btn-sm btn-secondary" disabled aria-label="Non eliminabile" title="Non eliminabile">
+            <i class="fa-solid fa-trash" aria-hidden="true"></i>
+          </button>
         <?php else: ?>
           <button
             type="button"
             class="btn btn-sm btn-danger js-delete-user"
+            aria-label="Elimina"
+            title="Elimina"
             data-delete-url="?action=users&delete=<?= (int) $u['id'] ?>"
             data-username="<?= htmlspecialchars($u['username']) ?>"
             data-bs-toggle="modal"
             data-bs-target="#deleteUserModal"
           >
-            Elimina
+            <i class="fa-solid fa-trash" aria-hidden="true"></i>
           </button>
         <?php endif; ?>
       </td>
