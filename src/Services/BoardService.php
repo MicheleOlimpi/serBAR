@@ -82,10 +82,17 @@ class BoardService
             }
         }
 
+        $chiuso = $this->idByCode('chiuso');
+        $weekdayCloseRules = $chiuso > 0 ? $this->weekdayCloseRules() : [];
+
         $ins = $this->pdo->prepare('INSERT INTO board_days (board_id, day_date, weekday_name, recurrence_name, day_type_id) VALUES (?,?,?,?,?)');
         $insShift = $this->pdo->prepare("INSERT INTO board_day_shifts (board_day_id, daily_shift_config_id, start_time, end_time, closes_bar, priority, volunteers, responsabile_chiusura) SELECT ?, id, start_time, end_time, closes_bar, priority, '', NULL FROM daily_shift_config WHERE day_type_id=? ORDER BY priority ASC, start_time ASC");
 
         foreach ($days as $day) {
+            $weekdayCode = strtolower((new \DateTimeImmutable((string) $day['day_date']))->format('l'));
+            if (($weekdayCloseRules[$weekdayCode] ?? false) && $chiuso > 0) {
+                $day['day_type_id'] = $chiuso;
+            }
             $ins->execute([
                 $boardId,
                 $day['day_date'],
@@ -97,6 +104,26 @@ class BoardService
             $boardDayId = (int) $this->pdo->lastInsertId();
             $insShift->execute([$boardDayId, (int) $day['day_type_id']]);
         }
+    }
+
+    /**
+     * @return array<string, bool>
+     */
+    private function weekdayCloseRules(): array
+    {
+        $rows = $this->pdo->query('SELECT weekday_code, is_closed FROM weekday_close')->fetchAll(PDO::FETCH_ASSOC);
+        $rules = [];
+
+        foreach ($rows as $row) {
+            $weekdayCode = strtolower((string) ($row['weekday_code'] ?? ''));
+            if ($weekdayCode === '') {
+                continue;
+            }
+
+            $rules[$weekdayCode] = (int) ($row['is_closed'] ?? 0) === 1;
+        }
+
+        return $rules;
     }
 
     private function idByCode(string $code): int
