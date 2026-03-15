@@ -2,8 +2,7 @@
 
 <div class="card border-0 shadow-sm">
   <div class="card-body p-4">
-    <h2 class="h5 mb-3">Invia una nuova segnalazione</h2>
-    <p class="text-muted">La segnalazione non è collegata a un turno specifico e sarà registrata con stato iniziale <strong>"inviata"</strong>.</p>
+    <p class="text-muted">Effettua una segnalazione tramite questa pagina. Verrà gestita al più presto. Puoi verificarne successivamente lo stato nella dashboard.</p>
 
     <?php if (!empty($sent)): ?>
       <div class="alert alert-success" role="alert">Segnalazione inviata correttamente.</div>
@@ -25,7 +24,7 @@
           placeholder="Scrivi qui la tua segnalazione..."
         ><?= htmlspecialchars((string) ($message ?? '')) ?></textarea>
       </div>
-      <button class="btn btn-primary" type="submit">Invia segnalazione</button>
+      <button class="btn btn-primary" type="submit">Invia</button>
     </form>
   </div>
 </div>
