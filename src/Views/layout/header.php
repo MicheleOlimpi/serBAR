@@ -16,6 +16,7 @@ $adminNavItems = [
     'day_types' => ['label' => 'Tipi giorno', 'href' => '?action=day_types', 'icon' => 'fa-calendar-day'],
     'shift_config' => ['label' => 'Turni giornalieri', 'href' => '?action=shift_config', 'icon' => 'fa-clock-rotate-left'],
     'calendar' => ['label' => 'Calendario', 'href' => '?action=calendar', 'icon' => 'fa-calendar-days'],
+    'weekday_close' => ['label' => 'Giorni chiusura', 'href' => '?action=weekday_close', 'icon' => 'fa-calendar-xmark'],
     'notifications' => ['label' => 'Segnalazioni', 'href' => '?action=notifications', 'icon' => 'fa-message'],
     'setup' => ['label' => 'Setup', 'href' => '?action=setup', 'icon' => 'fa-gear'],
     'information' => ['label' => 'Informazioni', 'href' => '?action=information', 'icon' => 'fa-circle-info'],

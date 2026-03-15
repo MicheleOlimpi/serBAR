@@ -164,7 +164,7 @@ class AppController
 
             try {
                 $id = $this->repo->createBoard($month, $year);
-                $this->boardService->generate($id, $month, $year);
+                $this->boardService->generate($id, $month, $year, $this->repo->weekdayCloseMap());
                 View::redirect('?action=boards');
             } catch (\PDOException $e) {
                 if ((string) $e->getCode() === '23000') {
@@ -323,6 +323,25 @@ class AppController
             'dayTypes' => $this->repo->dayTypes(),
             'editing' => $editing,
             'error' => isset($_GET['error']) ? (string) $_GET['error'] : '',
+            'saved' => isset($_GET['saved']),
+        ]);
+    }
+
+
+    public function weekdayClose(): void
+    {
+        $this->guardAdmin();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            foreach ($_POST['weekday'] ?? [] as $weekdayNumber => $dayTypeId) {
+                $this->repo->saveWeekdayClose((int) $weekdayNumber, (int) $dayTypeId);
+            }
+            View::redirect('?action=weekday_close&saved=1');
+        }
+
+        View::render('admin/weekday_close', [
+            'rows' => $this->repo->weekdayCloseRows(),
+            'dayTypes' => $this->repo->dayTypes(),
             'saved' => isset($_GET['saved']),
         ]);
     }

@@ -14,7 +14,7 @@ class BoardService
     {
     }
 
-    public function generate(int $boardId, int $month, int $year): void
+    public function generate(int $boardId, int $month, int $year, array $weekdayCloseMap = []): void
     {
         $start = new \DateTimeImmutable(sprintf('%04d-%02d-01', $year, $month));
         $end = $start->modify('last day of this month');
@@ -63,6 +63,16 @@ class BoardService
             }
         }
 
+        $chiuso = $this->idByCode('chiuso');
+        if ($chiuso > 0) {
+            foreach ($days as $iso => $day) {
+                $weekdayNumber = (int) (new \DateTimeImmutable($iso))->format('N');
+                if (($weekdayCloseMap[$weekdayNumber] ?? 0) === $chiuso) {
+                    $days[$iso]['day_type_id'] = $chiuso;
+                }
+            }
+        }
+
         $easter = $this->easterSunday($year);
         $this->applySpecialDay($days, $easter->modify('-47 days'), $feriale, 'Martedì grasso');
         $this->applySpecialDay($days, $easter->modify('-46 days'), $feriale, 'Mercoledì delle ceneri');
@@ -96,6 +106,33 @@ class BoardService
 
             $boardDayId = (int) $this->pdo->lastInsertId();
             $insShift->execute([$boardDayId, (int) $day['day_type_id']]);
+        }
+
+        if ($chiuso > 0) {
+            $this->applyWeekdayCloseToBoard($boardId, $chiuso, $weekdayCloseMap);
+        }
+    }
+
+    private function applyWeekdayCloseToBoard(int $boardId, int $chiusoDayTypeId, array $weekdayCloseMap): void
+    {
+        $stmtDays = $this->pdo->prepare('SELECT id, day_date FROM board_days WHERE board_id = ?');
+        $stmtDays->execute([$boardId]);
+        $boardDays = $stmtDays->fetchAll(PDO::FETCH_ASSOC);
+
+        $updateDay = $this->pdo->prepare('UPDATE board_days SET day_type_id = ? WHERE id = ?');
+        $deleteShifts = $this->pdo->prepare('DELETE FROM board_day_shifts WHERE board_day_id = ?');
+        $insertShifts = $this->pdo->prepare("INSERT INTO board_day_shifts (board_day_id, daily_shift_config_id, start_time, end_time, closes_bar, priority, volunteers, responsabile_chiusura) SELECT ?, id, start_time, end_time, closes_bar, priority, '', NULL FROM daily_shift_config WHERE day_type_id=? ORDER BY priority ASC, start_time ASC");
+
+        foreach ($boardDays as $boardDay) {
+            $weekdayNumber = (int) (new \DateTimeImmutable((string) $boardDay['day_date']))->format('N');
+            if (($weekdayCloseMap[$weekdayNumber] ?? 0) !== $chiusoDayTypeId) {
+                continue;
+            }
+
+            $boardDayId = (int) $boardDay['id'];
+            $updateDay->execute([$chiusoDayTypeId, $boardDayId]);
+            $deleteShifts->execute([$boardDayId]);
+            $insertShifts->execute([$boardDayId, $chiusoDayTypeId]);
         }
     }
 

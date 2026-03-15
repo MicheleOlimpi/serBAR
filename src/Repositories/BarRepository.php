@@ -369,6 +369,76 @@ class BarRepository
             ->execute([$d['day_date'], $d['recurrence_name'], $d['santo'], $d['is_holiday'], $d['is_special'], $d['day_type_id'] ?: null]);
     }
 
+
+    public function weekdayCloseRows(): array
+    {
+        $sql = 'SELECT wc.*, dt.name AS day_type_name
+                FROM weekday_close wc
+                LEFT JOIN day_types dt ON dt.id = wc.day_type_id
+                ORDER BY wc.weekday_number ASC';
+
+        $rows = $this->pdo->query($sql)->fetchAll();
+        if ($rows !== []) {
+            return $rows;
+        }
+
+        $weekdayNames = [
+            1 => 'Lunedì',
+            2 => 'Martedì',
+            3 => 'Mercoledì',
+            4 => 'Giovedì',
+            5 => 'Venerdì',
+            6 => 'Sabato',
+            7 => 'Domenica',
+        ];
+
+        $ferialeId = (int) $this->pdo->query("SELECT id FROM day_types WHERE code='feriale' LIMIT 1")->fetchColumn();
+        if ($ferialeId < 1) {
+            $ferialeId = (int) ($this->pdo->query('SELECT id FROM day_types ORDER BY id ASC LIMIT 1')->fetchColumn() ?: 0);
+        }
+
+        foreach ($weekdayNames as $weekdayNumber => $weekdayName) {
+            $this->saveWeekdayClose($weekdayNumber, $ferialeId);
+        }
+
+        return $this->pdo->query($sql)->fetchAll();
+    }
+
+    public function saveWeekdayClose(int $weekdayNumber, int $dayTypeId): void
+    {
+        if ($weekdayNumber < 1 || $weekdayNumber > 7 || $dayTypeId < 1) {
+            return;
+        }
+
+        $weekdayNames = [
+            1 => 'Lunedì',
+            2 => 'Martedì',
+            3 => 'Mercoledì',
+            4 => 'Giovedì',
+            5 => 'Venerdì',
+            6 => 'Sabato',
+            7 => 'Domenica',
+        ];
+
+        $this->pdo->prepare('INSERT INTO weekday_close (weekday_number, weekday_name, day_type_id) VALUES (?,?,?) ON DUPLICATE KEY UPDATE weekday_name=VALUES(weekday_name), day_type_id=VALUES(day_type_id)')
+            ->execute([$weekdayNumber, $weekdayNames[$weekdayNumber], $dayTypeId]);
+    }
+
+    public function weekdayCloseMap(): array
+    {
+        $stmt = $this->pdo->query('SELECT weekday_number, day_type_id FROM weekday_close');
+        if ($stmt === false) {
+            return [];
+        }
+
+        $map = [];
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $map[(int) $row['weekday_number']] = (int) $row['day_type_id'];
+        }
+
+        return $map;
+    }
+
     public function boards(): array
     {
         return $this->pdo->query('SELECT * FROM boards ORDER BY year DESC, month DESC')->fetchAll();
