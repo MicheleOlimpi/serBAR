@@ -1,5 +1,6 @@
 <?php $currentColor = htmlspecialchars((string) ($editing['color_hex'] ?? '#FFFFFF')); ?>
 <h4>TIPI GIORNO</h4>
+<br>
 <form method="post" class="row g-2 mb-3">
   <input type="hidden" name="id" value="<?= (int) ($editing['id'] ?? 0) ?>">
   <input type="hidden" name="color_hex" id="colorHexInput" value="<?= $currentColor ?>">
