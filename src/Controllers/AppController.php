@@ -58,8 +58,7 @@ class AppController
 
     public function dashboard(): void
     {
-        $this->guard();
-        if (Auth::isAdmin()) {
+        if (Auth::check() && Auth::isAdmin()) {
             $boards = array_slice($this->repo->boards(), 0, 12);
             $allNotifications = $this->repo->notifications();
             $notifications = array_slice($allNotifications, 0, 20);
@@ -88,7 +87,9 @@ class AppController
 
         $setupSettings = $this->repo->setupSettings();
         if (($setupSettings['consultation_interface_enabled'] ?? '1') !== '1') {
-            Auth::logout();
+            if (Auth::check() && !Auth::isAdmin()) {
+                Auth::logout();
+            }
             View::redirect('?action=login');
         }
 
@@ -126,7 +127,7 @@ class AppController
             'shifts' => $this->repo->consultationShifts(),
             'notifications' => $this->repo->consultationNotifications(),
             'greeting' => $greeting,
-            'username' => (string) (Auth::user()['username'] ?? ''),
+            'username' => Auth::check() ? (string) (Auth::user()['username'] ?? '') : 'Ospite',
             'setupSettings' => $setupSettings,
         ]);
     }
