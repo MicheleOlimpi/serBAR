@@ -27,10 +27,11 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
   </tr>
   <?php foreach($users as $u): ?>
     <?php $isProtectedAdmin = strtolower((string) $u['username']) === 'admin'; ?>
+    <?php $updateFormId = 'update-user-form-' . (int) $u['id']; ?>
     <tr>
       <td><?= htmlspecialchars($u['username']) ?></td>
       <td>
-        <form method="post" class="d-flex flex-wrap gap-1">
+        <form method="post" id="<?= htmlspecialchars($updateFormId) ?>" class="d-flex flex-wrap gap-1">
           <input type="hidden" name="update_user_id" value="<?= (int) $u['id'] ?>">
           <input type="text" name="last_name" class="form-control form-control-sm" value="<?= htmlspecialchars($u['last_name']) ?>" required>
           <input type="text" name="first_name" class="form-control form-control-sm" value="<?= htmlspecialchars($u['first_name']) ?>" required>
@@ -50,12 +51,12 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
               <option value="inattivo" <?= $u['status'] === 'inattivo' ? 'selected' : '' ?>>inattivo</option>
             </select>
           <?php endif; ?>
-          <button class="btn btn-sm btn-outline-primary" aria-label="Salva" title="Salva">
-            <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>
-          </button>
         </form>
         </td>
         <td>
+        <button class="btn btn-sm btn-outline-primary" type="submit" form="<?= htmlspecialchars($updateFormId) ?>" aria-label="Salva" title="Salva">
+          <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>
+        </button>
         <button
           type="button"
           class="btn btn-sm btn-outline-primary js-change-password"
