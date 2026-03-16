@@ -43,7 +43,7 @@ $monthNames = [
 <tr><td><?= ($monthNames[(int) $b['month']] ?? sprintf('%02d', $b['month'])) . ' ' . $b['year'] ?></td><td>
 <a class="btn btn-sm btn-primary" href="?action=board_edit&id=<?= $b['id'] ?>" aria-label="Modifica" title="Modifica"><i class="fa-solid fa-pen" aria-hidden="true"></i></a>
 <a class="btn btn-sm btn-secondary" href="?action=board_edit&id=<?= $b['id'] ?>&print=1" target="_blank" aria-label="Stampa" title="Stampa"><i class="fa-solid fa-print" aria-hidden="true"></i></a>
-<a class="btn btn-sm btn-info text-white" href="?action=board_edit&id=<?= $b['id'] ?>&generate=1" target="_blank" rel="noopener">GENERA CARTELLONE</a>
+<a class="btn btn-sm btn-info text-white" href="?action=board_edit&id=<?= $b['id'] ?>&generate=1" target="_blank" rel="noopener" aria-label="Genera cartellone" title="Genera cartellone"><i class="fa-solid fa-clipboard" aria-hidden="true"></i></a>
 <button
   type="button"
   class="btn btn-sm btn-danger js-delete-board"
