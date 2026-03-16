@@ -22,6 +22,7 @@ $monthNames = [
 ?>
 
 <h4>GESTIONE TABELLONI</h4>
+<br>
 <form method="post" class="row g-2 mb-3">
   <input type="hidden" name="create_board" value="1">
   <div class="col-md-3">
