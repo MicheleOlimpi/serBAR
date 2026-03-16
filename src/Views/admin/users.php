@@ -1,4 +1,5 @@
 <h4>GESTIONE UTENTI</h4>
+<br>
 <?php
 $duplicateUsernameError = (string) ($duplicateUsernameError ?? '');
 $passwordChangeError = (string) ($passwordChangeError ?? '');
