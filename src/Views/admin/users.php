@@ -54,6 +54,8 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
             <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>
           </button>
         </form>
+        </td>
+        <td>
         <button
           type="button"
           class="btn btn-sm btn-outline-primary js-change-password"
@@ -66,8 +68,6 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
         >
           <i class="fa-solid fa-key" aria-hidden="true"></i>
         </button>
-      </td>
-      <td>
         <?php if ($isProtectedAdmin): ?>
           <button type="button" class="btn btn-sm btn-secondary" disabled aria-label="Non eliminabile" title="Non eliminabile">
             <i class="fa-solid fa-trash" aria-hidden="true"></i>
