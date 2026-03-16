@@ -1,5 +1,6 @@
 <h4>SETUP SISTEMA</h4>
-<p class="text-muted">Configura le opzioni dell'interfaccia di consultazione e i testi mostrati nella finestra di login.</p>
+<br>
+<p class="text-muted">Configura le opzioni generali del sistema.</p>
 
 <?php if (!empty($saved)): ?>
   <div class="alert alert-success">Impostazioni salvate correttamente.</div>
