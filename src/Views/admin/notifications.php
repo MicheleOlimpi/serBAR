@@ -18,7 +18,7 @@ $statusBadgeMap = [
 ?>
 
 <h4>GESTIONE SEGNALAZIONI</h4>
-
+<br>
 <div class="card mb-3">
   <div class="card-body">
     <h5 class="card-title"><?= $isEditing ? 'Modifica segnalazione' : 'Nuova segnalazione' ?></h5>
