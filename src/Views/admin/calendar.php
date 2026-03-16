@@ -62,5 +62,3 @@
     </table>
   </div>
 </form>
-
-<a class="btn btn-outline-dark" href="./">Indietro</a>
