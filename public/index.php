@@ -60,6 +60,7 @@ $routes = [
     'segnalazione' => 'segnalazione',
     'lista_volontari' => 'listaVolontari',
     'license' => 'license',
+    'panel' => 'panel',
 ];
 
 $method = $routes[$action] ?? 'dashboard';

@@ -604,6 +604,28 @@ class BarRepository
         return $this->pdo->query($sql)->fetchAll();
     }
 
+
+    public function publicPanelMonthShifts(int $month, int $year): array
+    {
+        $sql = 'SELECT
+                    bd.day_date,
+                    bd.weekday_name,
+                    dt.color_hex AS day_type_color,
+                    bds.start_time,
+                    bds.volunteers
+                FROM boards b
+                JOIN board_days bd ON bd.board_id = b.id
+                LEFT JOIN day_types dt ON dt.id = bd.day_type_id
+                LEFT JOIN board_day_shifts bds ON bds.board_day_id = bd.id
+                WHERE b.month = ? AND b.year = ?
+                ORDER BY bd.day_date ASC, bds.priority ASC, bds.start_time ASC';
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$month, $year]);
+
+        return $stmt->fetchAll();
+    }
+
     public function consultationNotifications(): array
     {
         $sql = 'SELECT 

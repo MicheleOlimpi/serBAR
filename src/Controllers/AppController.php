@@ -542,6 +542,32 @@ class AppController
             . '</head><body><pre>' . htmlspecialchars($licenseContent) . '</pre></body></html>';
     }
 
+
+    public function panel(): void
+    {
+        $setupSettings = $this->repo->setupSettings();
+        $isPublicInterfaceEnabled = ($setupSettings['public_interface_enabled'] ?? '0') === '1';
+        $configuredPasskey = trim((string) ($setupSettings['public_interface_passkey'] ?? ''));
+        $providedPasskey = trim((string) ($_GET['passkey'] ?? $_GET['key'] ?? ''));
+
+        if (!$isPublicInterfaceEnabled || $configuredPasskey === '' || $providedPasskey === '' || !hash_equals($configuredPasskey, $providedPasskey)) {
+            http_response_code(404);
+            echo 'Pagina non disponibile.';
+            return;
+        }
+
+        $now = new \DateTimeImmutable('now');
+        $month = (int) $now->format('n');
+        $year = (int) $now->format('Y');
+
+        View::render('public/panel', [
+            'month' => $month,
+            'year' => $year,
+            'shifts' => $this->repo->publicPanelMonthShifts($month, $year),
+            'isPublicPanelView' => true,
+        ]);
+    }
+
     public function setup(): void
     {
         $this->guardAdmin();

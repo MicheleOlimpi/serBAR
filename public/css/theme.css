@@ -154,3 +154,30 @@ textarea::placeholder,
   color: var(--responsible-picker-placeholder-color);
   opacity: var(--responsible-picker-placeholder-opacity);
 }
+
+.public-panel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.public-panel-day {
+  box-shadow: 0 0.125rem 0.25rem rgba(15, 23, 42, 0.08);
+}
+
+.public-panel-day-header {
+  padding: 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.public-panel-day-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.public-panel-day-weekday {
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
