@@ -23,17 +23,27 @@
             <?php foreach ($directoryUsers as $directoryUser): ?>
               <?php $rawPhone = trim((string) ($directoryUser['phone'] ?? '')); ?>
               <?php $callPhone = preg_replace('/[^0-9+]/', '', $rawPhone); ?>
+              <?php $whatsappPhone = preg_replace('/[^0-9]/', '', $rawPhone); ?>
               <tr>
                 <td><?= htmlspecialchars((string) $directoryUser['last_name']) ?></td>
                 <td><?= htmlspecialchars((string) $directoryUser['first_name']) ?></td>
                 <td><?= htmlspecialchars($rawPhone !== '' ? $rawPhone : '-') ?></td>
                 <td class="text-end">
                   <?php if ($callPhone !== ''): ?>
-                    <a class="btn btn-sm btn-outline-success" href="tel:<?= htmlspecialchars($callPhone) ?>">
-                      <i class="fa-solid fa-phone me-1"></i>Chiama
-                    </a>
+                    <div class="d-inline-flex gap-1">
+                      <a class="btn btn-sm btn-outline-success" href="tel:<?= htmlspecialchars($callPhone) ?>" aria-label="Chiama" title="Chiama">
+                        <i class="fa-solid fa-phone" aria-hidden="true"></i>
+                      </a>
+                      <?php if ($whatsappPhone !== ''): ?>
+                        <a class="btn btn-sm btn-outline-success" href="https://wa.me/<?= htmlspecialchars($whatsappPhone) ?>" target="_blank" rel="noopener" aria-label="Invia messaggio WhatsApp" title="Invia messaggio WhatsApp">
+                          <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+                        </a>
+                      <?php endif; ?>
+                    </div>
                   <?php else: ?>
-                    <button class="btn btn-sm btn-outline-secondary" type="button" disabled>Chiama</button>
+                    <button class="btn btn-sm btn-outline-secondary" type="button" disabled aria-label="Chiama" title="Chiama">
+                      <i class="fa-solid fa-phone" aria-hidden="true"></i>
+                    </button>
                   <?php endif; ?>
                 </td>
               </tr>
