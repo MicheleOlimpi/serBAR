@@ -347,7 +347,7 @@ class AppController
         }
 
         View::render('admin/calendar', [
-            'days' => $this->repo->calendarDays($_GET['month'] ?? null),
+            'days' => $this->repo->calendarDays(),
             'types' => $this->repo->dayTypes(),
         ]);
     }
