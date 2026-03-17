@@ -2,6 +2,9 @@
 ![GitHub License](https://img.shields.io/github/license/MicheleOlimpi/serBAR)
 ![GitHub last commit](https://img.shields.io/github/last-commit/MicheleOlimpi/serBAR)
 
+<p align="center">
+  <img src="public/serBAR-square.svg" alt="Logo serBAR" width="150" height="150">
+</p>
 
 # serBAR
 
@@ -20,6 +23,9 @@ Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le va
 Il file viene caricato con riferimento relativo così l'app continua a funzionare anche quando è pubblicata in una sottocartella del dominio.
 
 ## Novità recenti
+- **Branding README aggiornato**:
+  - inserito il logo ufficiale **square** del progetto nell'intestazione;
+  - dimensionamento impostato a **150x150 px** per mantenere una resa coerente su GitHub.
 - **Installazione guidata migliorata**:
   - aggiunta una schermata di avanzamento durante il setup iniziale;
   - introdotto un riepilogo finale più chiaro al termine dell'installazione;
