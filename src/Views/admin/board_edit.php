@@ -47,49 +47,6 @@ $boardGeneratedHeaderSubtitle = $monthName . ' ' . (int) ($board['year'] ?? 0);
   .day-number { font-size: 1.75rem; font-weight: 700; line-height: 1; }
   .responsible-section-hidden { display: none; }
 
-  .board-generated-wrap { width: 100vw; min-height: 100vh; }
-  .board-generated-table { width: 100%; margin: 0; border-collapse: collapse; }
-  .board-generated-header {
-    --board-generated-header-title-color: currentColor;
-    --board-generated-header-title-font-size: 2rem;
-    --board-generated-header-title-font-weight: 700;
-    --board-generated-header-title-letter-spacing: normal;
-    --board-generated-header-subtitle-color: currentColor;
-    --board-generated-header-subtitle-font-size: 1.5rem;
-    --board-generated-header-subtitle-font-weight: 400;
-    --board-generated-header-subtitle-letter-spacing: normal;
-    text-align: center;
-    padding: 1rem .5rem;
-  }
-  .board-generated-header-title {
-    color: var(--board-generated-header-title-color);
-    font-size: var(--board-generated-header-title-font-size);
-    font-weight: var(--board-generated-header-title-font-weight);
-    letter-spacing: var(--board-generated-header-title-letter-spacing);
-    line-height: 1.2;
-  }
-  .board-generated-header-subtitle {
-    color: var(--board-generated-header-subtitle-color);
-    font-size: var(--board-generated-header-subtitle-font-size);
-    font-weight: var(--board-generated-header-subtitle-font-weight);
-    letter-spacing: var(--board-generated-header-subtitle-letter-spacing);
-    line-height: 1.2;
-  }
-  .board-generated-table td { border: 1px solid #dee2e6; vertical-align: top; padding: .5rem; }
-  .board-generated-day { width: 200px; }
-  .board-generated-day .day-number { font-size: 2rem; }
-  .board-generated-shift-row {
-    display: grid;
-    grid-template-columns: 110px 1fr auto;
-    gap: .75rem;
-    align-items: start;
-    padding: .25rem 0;
-  }
-  .board-generated-shift-row + .board-generated-shift-row { border-top: 1px dashed #dee2e6; }
-  .board-generated-volunteers { text-align: center; }
-  @media (max-width: 767.98px) {
-    .board-generated-shift-row { grid-template-columns: 1fr; }
-  }
 </style>
 <?php if (Auth::isAdmin() && !$generate): ?><form method="post"><?php endif; ?>
 <div class="<?= $generate ? 'board-generated-wrap' : '' ?>">

@@ -21,6 +21,22 @@
   --board-day-weekday-size: 0.9rem;
   --board-day-weekday-weight: 600;
   --board-day-weekday-line-height: 1.2;
+  --board-generated-header-title-color: currentColor;
+  --board-generated-header-title-font-size: 2rem;
+  --board-generated-header-title-font-weight: 700;
+  --board-generated-header-title-letter-spacing: normal;
+  --board-generated-header-subtitle-color: currentColor;
+  --board-generated-header-subtitle-font-size: 1.5rem;
+  --board-generated-header-subtitle-font-weight: 400;
+  --board-generated-header-subtitle-letter-spacing: normal;
+  --board-generated-day-width: 200px;
+  --board-generated-day-number-size: 2rem;
+  --board-generated-cell-border-color: #dee2e6;
+  --board-generated-cell-padding: 0.5rem;
+  --board-generated-shift-time-width: 110px;
+  --board-generated-shift-gap: 0.75rem;
+  --board-generated-shift-padding-y: 0.25rem;
+  --board-generated-shift-divider-color: #dee2e6;
   --modal-icon-color: var(--bs-danger);
   --modal-icon-size: 1.75rem;
   --modal-title-color: var(--bs-dark);
@@ -200,4 +216,72 @@ textarea::placeholder,
   font-size: 0.875rem;
   font-weight: 600;
   line-height: 1.2;
+}
+
+.board-generated-wrap {
+  width: 100vw;
+  min-height: 100vh;
+}
+
+.board-generated-table {
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+}
+
+.board-generated-header {
+  text-align: center;
+  padding: 1rem 0.5rem;
+}
+
+.board-generated-header-title {
+  color: var(--board-generated-header-title-color);
+  font-size: var(--board-generated-header-title-font-size);
+  font-weight: var(--board-generated-header-title-font-weight);
+  letter-spacing: var(--board-generated-header-title-letter-spacing);
+  line-height: 1.2;
+}
+
+.board-generated-header-subtitle {
+  color: var(--board-generated-header-subtitle-color);
+  font-size: var(--board-generated-header-subtitle-font-size);
+  font-weight: var(--board-generated-header-subtitle-font-weight);
+  letter-spacing: var(--board-generated-header-subtitle-letter-spacing);
+  line-height: 1.2;
+}
+
+.board-generated-table td {
+  border: 1px solid var(--board-generated-cell-border-color);
+  vertical-align: top;
+  padding: var(--board-generated-cell-padding);
+}
+
+.board-generated-day {
+  width: var(--board-generated-day-width);
+}
+
+.board-generated-day .day-number {
+  font-size: var(--board-generated-day-number-size);
+}
+
+.board-generated-shift-row {
+  display: grid;
+  grid-template-columns: var(--board-generated-shift-time-width) 1fr auto;
+  gap: var(--board-generated-shift-gap);
+  align-items: start;
+  padding: var(--board-generated-shift-padding-y) 0;
+}
+
+.board-generated-shift-row + .board-generated-shift-row {
+  border-top: 1px dashed var(--board-generated-shift-divider-color);
+}
+
+.board-generated-volunteers {
+  text-align: center;
+}
+
+@media (max-width: 767.98px) {
+  .board-generated-shift-row {
+    grid-template-columns: 1fr;
+  }
 }
