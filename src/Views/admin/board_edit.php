@@ -15,6 +15,8 @@ $monthNames = [
   12 => 'Dicembre',
 ];
 $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) ($board['month'] ?? 0));
+$boardGeneratedHeaderTitle = 'SERVIZIO BAR';
+$boardGeneratedHeaderSubtitle = $monthName . ' ' . (int) ($board['year'] ?? 0);
 ?>
 <?php if (!$generate): ?>
 <h4>TABELLONE <?= htmlspecialchars($monthName) ?> <?= (int) ($board['year'] ?? 0) ?></h4>
@@ -47,7 +49,32 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
 
   .board-generated-wrap { width: 100vw; min-height: 100vh; }
   .board-generated-table { width: 100%; margin: 0; border-collapse: collapse; }
-  .board-generated-header { text-align: center; padding: 1rem .5rem; }
+  .board-generated-header {
+    --board-generated-header-title-color: currentColor;
+    --board-generated-header-title-font-size: 2rem;
+    --board-generated-header-title-font-weight: 700;
+    --board-generated-header-title-letter-spacing: normal;
+    --board-generated-header-subtitle-color: currentColor;
+    --board-generated-header-subtitle-font-size: 1.5rem;
+    --board-generated-header-subtitle-font-weight: 400;
+    --board-generated-header-subtitle-letter-spacing: normal;
+    text-align: center;
+    padding: 1rem .5rem;
+  }
+  .board-generated-header-title {
+    color: var(--board-generated-header-title-color);
+    font-size: var(--board-generated-header-title-font-size);
+    font-weight: var(--board-generated-header-title-font-weight);
+    letter-spacing: var(--board-generated-header-title-letter-spacing);
+    line-height: 1.2;
+  }
+  .board-generated-header-subtitle {
+    color: var(--board-generated-header-subtitle-color);
+    font-size: var(--board-generated-header-subtitle-font-size);
+    font-weight: var(--board-generated-header-subtitle-font-weight);
+    letter-spacing: var(--board-generated-header-subtitle-letter-spacing);
+    line-height: 1.2;
+  }
   .board-generated-table td { border: 1px solid #dee2e6; vertical-align: top; padding: .5rem; }
   .board-generated-day { width: 200px; }
   .board-generated-day .day-number { font-size: 2rem; }
@@ -70,8 +97,8 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
 <?php if ($generate): ?>
 <tr>
   <td colspan="2" class="board-generated-header">
-    <div class="fw-bold fs-2">SERVIZIO BAR</div>
-    <div class="fs-4"><?= htmlspecialchars($monthName) ?> <?= (int) ($board['year'] ?? 0) ?></div>
+    <div class="board-generated-header-title"><?= htmlspecialchars($boardGeneratedHeaderTitle) ?></div>
+    <div class="board-generated-header-subtitle"><?= htmlspecialchars($boardGeneratedHeaderSubtitle) ?></div>
   </td>
 </tr>
 <?php else: ?>
