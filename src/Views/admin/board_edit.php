@@ -86,7 +86,8 @@ $boardGeneratedHeaderSubtitle = $monthName . ' ' . (int) ($board['year'] ?? 0);
     <?php endif; ?>
   </div>
 </td>
-<td>
+<td class="<?= $generate ? 'board-generated-shifts' : '' ?>">
+  <div class="<?= $generate ? 'board-generated-shifts-inner' : '' ?>">
   <?php if ($shifts === []): ?>
     <span class="text-muted">Nessun turno configurato per questo tipo giorno.</span>
   <?php else: ?>
@@ -138,6 +139,7 @@ $boardGeneratedHeaderSubtitle = $monthName . ' ' . (int) ($board['year'] ?? 0);
       </div>
     <?php endforeach; ?>
   <?php endif; ?>
+  </div>
 </td>
 <?php if (!$generate): ?>
 <td><?php if(Auth::isAdmin()): ?><input class="form-control form-control-sm" name="day[<?= $d['id'] ?>][notes]" value="<?= htmlspecialchars((string)$d['notes']) ?>" placeholder="annotazioni"><?php else: ?><?= htmlspecialchars((string)$d['notes']) ?><?php endif; ?></td>
