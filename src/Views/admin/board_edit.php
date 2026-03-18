@@ -56,6 +56,7 @@ $boardGeneratedHeaderSubtitle = $monthName . ' ' . (int) ($board['year'] ?? 0);
   <td colspan="2" class="board-generated-header">
     <div class="board-generated-header-title"><?= htmlspecialchars($boardGeneratedHeaderTitle) ?></div>
     <div class="board-generated-header-subtitle"><?= htmlspecialchars($boardGeneratedHeaderSubtitle) ?></div>
+    <br>
   </td>
 </tr>
 <?php else: ?>
