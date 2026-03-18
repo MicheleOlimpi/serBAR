@@ -44,25 +44,6 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
   .day-type-selector { max-width: 140px; }
   .day-number { font-size: 1.75rem; font-weight: 700; line-height: 1; }
   .responsible-section-hidden { display: none; }
-
-  .board-generated-wrap { width: 100vw; min-height: 100vh; }
-  .board-generated-table { width: 100%; margin: 0; border-collapse: collapse; }
-  .board-generated-header { text-align: center; padding: 1rem .5rem; }
-  .board-generated-table td { border: 1px solid #dee2e6; vertical-align: top; padding: .5rem; }
-  .board-generated-day { width: 200px; }
-  .board-generated-day .day-number { font-size: 2rem; }
-  .board-generated-shift-row {
-    display: grid;
-    grid-template-columns: 110px 1fr auto;
-    gap: .75rem;
-    align-items: start;
-    padding: .25rem 0;
-  }
-  .board-generated-shift-row + .board-generated-shift-row { border-top: 1px dashed #dee2e6; }
-  .board-generated-volunteers { text-align: center; }
-  @media (max-width: 767.98px) {
-    .board-generated-shift-row { grid-template-columns: 1fr; }
-  }
 </style>
 <?php if (Auth::isAdmin() && !$generate): ?><form method="post"><?php endif; ?>
 <div class="<?= $generate ? 'board-generated-wrap' : '' ?>">
@@ -70,8 +51,8 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
 <?php if ($generate): ?>
 <tr>
   <td colspan="2" class="board-generated-header">
-    <div class="fw-bold fs-2">SERVIZIO BAR</div>
-    <div class="fs-4"><?= htmlspecialchars($monthName) ?> <?= (int) ($board['year'] ?? 0) ?></div>
+    <div class="board-generated-title">SERVIZIO BAR</div>
+    <div class="board-generated-subtitle"><?= htmlspecialchars($monthName) ?> <?= (int) ($board['year'] ?? 0) ?></div>
   </td>
 </tr>
 <?php else: ?>
@@ -130,12 +111,24 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
             </div>
           </div>
         <?php else: ?>
-          <div class="small fw-semibold mb-1">
-            <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?> - <?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?>
-          </div>
-          <div class="<?= $generate ? 'board-generated-volunteers' : '' ?>"><?= nl2br(htmlspecialchars((string) ($shift['volunteers'] ?: '-'))) ?></div>
-          <?php if (!empty($shift['closes_bar'])): ?>
-            <div><?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?: '--')) ?></div>
+          <?php if ($generate): ?>
+            <div class="board-generated-shift-time small fw-semibold">
+              <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?> - <?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?>
+            </div>
+            <div class="board-generated-volunteers"><?= nl2br(htmlspecialchars((string) ($shift['volunteers'] ?: '-'))) ?></div>
+            <div class="board-generated-close<?= empty($shift['closes_bar']) ? ' board-generated-close-empty' : '' ?>">
+              <?php if (!empty($shift['closes_bar'])): ?>
+                <?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?: '--')) ?>
+              <?php endif; ?>
+            </div>
+          <?php else: ?>
+            <div class="small fw-semibold mb-1">
+              <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?> - <?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?>
+            </div>
+            <div><?= nl2br(htmlspecialchars((string) ($shift['volunteers'] ?: '-'))) ?></div>
+            <?php if (!empty($shift['closes_bar'])): ?>
+              <div><?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?: '--')) ?></div>
+            <?php endif; ?>
           <?php endif; ?>
         <?php endif; ?>
       </div>

@@ -21,6 +21,16 @@
   --board-day-weekday-size: 0.9rem;
   --board-day-weekday-weight: 600;
   --board-day-weekday-line-height: 1.2;
+  --board-generated-title-color: var(--bs-dark);
+  --board-generated-title-size: 2rem;
+  --board-generated-title-weight: 700;
+  --board-generated-title-line-height: 1.2;
+  --board-generated-title-letter-spacing: 0;
+  --board-generated-subtitle-color: var(--bs-dark);
+  --board-generated-subtitle-size: 1.5rem;
+  --board-generated-subtitle-weight: 500;
+  --board-generated-subtitle-line-height: 1.2;
+  --board-generated-subtitle-letter-spacing: 0;
   --modal-icon-color: var(--bs-danger);
   --modal-icon-size: 1.75rem;
   --modal-title-color: var(--bs-dark);
@@ -200,4 +210,87 @@ textarea::placeholder,
   font-size: 0.875rem;
   font-weight: 600;
   line-height: 1.2;
+}
+
+.board-generated-wrap {
+  width: 100vw;
+  min-height: 100vh;
+}
+
+.board-generated-table {
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+}
+
+.board-generated-header {
+  text-align: center;
+  padding: 1rem 0.5rem;
+}
+
+.board-generated-title {
+  color: var(--board-generated-title-color);
+  font-size: var(--board-generated-title-size);
+  font-weight: var(--board-generated-title-weight);
+  line-height: var(--board-generated-title-line-height);
+  letter-spacing: var(--board-generated-title-letter-spacing);
+}
+
+.board-generated-subtitle {
+  color: var(--board-generated-subtitle-color);
+  font-size: var(--board-generated-subtitle-size);
+  font-weight: var(--board-generated-subtitle-weight);
+  line-height: var(--board-generated-subtitle-line-height);
+  letter-spacing: var(--board-generated-subtitle-letter-spacing);
+}
+
+.board-generated-table td {
+  border: 1px solid #dee2e6;
+  vertical-align: top;
+  padding: 0.5rem;
+}
+
+.board-generated-day {
+  width: 200px;
+}
+
+.board-generated-day .day-number {
+  font-size: 2rem;
+}
+
+.board-generated-shift-row {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr) minmax(120px, auto);
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.25rem 0;
+}
+
+.board-generated-shift-row + .board-generated-shift-row {
+  border-top: 1px dashed #dee2e6;
+}
+
+.board-generated-shift-time {
+  white-space: nowrap;
+}
+
+.board-generated-volunteers,
+.board-generated-close {
+  text-align: center;
+}
+
+.board-generated-close-empty {
+  min-height: 1.5rem;
+}
+
+@media (max-width: 767.98px) {
+  .board-generated-shift-row {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .board-generated-volunteers,
+  .board-generated-close {
+    text-align: left;
+  }
 }
