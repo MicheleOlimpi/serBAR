@@ -24,6 +24,10 @@ $adminNavItems = [
     'setup' => ['label' => 'Setup', 'href' => '?action=setup', 'icon' => 'fa-gear'],
     'information' => ['label' => 'Informazioni', 'href' => '?action=information', 'icon' => 'fa-circle-info'],
 ];
+
+if (($u['role'] ?? '') === 'supervisor') {
+    unset($adminNavItems['setup']);
+}
 $consultationNavItems['dashboard'] = ['label' => 'dashboard', 'href' => './', 'icon' => 'fa-gauge'];
 
 if ($u && !Auth::isAdmin()) {
