@@ -264,6 +264,17 @@ textarea::placeholder,
   font-size: var(--board-generated-day-number-size);
 }
 
+.board-generated-shifts {
+  vertical-align: middle !important;
+}
+
+.board-generated-shifts-content {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .board-generated-shift-row {
   padding: var(--board-generated-shift-padding-y) 0;
 }
