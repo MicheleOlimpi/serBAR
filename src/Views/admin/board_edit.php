@@ -47,6 +47,7 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
 
   .board-generated-wrap { width: 100vw; min-height: 100vh; }
   .board-generated-table { width: 100%; margin: 0; border-collapse: collapse; }
+  .board-generated-header { text-align: center; padding: 1rem .5rem; }
   .board-generated-table td { border: 1px solid #dee2e6; vertical-align: top; padding: .5rem; }
   .board-generated-day { width: 200px; }
   .board-generated-day .day-number { font-size: 2rem; }
@@ -58,6 +59,7 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
     padding: .25rem 0;
   }
   .board-generated-shift-row + .board-generated-shift-row { border-top: 1px dashed #dee2e6; }
+  .board-generated-volunteers { text-align: center; }
   @media (max-width: 767.98px) {
     .board-generated-shift-row { grid-template-columns: 1fr; }
   }
@@ -65,7 +67,14 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
 <?php if (Auth::isAdmin() && !$generate): ?><form method="post"><?php endif; ?>
 <div class="<?= $generate ? 'board-generated-wrap' : '' ?>">
 <table class="<?= $generate ? 'board-generated-table bg-white' : 'table table-sm table-bordered bg-white' ?>">
-<?php if (!$generate): ?>
+<?php if ($generate): ?>
+<tr>
+  <td colspan="2" class="board-generated-header">
+    <div class="fw-bold fs-2">SERVIZIO BAR</div>
+    <div class="fs-4"><?= htmlspecialchars($monthName) ?> <?= (int) ($board['year'] ?? 0) ?></div>
+  </td>
+</tr>
+<?php else: ?>
 <tr><?php if(!Auth::isAdmin()):?><th>Segnala</th><?php endif; ?></tr>
 <?php endif; ?>
 <?php foreach($days as $d): $shifts = $dayShifts[$d['id']] ?? []; ?>
@@ -124,7 +133,7 @@ $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) 
           <div class="small fw-semibold mb-1">
             <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?> - <?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?>
           </div>
-          <div><?= nl2br(htmlspecialchars((string) ($shift['volunteers'] ?: '-'))) ?></div>
+          <div class="<?= $generate ? 'board-generated-volunteers' : '' ?>"><?= nl2br(htmlspecialchars((string) ($shift['volunteers'] ?: '-'))) ?></div>
           <?php if (!empty($shift['closes_bar'])): ?>
             <div><?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?: '--')) ?></div>
           <?php endif; ?>
