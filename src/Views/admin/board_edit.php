@@ -115,12 +115,24 @@ $boardGeneratedHeaderSubtitle = $monthName . ' ' . (int) ($board['year'] ?? 0);
             </div>
           </div>
         <?php else: ?>
-          <div class="small fw-semibold mb-1">
-            <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?> - <?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?>
-          </div>
-          <div class="<?= $generate ? 'board-generated-volunteers' : '' ?>"><?= nl2br(htmlspecialchars((string) ($shift['volunteers'] ?: '-'))) ?></div>
-          <?php if (!empty($shift['closes_bar'])): ?>
-            <div><?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?: '--')) ?></div>
+          <?php if ($generate): ?>
+            <div class="board-generated-shift-grid">
+              <div class="board-generated-shift-cell board-generated-shift-time">
+                <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?> - <?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?>
+              </div>
+              <div class="board-generated-shift-cell board-generated-volunteers"><?= nl2br(htmlspecialchars((string) ($shift['volunteers'] ?: '-'))) ?></div>
+              <div class="board-generated-shift-cell board-generated-closure">
+                <?= htmlspecialchars(!empty($shift['closes_bar']) ? (string) ($shift['responsabile_chiusura'] ?: '--') : '') ?>
+              </div>
+            </div>
+          <?php else: ?>
+            <div class="small fw-semibold mb-1">
+              <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?> - <?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?>
+            </div>
+            <div><?= nl2br(htmlspecialchars((string) ($shift['volunteers'] ?: '-'))) ?></div>
+            <?php if (!empty($shift['closes_bar'])): ?>
+              <div><?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?: '--')) ?></div>
+            <?php endif; ?>
           <?php endif; ?>
         <?php endif; ?>
       </div>
