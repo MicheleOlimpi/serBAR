@@ -110,8 +110,9 @@ Il file viene caricato con riferimento relativo così l'app continua a funzionar
 - Creazione/modifica/eliminazione tabelloni mensili
 - Gestione turni giornalieri e annotazioni
 - Editing tabellone con supporto a selezione rapida utenti e responsabile chiusura
-- Interfaccia consultazione e segnalazioni
 - Vista stampabile/esportabile PDF via stampa browser
+- Interfaccia per consultazione e segnalazioni dedicata all'utenza standard, eventualmente disabilitabile
+- Interfaccia al pubblico accessibile solo tramite token, eventualmente disabilitabile.
 
 ## GESTIONE DELLE FESTIVITA'
 Vengono gestite le festività nazionali, cattoliche e eventuali giorni speciali sia fisse che mobili.
