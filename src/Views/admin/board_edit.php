@@ -86,58 +86,60 @@ $boardGeneratedHeaderSubtitle = $monthName . ' ' . (int) ($board['year'] ?? 0);
     <?php endif; ?>
   </div>
 </td>
-<td>
-  <?php if ($shifts === []): ?>
-    <span class="text-muted">Nessun turno configurato per questo tipo giorno.</span>
-  <?php else: ?>
-    <?php foreach ($shifts as $shift): ?>
-      <div class="<?= $generate ? 'board-generated-shift-row' : 'border rounded p-2 mb-2' ?>">
-        <?php if (!$generate && Auth::isAdmin()): ?>
-          <div class="shift-grid">
-            <div>
-              <div class="small fw-semibold">
-                <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?> - <?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?>
+<td class="<?= $generate ? 'board-generated-shifts' : '' ?>">
+  <div class="<?= $generate ? 'board-generated-shifts-content' : '' ?>">
+    <?php if ($shifts === []): ?>
+      <span class="text-muted">Nessun turno configurato per questo tipo giorno.</span>
+    <?php else: ?>
+      <?php foreach ($shifts as $shift): ?>
+        <div class="<?= $generate ? 'board-generated-shift-row' : 'border rounded p-2 mb-2' ?>">
+          <?php if (!$generate && Auth::isAdmin()): ?>
+            <div class="shift-grid">
+              <div>
+                <div class="small fw-semibold">
+                  <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?> - <?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?>
+                </div>
               </div>
-            </div>
-            <div>
-              <input id="volunteers-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][volunteers]" value="<?= htmlspecialchars((string) ($shift['volunteers'] ?? '')) ?>" placeholder="Volontari in turno">
-              <div class="input-group input-group-sm volunteer-picker" data-target="volunteers-<?= (int) $shift['id'] ?>">
-                <input type="text" class="form-control volunteer-picker-input" list="users-list" placeholder="Seleziona volontario">
-                <button class="btn btn-outline-success" type="button" aria-label="Aggiungi volontario"><i class="fa-solid fa-circle-plus text-success" aria-hidden="true"></i></button>
+              <div>
+                <input id="volunteers-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][volunteers]" value="<?= htmlspecialchars((string) ($shift['volunteers'] ?? '')) ?>" placeholder="Volontari in turno">
+                <div class="input-group input-group-sm volunteer-picker" data-target="volunteers-<?= (int) $shift['id'] ?>">
+                  <input type="text" class="form-control volunteer-picker-input" list="users-list" placeholder="Seleziona volontario">
+                  <button class="btn btn-outline-success" type="button" aria-label="Aggiungi volontario"><i class="fa-solid fa-circle-plus text-success" aria-hidden="true"></i></button>
+                </div>
               </div>
-            </div>
-            <div class="responsible-section <?= empty($shift['closes_bar']) ? 'responsible-section-hidden' : '' ?>">
-              <input id="responsabile-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][responsabile_chiusura]" value="<?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?? '')) ?>" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?> placeholder="Chiusura">
-              <div class="input-group input-group-sm responsible-picker" data-target="responsabile-<?= (int) $shift['id'] ?>">
-                <input type="text" class="form-control responsible-picker-input" list="users-list" placeholder="Seleziona chiusura" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?>>
-                <button class="btn btn-outline-success" type="button" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?> aria-label="Imposta responsabile"><i class="fa-solid fa-circle-plus text-success" aria-hidden="true"></i></button>
-              </div>
-            </div>
-          </div>
-        <?php else: ?>
-          <?php if ($generate): ?>
-            <div class="board-generated-shift-grid">
-              <div class="board-generated-shift-cell board-generated-shift-time">
-                <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?> - <?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?>
-              </div>
-              <div class="board-generated-shift-cell board-generated-volunteers"><?= nl2br(htmlspecialchars((string) ($shift['volunteers'] ?: '-'))) ?></div>
-              <div class="board-generated-shift-cell board-generated-closure">
-                <?= htmlspecialchars(!empty($shift['closes_bar']) ? (string) ($shift['responsabile_chiusura'] ?: '--') : '') ?>
+              <div class="responsible-section <?= empty($shift['closes_bar']) ? 'responsible-section-hidden' : '' ?>">
+                <input id="responsabile-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][responsabile_chiusura]" value="<?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?? '')) ?>" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?> placeholder="Chiusura">
+                <div class="input-group input-group-sm responsible-picker" data-target="responsabile-<?= (int) $shift['id'] ?>">
+                  <input type="text" class="form-control responsible-picker-input" list="users-list" placeholder="Seleziona chiusura" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?>>
+                  <button class="btn btn-outline-success" type="button" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?> aria-label="Imposta responsabile"><i class="fa-solid fa-circle-plus text-success" aria-hidden="true"></i></button>
+                </div>
               </div>
             </div>
           <?php else: ?>
-            <div class="small fw-semibold mb-1">
-              <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?> - <?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?>
-            </div>
-            <div><?= nl2br(htmlspecialchars((string) ($shift['volunteers'] ?: '-'))) ?></div>
-            <?php if (!empty($shift['closes_bar'])): ?>
-              <div><?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?: '--')) ?></div>
+            <?php if ($generate): ?>
+              <div class="board-generated-shift-grid">
+                <div class="board-generated-shift-cell board-generated-shift-time">
+                  <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?> - <?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?>
+                </div>
+                <div class="board-generated-shift-cell board-generated-volunteers"><?= nl2br(htmlspecialchars((string) ($shift['volunteers'] ?: '-'))) ?></div>
+                <div class="board-generated-shift-cell board-generated-closure">
+                  <?= htmlspecialchars(!empty($shift['closes_bar']) ? (string) ($shift['responsabile_chiusura'] ?: '--') : '') ?>
+                </div>
+              </div>
+            <?php else: ?>
+              <div class="small fw-semibold mb-1">
+                <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?> - <?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?>
+              </div>
+              <div><?= nl2br(htmlspecialchars((string) ($shift['volunteers'] ?: '-'))) ?></div>
+              <?php if (!empty($shift['closes_bar'])): ?>
+                <div><?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?: '--')) ?></div>
+              <?php endif; ?>
             <?php endif; ?>
           <?php endif; ?>
-        <?php endif; ?>
-      </div>
-    <?php endforeach; ?>
-  <?php endif; ?>
+        </div>
+      <?php endforeach; ?>
+    <?php endif; ?>
+  </div>
 </td>
 <?php if (!$generate): ?>
 <td><?php if(Auth::isAdmin()): ?><input class="form-control form-control-sm" name="day[<?= $d['id'] ?>][notes]" value="<?= htmlspecialchars((string)$d['notes']) ?>" placeholder="annotazioni"><?php else: ?><?= htmlspecialchars((string)$d['notes']) ?><?php endif; ?></td>
