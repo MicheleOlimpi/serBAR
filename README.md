@@ -26,6 +26,15 @@ Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le va
 Il file viene caricato con riferimento relativo così l'app continua a funzionare anche quando è pubblicata in una sottocartella del dominio.
 
 ## Novità recenti
+- **Tabellone generato più completo e leggibile**:
+  - aggiunta la colonna **Chiusura** nella vista generata/stampabile del tabellone per evidenziare il responsabile di chiusura;
+  - i turni del tabellone generato sono ora centrati verticalmente per migliorare l'impaginazione;
+  - inserita una riga di separazione sotto l'intestazione del mese per rendere più chiaro il layout.
+- **Tema del tabellone generato più personalizzabile**:
+  - spostati nel file tema centralizzato gli stili della vista generata, così header, celle, spaziature e dimensioni possono essere configurati via variabili CSS;
+  - introdotte variabili dedicate per titolo/sottotitolo del tabellone e larghezze delle colonne principali.
+- **Navigazione supervisor ottimizzata**:
+  - il ruolo `supervisor` non vede più la voce di menu **Setup**, mantenendo la barra di navigazione coerente con i permessi disponibili.
 - **Branding README aggiornato**:
   - inserito il logo ufficiale **square** del progetto nell'intestazione;
   - dimensionamento impostato a **150x150 px** per mantenere una resa coerente su GitHub.
