@@ -10,8 +10,6 @@ use App\Services\InstallerService;
 
 class InstallController
 {
-    private const COMPLETE_SESSION_KEY = 'install_complete_data';
-
     public function __construct(private InstallerService $installer, private string $configPath)
     {
     }
@@ -19,14 +17,15 @@ class InstallController
     public function handle(): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['step'] ?? '') === 'complete') {
-            $completeData = $_SESSION[self::COMPLETE_SESSION_KEY] ?? null;
-            unset($_SESSION[self::COMPLETE_SESSION_KEY]);
+            $db = trim((string) ($_GET['db'] ?? ''));
+            $host = trim((string) ($_GET['host'] ?? ''));
+            $port = (int) ($_GET['port'] ?? 0);
 
-            if (is_array($completeData)) {
+            if ($db !== '' && $host !== '' && $port > 0) {
                 View::render('install/complete', [
-                    'db' => $completeData['db'],
-                    'host' => $completeData['host'],
-                    'port' => $completeData['port'],
+                    'db' => $db,
+                    'host' => $host,
+                    'port' => $port,
                     'isInstallView' => true,
                 ]);
                 return;
@@ -70,17 +69,14 @@ class InstallController
                     }
                 }
 
-                if (session_status() !== PHP_SESSION_ACTIVE) {
-                    @session_start();
-                }
+                $completeUrl = sprintf(
+                    '?action=install&step=complete&db=%s&host=%s&port=%d',
+                    rawurlencode($cfg['database']),
+                    rawurlencode($cfg['host']),
+                    $cfg['port']
+                );
 
-                $_SESSION[self::COMPLETE_SESSION_KEY] = [
-                    'db' => $cfg['database'],
-                    'host' => $cfg['host'],
-                    'port' => $cfg['port'],
-                ];
-
-                echo '<script>window.location.href = "?action=install&step=complete";</script>';
+                echo '<script>window.location.href = ' . json_encode($completeUrl, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . ';</script>';
                 return;
             } catch (\Throwable $e) {
                 View::render('install/index', [
