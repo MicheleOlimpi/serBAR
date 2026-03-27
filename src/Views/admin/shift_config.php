@@ -26,11 +26,11 @@
     <label class="form-check-label" for="closes_bar">A fine turno il bar chiude</label>
   </div>
   <div class="col-md-12 d-flex gap-2 mt-2">
-    <button class="btn btn-success"><?= $editing ? 'Aggiorna turno' : 'Aggiungi turno' ?></button>
+    <button class="btn btn-success"><?= $editing ? 'Aggiorna' : 'Aggiungi' ?></button>
     <?php if ($editing): ?><a class="btn btn-outline-secondary" href="?action=shift_config">Annulla</a><?php endif; ?>
   </div>
 </form>
-
+<br>
 <table class="table table-striped">
   <tr><th>TIPO GIORNO</th><th>INIZIO</th><th>FINE</th><th>CHIUSURA BAR</th><th>PRIORITÀ</th><th>&nbsp</th></tr>
   <?php foreach($shifts as $shift): ?>
