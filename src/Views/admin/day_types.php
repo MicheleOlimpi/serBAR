@@ -24,7 +24,7 @@
     <?php if ($editing): ?><a class="btn btn-outline-secondary" href="?action=day_types">Annulla</a><?php endif; ?>
   </div>
 </form>
-
+<br>
 <table class="table table-striped">
   <tr><th>NOME</th><th>CODICE</th><th>COLORE</th><th>&nbsp</th></tr>
   <?php foreach ($types as $t): ?>
