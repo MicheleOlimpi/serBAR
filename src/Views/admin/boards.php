@@ -39,6 +39,7 @@ $monthNames = [
   </div>
   <div class="col-md-2"><button class="btn btn-success">GENERA</button></div>
 </form>
+<br>
 <table class="table table-striped"><tr><th>Tabellone</th><th>Azioni</th></tr>
 <?php foreach($boards as $b): ?>
 <tr><td><?= ($monthNames[(int) $b['month']] ?? sprintf('%02d', $b['month'])) . ' ' . $b['year'] ?></td><td>
