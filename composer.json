@@ -5,7 +5,8 @@
   "license": "MIT",
   "require": {
     "php": "^8.0",
-    "ext-pdo": "*"
+    "ext-pdo": "*",
+    "phpmailer/phpmailer": "^6.9"
   },
   "autoload": {
     "psr-4": {
