@@ -10,6 +10,7 @@
       <thead>
         <tr>
           <th class="ps-3">GIORNO</th>
+          <th>DESCRIZIONE</th>
           <th class="text-center">CHIUSO</th>
         </tr>
       </thead>
@@ -18,6 +19,15 @@
           <?php $weekdayCode = strtolower((string) ($rule['weekday_code'] ?? '')); ?>
           <tr>
             <td class="ps-3"><?= htmlspecialchars((string) ($rule['day_name'] ?? ucfirst($weekdayCode))) ?></td>
+            <td>
+              <input
+                type="text"
+                class="form-control form-control-sm"
+                name="weekday_description[<?= htmlspecialchars($weekdayCode) ?>]"
+                value="<?= htmlspecialchars((string) ($rule['description'] ?? '')) ?>"
+                placeholder="Descrizione"
+              >
+            </td>
             <td class="text-center">
               <input
                 type="checkbox"

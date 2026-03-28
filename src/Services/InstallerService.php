@@ -94,7 +94,7 @@ class InstallerService
             'CREATE TABLE IF NOT EXISTS board_day_shifts (id INT AUTO_INCREMENT PRIMARY KEY, board_day_id INT NOT NULL, daily_shift_config_id INT NULL, start_time TIME NOT NULL, end_time TIME NOT NULL, closes_bar TINYINT(1) NOT NULL DEFAULT 0, priority INT NOT NULL DEFAULT 1, volunteers TEXT NULL, responsabile_chiusura VARCHAR(255) NULL, UNIQUE KEY uq_board_day_shift_priority (board_day_id, priority), FOREIGN KEY (board_day_id) REFERENCES board_days(id) ON DELETE CASCADE, FOREIGN KEY (daily_shift_config_id) REFERENCES daily_shift_config(id) ON DELETE SET NULL)',
             "CREATE TABLE IF NOT EXISTS notifications (id INT AUTO_INCREMENT PRIMARY KEY, user_id INT NOT NULL, message TEXT NOT NULL, status VARCHAR(20) NOT NULL DEFAULT 'inviata', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE)",
             'CREATE TABLE IF NOT EXISTS app_settings (setting_key VARCHAR(100) PRIMARY KEY, setting_value VARCHAR(255) NOT NULL)',
-            'CREATE TABLE IF NOT EXISTS weekday_close (id INT AUTO_INCREMENT PRIMARY KEY, weekday_code VARCHAR(20) NOT NULL UNIQUE, weekday_order TINYINT UNSIGNED NOT NULL, day_type_id INT NOT NULL, is_closed TINYINT(1) NOT NULL DEFAULT 0, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE CASCADE)'
+            'CREATE TABLE IF NOT EXISTS weekday_close (id INT AUTO_INCREMENT PRIMARY KEY, weekday_code VARCHAR(20) NOT NULL UNIQUE, weekday_order TINYINT UNSIGNED NOT NULL, day_type_id INT NOT NULL, is_closed TINYINT(1) NOT NULL DEFAULT 0, description TEXT NULL, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE CASCADE)'
         ];
     }
 
@@ -225,7 +225,7 @@ class InstallerService
 
     private function ensureWeekdayCloseSchema(PDO $pdo): void
     {
-        $pdo->exec('CREATE TABLE IF NOT EXISTS weekday_close (id INT AUTO_INCREMENT PRIMARY KEY, weekday_code VARCHAR(20) NOT NULL UNIQUE, weekday_order TINYINT UNSIGNED NOT NULL, day_type_id INT NOT NULL, is_closed TINYINT(1) NOT NULL DEFAULT 0, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE CASCADE)');
+        $pdo->exec('CREATE TABLE IF NOT EXISTS weekday_close (id INT AUTO_INCREMENT PRIMARY KEY, weekday_code VARCHAR(20) NOT NULL UNIQUE, weekday_order TINYINT UNSIGNED NOT NULL, day_type_id INT NOT NULL, is_closed TINYINT(1) NOT NULL DEFAULT 0, description TEXT NULL, FOREIGN KEY (day_type_id) REFERENCES day_types(id) ON DELETE CASCADE)');
 
         $stmt = $pdo->query("SHOW COLUMNS FROM weekday_close LIKE 'weekday_order'");
         if ($stmt === false || !$stmt->fetch()) {
@@ -240,6 +240,11 @@ class InstallerService
         $stmt = $pdo->query("SHOW COLUMNS FROM weekday_close LIKE 'is_closed'");
         if ($stmt === false || !$stmt->fetch()) {
             $pdo->exec('ALTER TABLE weekday_close ADD COLUMN is_closed TINYINT(1) NOT NULL DEFAULT 0 AFTER day_type_id');
+        }
+
+        $stmt = $pdo->query("SHOW COLUMNS FROM weekday_close LIKE 'description'");
+        if ($stmt === false || !$stmt->fetch()) {
+            $pdo->exec('ALTER TABLE weekday_close ADD COLUMN description TEXT NULL AFTER is_closed');
         }
 
         $indexStmt = $pdo->query("SHOW INDEX FROM weekday_close WHERE Key_name='uq_weekday_close_code'");
@@ -309,7 +314,7 @@ class InstallerService
             ['sunday', 7],
         ];
 
-        $stmt = $pdo->prepare('INSERT IGNORE INTO weekday_close (weekday_code, weekday_order, day_type_id, is_closed) VALUES (?, ?, ?, 0)');
+        $stmt = $pdo->prepare('INSERT IGNORE INTO weekday_close (weekday_code, weekday_order, day_type_id, is_closed, description) VALUES (?, ?, ?, 0, NULL)');
         foreach ($rows as [$weekdayCode, $weekdayOrder]) {
             $stmt->execute([$weekdayCode, $weekdayOrder, $ferialeTypeId]);
         }
@@ -317,49 +322,22 @@ class InstallerService
 
     private function seedCalendarDays(PDO $pdo): void
     {
-        $year = 2024;
-
-        $stmt = $pdo->prepare('INSERT IGNORE INTO calendar_days (day_date, recurrence_name, santo, is_holiday, is_special, day_type_id) VALUES (?, ?, ?, 0, 0, ?)');
-
-        $ferialeTypeId = 1;
-        $festivoTypeId = 3;
-
-        $start = new \DateTimeImmutable(sprintf('%04d-01-01', $year));
-        $end = new \DateTimeImmutable(sprintf('%04d-12-31', $year));
-
-        for ($day = $start; $day <= $end; $day = $day->modify('+1 day')) {
-            $stmt->execute([
-                $day->format('Y-m-d'),
-                '',
-                '',
-                $ferialeTypeId,
-            ]);
+        $seedFile = dirname(__DIR__, 2) . '/database/seed_calendar_days.sql';
+        if (!is_file($seedFile) || !is_readable($seedFile)) {
+            throw new \RuntimeException('File SQL calendario non trovato o non leggibile: ' . $seedFile);
         }
 
-        $holidays = [
-            ['date' => sprintf('%04d-01-01', $year), 'recurrence' => 'capodanno', 'santo' => 'Maria Santissima madre di Dio', 'special' => 0],
-            ['date' => sprintf('%04d-01-06', $year), 'recurrence' => 'Epifania', 'santo' => 'Epifania del Signore', 'special' => 0],
-            ['date' => sprintf('%04d-06-02', $year), 'recurrence' => 'Festa delle repubblica', 'santo' => 'Santi martiri Marcellino e Pietro', 'special' => 0],
-            ['date' => sprintf('%04d-08-15', $year), 'recurrence' => 'ferragosto', 'santo' => 'Assunzione della B.V. Maria', 'special' => 0],
-            ['date' => sprintf('%04d-09-29', $year), 'recurrence' => 'San Michele Arcangelo', 'santo' => 'San Michele Arcangelo', 'special' => 1],
-            ['date' => sprintf('%04d-11-01', $year), 'recurrence' => 'Tutti i santi', 'santo' => 'Tutti i santi', 'special' => 0],
-            ['date' => sprintf('%04d-12-08', $year), 'recurrence' => 'SS. Madonna', 'santo' => 'Immacolata concezione della B.V. Maria', 'special' => 0],
-            ['date' => sprintf('%04d-12-25', $year), 'recurrence' => 'Natale', 'santo' => 'Natale del Signore', 'special' => 0],
-            ['date' => sprintf('%04d-12-26', $year), 'recurrence' => 'Santo Stefano', 'santo' => 'S. Stefano', 'special' => 0],
-        ];
+        $sql = (string) file_get_contents($seedFile);
+        if (trim($sql) === '') {
+            throw new \RuntimeException('File SQL calendario vuoto: ' . $seedFile);
+        }
 
-        $updateHoliday = $pdo->prepare(
-            'UPDATE calendar_days SET day_type_id = ?, is_holiday = 1, is_special = ?, recurrence_name = ?, santo = ? WHERE day_date = ?'
-        );
-
-        foreach ($holidays as $holiday) {
-            $updateHoliday->execute([
-                $festivoTypeId,
-                (int) $holiday['special'],
-                $holiday['recurrence'],
-                $holiday['santo'],
-                $holiday['date'],
-            ]);
+        $sqlWithoutComments = preg_replace('/^\s*--.*$/m', '', $sql) ?? $sql;
+        foreach (array_filter(array_map('trim', explode(';', $sqlWithoutComments))) as $statement) {
+            if ($statement === '') {
+                continue;
+            }
+            $pdo->exec($statement);
         }
     }
 }

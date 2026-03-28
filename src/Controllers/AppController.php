@@ -364,7 +364,10 @@ class AppController
                     continue;
                 }
 
-                $entries[$weekdayCode] = !empty($_POST['weekday_close'][$weekdayCode]) ? 1 : 0;
+                $entries[$weekdayCode] = [
+                    'is_closed' => !empty($_POST['weekday_close'][$weekdayCode]) ? 1 : 0,
+                    'description' => trim((string) ($_POST['weekday_description'][$weekdayCode] ?? '')),
+                ];
             }
 
             if ($entries !== []) {

@@ -403,7 +403,7 @@ class BarRepository
 
     public function weekdayCloseRules(): array
     {
-        $sql = "SELECT wc.weekday_code, wc.is_closed, dt.id AS day_type_id, CASE wc.weekday_code
+        $sql = "SELECT wc.weekday_code, wc.is_closed, wc.description, dt.id AS day_type_id, CASE wc.weekday_code
                     WHEN 'monday' THEN 'Lunedì'
                     WHEN 'tuesday' THEN 'Martedì'
                     WHEN 'wednesday' THEN 'Mercoledì'
@@ -421,7 +421,7 @@ class BarRepository
     }
 
     /**
-     * @param array<string,int> $entries
+     * @param array<string,array{is_closed:int,description:string}> $entries
      */
     public function saveWeekdayCloseRules(array $entries): void
     {
@@ -429,9 +429,11 @@ class BarRepository
             return;
         }
 
-        $stmt = $this->pdo->prepare('UPDATE weekday_close SET is_closed=? WHERE weekday_code=?');
-        foreach ($entries as $weekdayCode => $isClosed) {
-            $stmt->execute([$isClosed ? 1 : 0, $weekdayCode]);
+        $stmt = $this->pdo->prepare('UPDATE weekday_close SET is_closed=?, description=? WHERE weekday_code=?');
+        foreach ($entries as $weekdayCode => $entry) {
+            $isClosed = !empty($entry['is_closed']) ? 1 : 0;
+            $description = trim((string) ($entry['description'] ?? ''));
+            $stmt->execute([$isClosed, $description === '' ? null : $description, $weekdayCode]);
         }
     }
 
