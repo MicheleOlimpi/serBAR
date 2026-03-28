@@ -333,18 +333,46 @@ class BarRepository
     public function saveSetupSettings(array $data): void
     {
         $upsert = $this->pdo->prepare('INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value=VALUES(setting_value)');
+        $currentSettings = $this->setupSettings();
+
+        $consultationEnabled = !empty($data['consultation_interface_enabled']);
+        $emailSendingEnabled = !empty($data['email_sending_enabled']);
 
         foreach (self::SETUP_BOOLEAN_KEYS as $settingKey) {
+            if (
+                !$consultationEnabled
+                && in_array($settingKey, ['consultation_notifications_enabled', 'consultation_directory_enabled'], true)
+                && !array_key_exists($settingKey, $data)
+            ) {
+                $value = ($currentSettings[$settingKey] ?? '0') === '1' ? '1' : '0';
+                $upsert->execute([$settingKey, $value]);
+                continue;
+            }
+
+            if (
+                !$emailSendingEnabled
+                && $settingKey === 'smtp_auth_enabled'
+                && !array_key_exists($settingKey, $data)
+            ) {
+                $value = ($currentSettings[$settingKey] ?? '0') === '1' ? '1' : '0';
+                $upsert->execute([$settingKey, $value]);
+                continue;
+            }
+
             $value = !empty($data[$settingKey]) ? '1' : '0';
             $upsert->execute([$settingKey, $value]);
         }
 
         $publicInterfaceEnabled = !empty($data['public_interface_enabled']);
-        $emailSendingEnabled = !empty($data['email_sending_enabled']);
-        $smtpAuthEnabled = !empty($data['smtp_auth_enabled']);
+        $smtpAuthEnabled = !empty($data['smtp_auth_enabled'])
+            || (
+                !$emailSendingEnabled
+                && !array_key_exists('smtp_auth_enabled', $data)
+                && (($currentSettings['smtp_auth_enabled'] ?? '0') === '1')
+            );
 
         foreach (self::SETUP_TEXT_KEYS as $settingKey) {
-            $value = trim((string) ($data[$settingKey] ?? ''));
+            $value = trim((string) ($data[$settingKey] ?? ($currentSettings[$settingKey] ?? '')));
 
             if ($settingKey === 'public_interface_passkey') {
                 $value = substr($value, 0, 10);
@@ -361,19 +389,6 @@ class BarRepository
             if ($settingKey === 'smtp_auth_type') {
                 $allowedAuthTypes = ['none', 'ssl', 'tls', 'starttls'];
                 $value = in_array(strtolower($value), $allowedAuthTypes, true) ? strtolower($value) : 'tls';
-            }
-
-            if (
-                in_array($settingKey, ['smtp_server', 'smtp_port', 'smtp_username', 'smtp_password', 'smtp_auth_type'], true)
-                && !$emailSendingEnabled
-            ) {
-                if ($settingKey === 'smtp_port') {
-                    $value = '587';
-                } elseif ($settingKey === 'smtp_auth_type') {
-                    $value = 'tls';
-                } else {
-                    $value = '';
-                }
             }
 
             if ($settingKey === 'smtp_auth_type' && !$smtpAuthEnabled) {
