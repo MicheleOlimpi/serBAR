@@ -5,8 +5,7 @@
   <input type="hidden" name="id" value="<?= (int) ($editing['id'] ?? 0) ?>">
   <input type="hidden" name="color_hex" id="colorHexInput" value="<?= $currentColor ?>">
 
-  <div class="col-md-4"><input name="name" class="form-control" placeholder="nome" required value="<?= htmlspecialchars((string) ($editing['name'] ?? '')) ?>"></div>
-  <div class="col-md-3"><input name="code" class="form-control" placeholder="codice" required value="<?= htmlspecialchars((string) ($editing['code'] ?? '')) ?>"></div>
+  <div class="col-md-7"><input name="name" class="form-control" placeholder="nome" required value="<?= htmlspecialchars((string) ($editing['name'] ?? '')) ?>"></div>
   <div class="col-md-2">
     <button
       type="button"
@@ -26,11 +25,10 @@
 </form>
 <br>
 <table class="table table-striped">
-  <tr><th>NOME</th><th>CODICE</th><th>COLORE</th><th>&nbsp</th></tr>
+  <tr><th>NOME</th><th>COLORE</th><th>&nbsp</th></tr>
   <?php foreach ($types as $t): ?>
     <tr>
       <td><?= htmlspecialchars((string) $t['name']) ?></td>
-      <td><?= htmlspecialchars((string) $t['code']) ?></td>
       <td>
         <span class="d-inline-block rounded border" style="width:28px;height:28px;background-color: <?= htmlspecialchars((string) ($t['color_hex'] ?? '#FFFFFF')) ?>"></span>
         <small class="text-muted ms-1"><?= htmlspecialchars((string) ($t['color_hex'] ?? '#FFFFFF')) ?></small>
@@ -39,7 +37,7 @@
         <a class="btn btn-sm btn-outline-primary" href="?action=day_types&edit=<?= (int) $t['id'] ?>" aria-label="Modifica" title="Modifica">
           <i class="fa-solid fa-pen" aria-hidden="true"></i>
         </a>
-        <?php if (!(int) $t['is_locked'] && !in_array(strtolower((string) $t['code']), ['feriale', 'prefestivo', 'festivo'], true)): ?>
+        <?php if (!(int) $t['is_locked']): ?>
           <button
             type="button"
             class="btn btn-sm btn-danger js-delete-day-type" aria-label="Elimina" title="Elimina"

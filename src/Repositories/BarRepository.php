@@ -30,7 +30,6 @@ class BarRepository
     ];
     private const PROGRAM_INFO_KEYS = ['program_name', 'program_author', 'program_version'];
     private const LOGIN_INFO_KEYS = ['login_info1', 'login_info2'];
-    private const NON_DELETABLE_DAY_TYPE_CODES = ['feriale', 'prefestivo', 'festivo'];
 
     public function __construct(private PDO $pdo)
     {
@@ -159,25 +158,28 @@ class BarRepository
     public function saveDayType(array $data): void
     {
         $colorHex = $this->sanitizeColorHex((string) ($data['color_hex'] ?? ''));
-
-        if (!empty($data['id'])) {
-            $this->pdo->prepare('UPDATE day_types SET name=?, code=?, color_hex=? WHERE id=?')
-                ->execute([$data['name'], $data['code'], $colorHex, (int) $data['id']]);
+        $name = trim((string) ($data['name'] ?? ''));
+        if ($name === '') {
             return;
         }
-        $this->pdo->prepare('INSERT INTO day_types (name, code, color_hex, is_locked) VALUES (?,?,?,0)')
-            ->execute([$data['name'], $data['code'], $colorHex]);
+
+        if (!empty($data['id'])) {
+            $this->pdo->prepare('UPDATE day_types SET name=?, color_hex=? WHERE id=?')
+                ->execute([$name, $colorHex, (int) $data['id']]);
+            return;
+        }
+        $this->pdo->prepare('INSERT INTO day_types (name, color_hex, is_locked) VALUES (?,?,0)')
+            ->execute([$name, $colorHex]);
     }
 
     public function deleteDayType(int $id): bool
     {
-        $stmt = $this->pdo->prepare('SELECT is_locked, code FROM day_types WHERE id=?');
+        $stmt = $this->pdo->prepare('SELECT is_locked FROM day_types WHERE id=?');
         $stmt->execute([$id]);
         $row = $stmt->fetch();
         if (
             !$row
             || (int) $row['is_locked'] === 1
-            || in_array(strtolower((string) $row['code']), self::NON_DELETABLE_DAY_TYPE_CODES, true)
         ) {
             return false;
         }
@@ -723,15 +725,6 @@ class BarRepository
     {
         $this->pdo->prepare('DELETE FROM calendar_days WHERE id=?')->execute([$id]);
     }
-
-    public function dayTypeByCode(string $code): ?array
-    {
-        $stmt = $this->pdo->prepare('SELECT * FROM day_types WHERE code=? LIMIT 1');
-        $stmt->execute([$code]);
-        $row = $stmt->fetch();
-        return $row ?: null;
-    }
-
 
     private function isValidTime(string $time): bool
     {
