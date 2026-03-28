@@ -10,8 +10,24 @@ use PDOException;
 class BarRepository
 {
     private const NOTIFICATION_STATUSES = ['inviata', 'letto', 'in_corso', 'chiuso'];
-    private const SETUP_BOOLEAN_KEYS = ['consultation_interface_enabled', 'consultation_notifications_enabled', 'consultation_directory_enabled', 'public_interface_enabled'];
-    private const SETUP_TEXT_KEYS = ['login_info1', 'login_info2', 'public_interface_passkey'];
+    private const SETUP_BOOLEAN_KEYS = [
+        'consultation_interface_enabled',
+        'consultation_notifications_enabled',
+        'consultation_directory_enabled',
+        'public_interface_enabled',
+        'email_sending_enabled',
+        'smtp_auth_enabled',
+    ];
+    private const SETUP_TEXT_KEYS = [
+        'login_info1',
+        'login_info2',
+        'public_interface_passkey',
+        'smtp_server',
+        'smtp_port',
+        'smtp_username',
+        'smtp_password',
+        'smtp_auth_type',
+    ];
     private const PROGRAM_INFO_KEYS = ['program_name', 'program_author', 'program_version'];
     private const LOGIN_INFO_KEYS = ['login_info1', 'login_info2'];
     private const NON_DELETABLE_DAY_TYPE_CODES = ['feriale', 'prefestivo', 'festivo'];
@@ -237,9 +253,16 @@ class BarRepository
             'consultation_notifications_enabled' => '1',
             'consultation_directory_enabled' => '1',
             'public_interface_enabled' => '0',
+            'email_sending_enabled' => '0',
+            'smtp_auth_enabled' => '1',
             'login_info1' => 'ACLI Grassina',
             'login_info2' => 'Gestione turni',
             'public_interface_passkey' => '',
+            'smtp_server' => '',
+            'smtp_port' => '587',
+            'smtp_username' => '',
+            'smtp_password' => '',
+            'smtp_auth_type' => 'tls',
         ];
 
         $stmt = $this->pdo->query('SELECT setting_key, setting_value FROM app_settings');
@@ -317,6 +340,8 @@ class BarRepository
         }
 
         $publicInterfaceEnabled = !empty($data['public_interface_enabled']);
+        $emailSendingEnabled = !empty($data['email_sending_enabled']);
+        $smtpAuthEnabled = !empty($data['smtp_auth_enabled']);
 
         foreach (self::SETUP_TEXT_KEYS as $settingKey) {
             $value = trim((string) ($data[$settingKey] ?? ''));
@@ -326,6 +351,33 @@ class BarRepository
                 if (!$publicInterfaceEnabled) {
                     $value = '';
                 }
+            }
+
+            if ($settingKey === 'smtp_port') {
+                $port = (int) $value;
+                $value = $port > 0 && $port <= 65535 ? (string) $port : '587';
+            }
+
+            if ($settingKey === 'smtp_auth_type') {
+                $allowedAuthTypes = ['none', 'ssl', 'tls', 'starttls'];
+                $value = in_array(strtolower($value), $allowedAuthTypes, true) ? strtolower($value) : 'tls';
+            }
+
+            if (
+                in_array($settingKey, ['smtp_server', 'smtp_port', 'smtp_username', 'smtp_password', 'smtp_auth_type'], true)
+                && !$emailSendingEnabled
+            ) {
+                if ($settingKey === 'smtp_port') {
+                    $value = '587';
+                } elseif ($settingKey === 'smtp_auth_type') {
+                    $value = 'tls';
+                } else {
+                    $value = '';
+                }
+            }
+
+            if ($settingKey === 'smtp_auth_type' && !$smtpAuthEnabled) {
+                $value = 'none';
             }
 
             $upsert->execute([$settingKey, $value]);
