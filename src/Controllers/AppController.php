@@ -418,6 +418,9 @@ class AppController
                 'http_server_name' => $httpServerName,
                 'http_server_version' => $httpServerVersion,
                 'php_version' => PHP_VERSION,
+                'php_mailer_version' => defined('\PHPMailer\PHPMailer\PHPMailer::VERSION')
+                    ? (string) constant('\PHPMailer\PHPMailer\PHPMailer::VERSION')
+                    : null,
             ],
         ]);
     }

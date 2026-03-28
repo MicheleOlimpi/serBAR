@@ -9,11 +9,11 @@ $statusLabels = [
     'chiuso' => 'Chiuso',
 ];
 
-$statusBadgeMap = [
-    'inviata' => 'text-bg-secondary',
-    'letto' => 'text-bg-info',
-    'in_corso' => 'text-bg-warning text-dark',
-    'chiuso' => 'text-bg-success',
+$statusTextColorMap = [
+    'inviata' => '#6c757d',
+    'letto' => '#0dcaf0',
+    'in_corso' => '#fd7e14',
+    'chiuso' => '#198754',
 ];
 ?>
 
@@ -94,11 +94,15 @@ $statusBadgeMap = [
           <td><?= htmlspecialchars((string) $n['message']) ?></td>
           <td>
             <div class="d-flex align-items-center gap-2">
-              <?php $statusClass = $statusBadgeMap[$n['status']] ?? 'text-bg-secondary'; ?>
-              <span class="badge <?= $statusClass ?>"><?= htmlspecialchars($statusLabels[$n['status']] ?? $n['status']) ?></span>
               <form method="post" class="d-flex gap-1">
                 <input type="hidden" name="quick_status_id" value="<?= (int) $n['id'] ?>">
-                <select name="quick_status" class="form-select form-select-sm" onchange="this.form.submit()">
+                <?php $statusColor = $statusTextColorMap[$n['status']] ?? '#6c757d'; ?>
+                <select
+                  name="quick_status"
+                  class="form-select form-select-sm js-status-select"
+                  style="color: <?= htmlspecialchars($statusColor) ?>;"
+                  onchange="updateStatusSelectColor(this); this.form.submit()"
+                >
                   <?php foreach ($statuses as $status): ?>
                     <option value="<?= $status ?>" <?= $n['status'] === $status ? 'selected' : '' ?>><?= htmlspecialchars($statusLabels[$status] ?? $status) ?></option>
                   <?php endforeach; ?>
@@ -155,6 +159,22 @@ $statusBadgeMap = [
 </div>
 
 <script>
+  const statusColorMap = {
+    inviata: '#6c757d',
+    letto: '#0dcaf0',
+    in_corso: '#fd7e14',
+    chiuso: '#198754',
+  };
+
+  function updateStatusSelectColor(selectElement) {
+    const nextColor = statusColorMap[selectElement.value] || '#6c757d';
+    selectElement.style.color = nextColor;
+  }
+
+  document.querySelectorAll('.js-status-select').forEach((selectElement) => {
+    updateStatusSelectColor(selectElement);
+  });
+
   const confirmDeleteNotificationBtn = document.getElementById('confirmDeleteNotificationBtn');
 
   document.querySelectorAll('.js-delete-notification').forEach((button) => {

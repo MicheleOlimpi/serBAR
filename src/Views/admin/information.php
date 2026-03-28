@@ -15,6 +15,14 @@
         <?= htmlspecialchars((string) ($serverInfo['http_server_version'] ?? 'Non disponibile')) ?>
       </li>
       <li><strong>Versione PHP:</strong> <?= htmlspecialchars((string) ($serverInfo['php_version'] ?? 'Non disponibile')) ?></li>
+      <li>
+        <strong>Versione PHPMailer:</strong>
+        <?php if (!empty($serverInfo['php_mailer_version'])): ?>
+          <?= htmlspecialchars((string) $serverInfo['php_mailer_version']) ?>
+        <?php else: ?>
+          <span class="text-danger">non installato</span>
+        <?php endif; ?>
+      </li>
     </ul>
   </div>
 </div>
