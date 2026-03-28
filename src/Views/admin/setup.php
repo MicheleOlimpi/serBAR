@@ -183,6 +183,9 @@
 <script>
   const publicInterfaceToggle = document.getElementById('public_interface_enabled');
   const publicInterfacePasskey = document.getElementById('public_interface_passkey');
+  const consultationInterfaceToggle = document.getElementById('consultation_interface_enabled');
+  const consultationNotificationsToggle = document.getElementById('consultation_notifications_enabled');
+  const consultationDirectoryToggle = document.getElementById('consultation_directory_enabled');
   const emailSendingToggle = document.getElementById('email_sending_enabled');
   const smtpAuthToggle = document.getElementById('smtp_auth_enabled');
   const smtpServer = document.getElementById('smtp_server');
@@ -197,6 +200,19 @@
     }
 
     publicInterfacePasskey.disabled = !publicInterfaceToggle.checked;
+  };
+
+  const toggleConsultationSettings = () => {
+    if (!consultationInterfaceToggle) {
+      return;
+    }
+
+    const consultationEnabled = consultationInterfaceToggle.checked;
+    [consultationNotificationsToggle, consultationDirectoryToggle].forEach((field) => {
+      if (field) {
+        field.disabled = !consultationEnabled;
+      }
+    });
   };
 
   const toggleEmailSettings = () => {
@@ -220,6 +236,10 @@
     publicInterfaceToggle.addEventListener('change', togglePublicInterfacePasskey);
   }
 
+  if (consultationInterfaceToggle) {
+    consultationInterfaceToggle.addEventListener('change', toggleConsultationSettings);
+  }
+
   if (emailSendingToggle) {
     emailSendingToggle.addEventListener('change', toggleEmailSettings);
   }
@@ -229,5 +249,6 @@
   }
 
   togglePublicInterfacePasskey();
+  toggleConsultationSettings();
   toggleEmailSettings();
 </script>
