@@ -2,7 +2,7 @@
   "name": "acli/servizio-bar",
   "description": "ACLI Servizio BAR - Sistema di gestione dei turni per bar",
   "type": "project",
-  "license": "MIT",
+  "license": "GPL-3.0-only",
   "require": {
     "php": "^8.0",
     "ext-pdo": "*",
