@@ -8,6 +8,11 @@ use PDO;
 
 class BoardService
 {
+    private const DAY_TYPE_FERIALE_ID = 1;
+    private const DAY_TYPE_PREFESTIVO_ID = 2;
+    private const DAY_TYPE_FESTIVO_ID = 3;
+    private const DAY_TYPE_CHIUSO_ID = 4;
+
     private array $weekday = ['Sunday' => 'Domenica', 'Monday' => 'Lunedì', 'Tuesday' => 'Martedì', 'Wednesday' => 'Mercoledì', 'Thursday' => 'Giovedì', 'Friday' => 'Venerdì', 'Saturday' => 'Sabato'];
 
     public function __construct(private PDO $pdo)
@@ -18,9 +23,9 @@ class BoardService
     {
         $start = new \DateTimeImmutable(sprintf('%04d-%02d-01', $year, $month));
         $end = $start->modify('last day of this month');
-        $feriale = $this->idByCode('feriale');
-        $prefestivo = $this->idByCode('prefestivo');
-        $festivo = $this->idByCode('festivo');
+        $feriale = self::DAY_TYPE_FERIALE_ID;
+        $prefestivo = self::DAY_TYPE_PREFESTIVO_ID;
+        $festivo = self::DAY_TYPE_FESTIVO_ID;
         $stmtCal = $this->pdo->prepare('SELECT day_date, recurrence_name, day_type_id FROM calendar_days WHERE MONTH(day_date) = ? ORDER BY day_date DESC');
         $days = [];
 
@@ -82,7 +87,7 @@ class BoardService
             }
         }
 
-        $chiuso = $this->idByCode('chiuso');
+        $chiuso = self::DAY_TYPE_CHIUSO_ID;
         $weekdayCloseRules = $chiuso > 0 ? $this->weekdayCloseRules() : [];
 
         $ins = $this->pdo->prepare('INSERT INTO board_days (board_id, day_date, weekday_name, recurrence_name, day_type_id) VALUES (?,?,?,?,?)');
@@ -124,13 +129,6 @@ class BoardService
         }
 
         return $rules;
-    }
-
-    private function idByCode(string $code): int
-    {
-        $stmt = $this->pdo->prepare('SELECT id FROM day_types WHERE code=? LIMIT 1');
-        $stmt->execute([$code]);
-        return (int) $stmt->fetchColumn();
     }
 
     private function easterSunday(int $year): \DateTimeImmutable
