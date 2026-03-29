@@ -10,6 +10,7 @@ $isCenteredLayout = $isLoginPage || $isInstallView;
 $isBoardGenerateView = $currentAction === 'board_edit' && isset($_GET['generate']) && $_GET['generate'] === '1';
 $isBoardEditView = $currentAction === 'board_edit' && !$isBoardGenerateView;
 $isPublicPanelView = (bool) ($isPublicPanelView ?? false);
+$installProgramName = strtoupper('serBAR');
 $assetBasePath = rtrim(str_replace('\\', '/', dirname((string) ($_SERVER['SCRIPT_NAME'] ?? '/'))), '/');
 $assetBasePath = $assetBasePath === '' ? '.' : $assetBasePath;
 $adminNavItems = [
@@ -54,6 +55,12 @@ $consultationNavItems['information'] = ['label' => 'Informazioni', 'href' => '?a
   <link href="<?= htmlspecialchars($assetBasePath . '/css/theme.css') ?>" rel="stylesheet">
 </head>
 <body class="bg-light">
+<?php if ($isInstallView): ?>
+<div class="install-brand-header">
+  <img src="<?= htmlspecialchars($assetBasePath . '/serBAR-square.svg') ?>" alt="Logo serBAR" class="install-brand-logo">
+  <span class="install-brand-title"><?= htmlspecialchars($installProgramName) ?> - INSTALLAZIONE</span>
+</div>
+<?php endif; ?>
 <?php if (!$isLoginPage && !$isInstallView && !$isBoardGenerateView && !$isPublicPanelView): ?>
 <nav class="navbar navbar-expand-lg app-navbar mb-4">
   <div class="container-fluid">
