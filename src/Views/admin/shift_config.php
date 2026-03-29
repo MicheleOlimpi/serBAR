@@ -32,7 +32,7 @@
 </form>
 <br>
 <table class="table table-striped">
-  <tr><th>TIPO GIORNO</th><th>INIZIO</th><th>FINE</th><th>CHIUSURA BAR</th><th>PRIORITÀ</th><th>&nbsp</th></tr>
+  <tr><th>TIPO GIORNO</th><th>INIZIO</th><th>FINE</th><th>CHIUSURA BAR</th><th>PRIORITÀ</th><th>AZIONI</th></tr>
   <?php foreach($shifts as $shift): ?>
     <tr>
       <td><?= htmlspecialchars($shift['day_type_name']) ?></td>
