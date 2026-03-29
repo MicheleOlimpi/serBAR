@@ -26,6 +26,18 @@ Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le va
 Il file viene caricato con riferimento relativo così l'app continua a funzionare anche quando è pubblicata in una sottocartella del dominio.
 
 ## Novità recenti
+- **Affidabilità avvio applicazione migliorata**:
+  - se il database non è disponibile, l'app reindirizza automaticamente al percorso di installazione invece di interrompere il flusso di accesso.
+- **Login più robusto in caso di errore DB**:
+  - aggiornato il flusso di autenticazione per gestire in modo più sicuro e prevedibile i problemi di connessione al database.
+- **Seed utenti separato e più manutenibile**:
+  - popolamento utenti estratto in `database/seed_users.sql` e integrato nel servizio di installazione per semplificare manutenzione e aggiornamenti.
+- **Gestione tabelloni vuoti migliorata (admin)**:
+  - migliorata la resa della pagina tabelloni quando non sono presenti dati, con messaggi/interfaccia più chiari.
+- **Anagrafica santi completata nel seed calendario**:
+  - completato l'inserimento dei santi nel file `database/seed_calendar_days.sql` (inclusi gli aggiornamenti più recenti su agosto e settembre).
+- **Utente `supervisor` incluso nei dati iniziali**:
+  - aggiunto anche nel seed SQL per avere il profilo disponibile già in fase di installazione.
 - **Tabellone generato più completo e leggibile**:
   - aggiunta la colonna **Chiusura** nella vista generata/stampabile del tabellone per evidenziare il responsabile di chiusura;
   - i turni del tabellone generato sono ora centrati verticalmente per migliorare l'impaginazione;
