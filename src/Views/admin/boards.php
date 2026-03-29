@@ -40,27 +40,38 @@ $monthNames = [
   <div class="col-md-2"><button class="btn btn-success">GENERA</button></div>
 </form>
 <br>
-<table class="table table-striped"><tr><th>TABELLONE</th><th>AZIONI</th></tr>
-<?php foreach($boards as $b): ?>
-<tr><td><?= ($monthNames[(int) $b['month']] ?? sprintf('%02d', $b['month'])) . ' ' . $b['year'] ?></td><td>
-<a class="btn btn-sm btn-primary" href="?action=board_edit&id=<?= $b['id'] ?>" aria-label="Modifica" title="Modifica"><i class="fa-solid fa-pen" aria-hidden="true"></i></a>
-<a class="btn btn-sm btn-secondary" href="?action=board_edit&id=<?= $b['id'] ?>&print=1" target="_blank" aria-label="Stampa" title="Stampa"><i class="fa-solid fa-print" aria-hidden="true"></i></a>
-<a class="btn btn-sm btn-info text-white" href="?action=board_edit&id=<?= $b['id'] ?>&generate=1" target="_blank" rel="noopener" aria-label="Genera cartellone" title="Genera cartellone"><i class="fa-solid fa-clipboard" aria-hidden="true"></i></a>
-<button
-  type="button"
-  class="btn btn-sm btn-danger js-delete-board"
-  data-delete-url="?action=boards&delete=<?= (int) $b['id'] ?>"
-  data-board-name="<?= htmlspecialchars(($monthNames[(int) $b['month']] ?? sprintf('%02d', $b['month'])) . ' ' . $b['year']) ?>"
-  data-bs-toggle="modal"
-  data-bs-target="#deleteBoardModal"
-  aria-label="Elimina"
-  title="Elimina"
->
-  <i class="fa-solid fa-trash" aria-hidden="true"></i>
-</button>
-</td></tr>
-<?php endforeach; ?>
+<?php if (!empty($boards)): ?>
+<table class="table table-striped">
+  <tr>
+    <th>TABELLONE</th>
+    <th>AZIONI</th>
+  </tr>
+  <?php foreach ($boards as $b): ?>
+  <tr>
+    <td><?= ($monthNames[(int) $b['month']] ?? sprintf('%02d', $b['month'])) . ' ' . $b['year'] ?></td>
+    <td>
+      <a class="btn btn-sm btn-primary" href="?action=board_edit&id=<?= $b['id'] ?>" aria-label="Modifica" title="Modifica"><i class="fa-solid fa-pen" aria-hidden="true"></i></a>
+      <a class="btn btn-sm btn-secondary" href="?action=board_edit&id=<?= $b['id'] ?>&print=1" target="_blank" aria-label="Stampa" title="Stampa"><i class="fa-solid fa-print" aria-hidden="true"></i></a>
+      <a class="btn btn-sm btn-info text-white" href="?action=board_edit&id=<?= $b['id'] ?>&generate=1" target="_blank" rel="noopener" aria-label="Genera cartellone" title="Genera cartellone"><i class="fa-solid fa-clipboard" aria-hidden="true"></i></a>
+      <button
+        type="button"
+        class="btn btn-sm btn-danger js-delete-board"
+        data-delete-url="?action=boards&delete=<?= (int) $b['id'] ?>"
+        data-board-name="<?= htmlspecialchars(($monthNames[(int) $b['month']] ?? sprintf('%02d', $b['month'])) . ' ' . $b['year']) ?>"
+        data-bs-toggle="modal"
+        data-bs-target="#deleteBoardModal"
+        aria-label="Elimina"
+        title="Elimina"
+      >
+        <i class="fa-solid fa-trash" aria-hidden="true"></i>
+      </button>
+    </td>
+  </tr>
+  <?php endforeach; ?>
 </table>
+<?php else: ?>
+<div class="text-center fw-semibold my-4">Nessun cartellone disponibile</div>
+<?php endif; ?>
 
 
 
