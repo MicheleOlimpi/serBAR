@@ -12,7 +12,7 @@
           <th>SANTO</th>
           <th>TIPO GIORNO</th>
           <th>SPECIALE</th>
-          <th class="text-end">Azione</th>
+          <th class="text-end">AZIONE</th>
         </tr>
       </thead>
       <tbody>
