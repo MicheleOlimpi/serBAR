@@ -288,10 +288,7 @@ class InstallerService
                 $progressCallback('Popolamento dati iniziali...');
             }
             $pdo->exec("INSERT IGNORE INTO day_types (id, name, color_hex, is_locked) VALUES (1,'feriale','#FFFFFF',1),(2,'prefestivo','#FF9090',1),(3,'festivo','#FF0000',1),(4,'chiuso','#A0A0A0',1),(5,'Orario continuato','#59d1d9',1)");
-            $adminHash = password_hash('admin', PASSWORD_DEFAULT);
-            $userHash = password_hash('user', PASSWORD_DEFAULT);
-            $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES ('admin','System','Admin','{$adminHash}','admin','','attivo')");
-            $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES ('user','System','User','{$userHash}','user','','attivo')");
+            $this->seedUsers($pdo);
             $this->seedAppSettings($pdo);
             $pdo->exec("INSERT IGNORE INTO daily_shift_config(id, day_type_id, start_time, end_time, closes_bar, priority) VALUES (1,1,'15:00:00','20:00:00',0,1),(2,1,'20:00:00','23:00:00',1,2),(3,2,'15:00:00','20:00:00',0,1),(4,2,'20:00:00','23:00:00',1,2),(5,3,'08:00:00','12:00:00',1,1),(6,3,'15:00:00','20:00:00',0,2),(7,3,'20:00:00','23:00:00',1,3),(8,4,'00:00:00','00:00:00',0,1),(9,5,'08:00:00','23:00:00',1,1)");
             $this->seedWeekdayClose($pdo);
@@ -322,35 +319,44 @@ class InstallerService
 
     private function seedCalendarDays(PDO $pdo): void
     {
-        $seedFile = dirname(__DIR__, 2) . '/database/seed_calendar_days.sql';
-        if (!is_file($seedFile) || !is_readable($seedFile)) {
-            throw new \RuntimeException('File SQL calendario non trovato o non leggibile: ' . $seedFile);
-        }
-
-        $sql = (string) file_get_contents($seedFile);
-        if (trim($sql) === '') {
-            throw new \RuntimeException('File SQL calendario vuoto: ' . $seedFile);
-        }
-
-        $sqlWithoutComments = preg_replace('/^\s*--.*$/m', '', $sql) ?? $sql;
-        foreach (array_filter(array_map('trim', explode(';', $sqlWithoutComments))) as $statement) {
-            if ($statement === '') {
-                continue;
-            }
-            $pdo->exec($statement);
-        }
+        $this->seedFromSqlFile($pdo, 'database/seed_calendar_days.sql', 'calendario');
     }
 
     private function seedAppSettings(PDO $pdo): void
     {
-        $seedFile = dirname(__DIR__, 2) . '/database/seed_app_settings.sql';
+        $this->seedFromSqlFile($pdo, 'database/seed_app_settings.sql', 'app_settings');
+    }
+
+    private function seedUsers(PDO $pdo): void
+    {
+        $adminHash = password_hash('admin', PASSWORD_DEFAULT);
+        $userHash = password_hash('user', PASSWORD_DEFAULT);
+
+        $this->seedFromSqlFile(
+            $pdo,
+            'database/seed_users.sql',
+            'users',
+            [
+                '__ADMIN_HASH__' => $adminHash,
+                '__USER_HASH__' => $userHash,
+            ]
+        );
+    }
+
+    private function seedFromSqlFile(PDO $pdo, string $relativePath, string $label, array $placeholders = []): void
+    {
+        $seedFile = dirname(__DIR__, 2) . '/' . ltrim($relativePath, '/');
         if (!is_file($seedFile) || !is_readable($seedFile)) {
-            throw new \RuntimeException('File SQL app_settings non trovato o non leggibile: ' . $seedFile);
+            throw new \RuntimeException(sprintf('File SQL %s non trovato o non leggibile: %s', $label, $seedFile));
         }
 
         $sql = (string) file_get_contents($seedFile);
         if (trim($sql) === '') {
-            throw new \RuntimeException('File SQL app_settings vuoto: ' . $seedFile);
+            throw new \RuntimeException(sprintf('File SQL %s vuoto: %s', $label, $seedFile));
+        }
+
+        if ($placeholders !== []) {
+            $sql = strtr($sql, $placeholders);
         }
 
         $sqlWithoutComments = preg_replace('/^\s*--.*$/m', '', $sql) ?? $sql;
