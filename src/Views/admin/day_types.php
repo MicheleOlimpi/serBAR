@@ -25,7 +25,7 @@
 </form>
 <br>
 <table class="table table-striped">
-  <tr><th>NOME</th><th>COLORE</th><th>&nbsp</th></tr>
+  <tr><th>NOME</th><th>COLORE</th><th>AZIONI</th></tr>
   <?php foreach ($types as $t): ?>
     <tr>
       <td><?= htmlspecialchars((string) $t['name']) ?></td>
