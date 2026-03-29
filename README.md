@@ -11,19 +11,19 @@
 Applicazione PHP 8 (PSR-4) con MariaDB per la gestione dei turni di servizio BAR in un circolo di volontari.
 Viene gestita anche la comunicazione di eventuali messaggi sullo stile di un software di ticketing.<br>
 Il sistema dispone di tre interfacce web:
-- una amministrativa dedicata ai gestori
-- una di consultazione/comunicazione dedicata ai volontari
-- una al pubblico, disabilitabile, per la visualizzazione dei turni al pubblico.
+- Amministrativa, dedicata ai gestori
+- Di consultazione/comunicazione, dedicata ai volontari
+- Al pubblico, disabilitabile, per la visualizzazione dei turni al pubblico.
 
 ## STACK
 - PHP 8+
+- phpmailer
 - MariaDB/MySQL
 - Bootstrap 5
 - FontAwesome
 
-## Tema
+## TEMA
 Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le variabili CSS di Bootstrap 5 (`--bs-*`) per personalizzare colori, radius e aspetto generale senza modificare le viste.
-Il file viene caricato con riferimento relativo così l'app continua a funzionare anche quando è pubblicata in una sottocartella del dominio.
 
 ## Novità recenti
 - **Affidabilità avvio applicazione migliorata**:
@@ -123,7 +123,7 @@ Il file viene caricato con riferimento relativo così l'app continua a funzionar
 - Gestione turni giornalieri e annotazioni
 - Editing tabellone con supporto a selezione rapida utenti e responsabile chiusura
 - Vista stampabile/esportabile PDF via stampa browser
-- Interfaccia per consultazione e segnalazioni dedicata all'utenza standard, eventualmente disabilitabile
+- Interfaccia per consultazione e segnalazioni dedicata all'utenza standard, eventualmente disabilitabile anche parzialmente
 - Interfaccia al pubblico accessibile solo tramite token, eventualmente disabilitabile.
 
 ## GESTIONE DELLE FESTIVITA'
@@ -139,3 +139,4 @@ Vengono gestite le festività nazionali, cattoliche e eventuali giorni speciali 
    - Domenica delle Palme
    - Pasqua
    - Lunedì dell'angelo
+## MESSAGGISTICA INTERNA
