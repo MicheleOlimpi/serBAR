@@ -292,7 +292,7 @@ class InstallerService
             $userHash = password_hash('user', PASSWORD_DEFAULT);
             $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES ('admin','System','Admin','{$adminHash}','admin','','attivo')");
             $pdo->exec("INSERT IGNORE INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES ('user','System','User','{$userHash}','user','','attivo')");
-            $pdo->exec("INSERT IGNORE INTO app_settings (setting_key, setting_value) VALUES ('program_name','serBAR'),('program_author','Michele Olimpi'),('program_version','V00.00'),('login_info1','ACLI Grassina'),('login_info2','Gestione turni'),('consultation_directory_enabled','1'),('consultation_interface_enabled','1'),('consultation_notifications_enabled','1'),('public_interface_enabled','1'),('public_interface_passkey','')");
+            $this->seedAppSettings($pdo);
             $pdo->exec("INSERT IGNORE INTO daily_shift_config(id, day_type_id, start_time, end_time, closes_bar, priority) VALUES (1,1,'15:00:00','20:00:00',0,1),(2,1,'20:00:00','23:00:00',1,2),(3,2,'15:00:00','20:00:00',0,1),(4,2,'20:00:00','23:00:00',1,2),(5,3,'08:00:00','12:00:00',1,1),(6,3,'15:00:00','20:00:00',0,2),(7,3,'20:00:00','23:00:00',1,3),(8,4,'00:00:00','00:00:00',0,1),(9,5,'08:00:00','23:00:00',1,1)");
             $this->seedWeekdayClose($pdo);
             $this->seedCalendarDays($pdo);
@@ -330,6 +330,27 @@ class InstallerService
         $sql = (string) file_get_contents($seedFile);
         if (trim($sql) === '') {
             throw new \RuntimeException('File SQL calendario vuoto: ' . $seedFile);
+        }
+
+        $sqlWithoutComments = preg_replace('/^\s*--.*$/m', '', $sql) ?? $sql;
+        foreach (array_filter(array_map('trim', explode(';', $sqlWithoutComments))) as $statement) {
+            if ($statement === '') {
+                continue;
+            }
+            $pdo->exec($statement);
+        }
+    }
+
+    private function seedAppSettings(PDO $pdo): void
+    {
+        $seedFile = dirname(__DIR__, 2) . '/database/seed_app_settings.sql';
+        if (!is_file($seedFile) || !is_readable($seedFile)) {
+            throw new \RuntimeException('File SQL app_settings non trovato o non leggibile: ' . $seedFile);
+        }
+
+        $sql = (string) file_get_contents($seedFile);
+        if (trim($sql) === '') {
+            throw new \RuntimeException('File SQL app_settings vuoto: ' . $seedFile);
         }
 
         $sqlWithoutComments = preg_replace('/^\s*--.*$/m', '', $sql) ?? $sql;
