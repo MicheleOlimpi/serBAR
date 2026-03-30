@@ -321,6 +321,16 @@ textarea::placeholder,
   text-align: center;
 }
 
+.board-generated-closure-box {
+  border: 1px solid var(--board-generated-cell-border-color);
+  border-radius: 0.4rem;
+  min-height: 2rem;
+  padding: 0.2rem 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 @media (max-width: 767.98px) {
   .board-generated-shift-grid {
     grid-template-columns: 1fr;
