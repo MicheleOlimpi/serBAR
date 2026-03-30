@@ -47,7 +47,8 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
         </div>
         <div class="modal-body">
-          serBAR sempra già installato su questo sistema, continuare?
+          serBAR sembra già installato su questo sistema, la reinstallazione<br>
+          sovrascriverà tutti i dati con quelli di defalut. Continuare?
         </div>
         <div class="modal-footer">
           <a class="btn btn-secondary" href="?action=install&cancel=1">No</a>
