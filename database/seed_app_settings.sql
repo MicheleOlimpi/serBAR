@@ -9,9 +9,10 @@ INSERT IGNORE INTO app_settings (setting_key, setting_value) VALUES
   ('consultation_notifications_enabled','1'),
   ('public_interface_enabled','1'),
   ('public_interface_passkey',''),
-	('smtp_auth_enabled','1'),
+  ('email_sending_enabled','0'),
+  ('smtp_auth_enabled','1'),
   ('smtp_auth_type','tls'),
   ('smtp_password',''),
   ('smtp_port','587'),
-  ('smtp_server',''),
+  ('smtp_server','exmample.smtp.local'),
   ('smtp_username','');
