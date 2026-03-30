@@ -3,18 +3,18 @@
   <div class="col-lg-6">
     <div class="card shadow-sm">
       <div class="card-body">
-        <h4>Installazione ACLI servizio BAR</h4>
+        <h4>Installazione di serBAR</h4>
         <?php if (!empty($error)): ?>
           <script>alert(<?= json_encode($error) ?>);</script>
           <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
 
-        <p class="text-muted mb-2">Procedura guidata: autenticazione DB, verifica server, creazione schema e popolamento dati iniziali.</p>
+        <p class="text-muted mb-2">Benvenuti nell'installazione di serBAR: questa procedura provvederà a .</p>
         <ul class="text-muted small ps-3 mb-3">
-          <li>Tabella <strong>day_types</strong>: feriale, prefestivo, festivo, chiuso, orario continuato.</li>
-          <li>Tabella <strong>users</strong>: admin/admin (admin attivo) e user/user (user attivo).</li>
-          <li>Tabella <strong>calendar_days</strong>: tutti i giorni dell'anno come feriale con ricorrenza e santo vuoti.</li>
-          <li>Festività iniziali preconfigurate: 01/01, 02/06, 15/08, 08/12, 25/12, 26/12 con ricorrenza e santo.</li>
+          <li>Verificare la presenza del server.</li>
+          <li>Creare il database.</li>
+          <li>Popolare il database.</li>
+          <li>copiare tutti i files necessari al funzionamento.</li>
         </ul>
 
         <form method="post" id="installForm">
