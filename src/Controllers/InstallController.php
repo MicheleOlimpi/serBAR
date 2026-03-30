@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Core\Config;
+use App\Core\Database;
 use App\Core\View;
 use App\Services\InstallerService;
 
@@ -16,6 +17,13 @@ class InstallController
 
     public function handle(): void
     {
+        if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['cancel'] ?? '') === '1') {
+            View::render('install/cancelled', [
+                'isInstallView' => true,
+            ]);
+            return;
+        }
+
         if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['step'] ?? '') === 'complete') {
             $db = trim((string) ($_GET['db'] ?? ''));
             $host = trim((string) ($_GET['host'] ?? ''));
@@ -33,6 +41,7 @@ class InstallController
         }
 
         $defaults = $this->loadDefaultsFromConfig();
+        $configuredDatabaseExists = $this->databaseExists($defaults);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $cfg = [
@@ -42,6 +51,15 @@ class InstallController
                 'password' => $_POST['password'] ?? '',
                 'port' => (int) ($_POST['port'] ?? $defaults['port']),
             ];
+
+            if ($configuredDatabaseExists && ($_POST['confirm_existing_db'] ?? '0') !== '1') {
+                View::render('install/index', [
+                    'defaults' => $cfg,
+                    'isInstallView' => true,
+                    'configuredDatabaseExists' => true,
+                ]);
+                return;
+            }
 
             try {
                 @session_write_close();
@@ -83,6 +101,7 @@ class InstallController
                     'error' => $e->getMessage(),
                     'defaults' => $cfg,
                     'isInstallView' => true,
+                    'configuredDatabaseExists' => $configuredDatabaseExists,
                 ]);
                 return;
             }
@@ -91,6 +110,7 @@ class InstallController
         View::render('install/index', [
             'defaults' => $defaults,
             'isInstallView' => true,
+            'configuredDatabaseExists' => $configuredDatabaseExists,
         ]);
     }
 
@@ -110,5 +130,25 @@ class InstallController
         }
 
         return $defaults;
+    }
+
+    private function databaseExists(array $cfg): bool
+    {
+        $databaseName = trim((string) ($cfg['database'] ?? ''));
+        if ($databaseName === '') {
+            return false;
+        }
+
+        try {
+            $pdo = Database::createServerConnection($cfg);
+            $statement = $pdo->prepare('SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = :database_name LIMIT 1');
+            $statement->execute([
+                'database_name' => $databaseName,
+            ]);
+
+            return (bool) $statement->fetchColumn();
+        } catch (\Throwable) {
+            return false;
+        }
     }
 }

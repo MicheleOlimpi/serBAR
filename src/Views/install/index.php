@@ -1,3 +1,4 @@
+<?php $configuredDatabaseExists = !empty($configuredDatabaseExists); ?>
 <div class="row justify-content-center">
   <div class="col-lg-6">
     <div class="card shadow-sm">
@@ -16,7 +17,8 @@
           <li>Festività iniziali preconfigurate: 01/01, 02/06, 15/08, 08/12, 25/12, 26/12 con ricorrenza e santo.</li>
         </ul>
 
-        <form method="post">
+        <form method="post" id="installForm">
+          <input type="hidden" name="confirm_existing_db" id="confirmExistingDbField" value="0">
           <h6 class="mt-2">1) Autenticazione server database</h6>
           <div class="row g-2">
             <div class="col-md-6"><label>Hostname</label><input name="host" class="form-control" value="<?= htmlspecialchars($defaults['host']) ?>"></div>
@@ -32,3 +34,58 @@
     </div>
   </div>
 </div>
+
+<?php if ($configuredDatabaseExists): ?>
+  <div class="modal fade" id="existingInstallModal" tabindex="-1" aria-labelledby="existingInstallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title d-flex align-items-center gap-2" id="existingInstallModalLabel">
+            <i class="fa-solid fa-circle-exclamation text-danger" aria-hidden="true"></i>
+            Conferma installazione
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+        </div>
+        <div class="modal-body">
+          serBAR sempra già installato su questo sistema, continuare?
+        </div>
+        <div class="modal-footer">
+          <a class="btn btn-secondary" href="?action=install&cancel=1">No</a>
+          <button type="button" class="btn btn-danger" id="confirmInstallBtn">Sì</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const installForm = document.getElementById('installForm');
+      const confirmField = document.getElementById('confirmExistingDbField');
+      const confirmButton = document.getElementById('confirmInstallBtn');
+      const modalElement = document.getElementById('existingInstallModal');
+      let alreadyConfirmed = false;
+
+      if (!installForm || !confirmField || !confirmButton || !modalElement || typeof bootstrap === 'undefined') {
+        return;
+      }
+
+      const existingInstallModal = new bootstrap.Modal(modalElement);
+
+      installForm.addEventListener('submit', (event) => {
+        if (alreadyConfirmed) {
+          return;
+        }
+
+        event.preventDefault();
+        existingInstallModal.show();
+      });
+
+      confirmButton.addEventListener('click', () => {
+        confirmField.value = '1';
+        alreadyConfirmed = true;
+        existingInstallModal.hide();
+        installForm.submit();
+      });
+    });
+  </script>
+<?php endif; ?>
