@@ -331,6 +331,7 @@ class InstallerService
     {
         $adminHash = password_hash('admin', PASSWORD_DEFAULT);
         $userHash = password_hash('user', PASSWORD_DEFAULT);
+        $supervisorHash = password_hash('supervisor', PASSWORD_DEFAULT);
 
         $this->seedFromSqlFile(
             $pdo,
@@ -339,6 +340,7 @@ class InstallerService
             [
                 '__ADMIN_HASH__' => $adminHash,
                 '__USER_HASH__' => $userHash,
+                '__SUPERVISOR_HASH__' => $supervisorHash,
             ]
         );
     }
