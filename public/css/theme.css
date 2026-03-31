@@ -36,6 +36,8 @@
   --board-generated-shift-time-width: 110px;
   --board-generated-shift-start-box-width: 86px;
   --board-generated-shift-start-box-height: 38px;
+  --board-generated-shift-volunteers-box-min-height: 38px;
+  --board-generated-shift-volunteers-box-padding: 0.3rem 0.5rem;
   --board-generated-shift-gap: 0.75rem;
   --board-generated-shift-padding-y: 0.25rem;
   --board-generated-shift-divider-color: #dee2e6;
@@ -327,6 +329,17 @@ textarea::placeholder,
   align-items: center;
   justify-content: center;
   font-weight: 600;
+}
+
+.board-generated-volunteers-box {
+  border: 1px solid var(--board-generated-cell-border-color);
+  border-radius: 0.4rem;
+  min-height: var(--board-generated-shift-volunteers-box-min-height);
+  padding: var(--board-generated-shift-volunteers-box-padding);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
 .board-generated-volunteers,
