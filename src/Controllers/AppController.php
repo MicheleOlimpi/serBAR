@@ -281,9 +281,16 @@ class AppController
     public function dayTypes(): void
     {
         $this->guardAdmin();
+        $duplicateDayTypeError = false;
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->repo->saveDayType($_POST);
-            View::redirect('?action=day_types');
+            $dayTypeId = isset($_POST['id']) ? (int) $_POST['id'] : 0;
+            $dayTypeName = trim((string) ($_POST['name'] ?? ''));
+            if ($this->repo->dayTypeNameExists($dayTypeName, $dayTypeId > 0 ? $dayTypeId : null)) {
+                $duplicateDayTypeError = true;
+            } else {
+                $this->repo->saveDayType($_POST);
+                View::redirect('?action=day_types');
+            }
         }
         if (isset($_GET['delete'])) {
             $this->repo->deleteDayType((int) $_GET['delete']);
@@ -296,6 +303,7 @@ class AppController
         View::render('admin/day_types', [
             'types' => $this->repo->dayTypes(),
             'editing' => $editing,
+            'duplicateDayTypeError' => $duplicateDayTypeError,
         ]);
     }
 
