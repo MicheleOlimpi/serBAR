@@ -172,6 +172,24 @@ class BarRepository
             ->execute([$name, $colorHex]);
     }
 
+    public function dayTypeNameExists(string $name, ?int $excludeId = null): bool
+    {
+        $normalizedName = trim($name);
+        if ($normalizedName === '') {
+            return false;
+        }
+
+        if ($excludeId !== null && $excludeId > 0) {
+            $stmt = $this->pdo->prepare('SELECT id FROM day_types WHERE LOWER(name) = LOWER(?) AND id <> ? LIMIT 1');
+            $stmt->execute([$normalizedName, $excludeId]);
+            return (bool) $stmt->fetch();
+        }
+
+        $stmt = $this->pdo->prepare('SELECT id FROM day_types WHERE LOWER(name) = LOWER(?) LIMIT 1');
+        $stmt->execute([$normalizedName]);
+        return (bool) $stmt->fetch();
+    }
+
     public function deleteDayType(int $id): bool
     {
         $stmt = $this->pdo->prepare('SELECT is_locked FROM day_types WHERE id=?');

@@ -119,7 +119,9 @@ $boardGeneratedHeaderSubtitle = $monthName . ' ' . (int) ($board['year'] ?? 0);
             <?php if ($generate): ?>
               <div class="board-generated-shift-grid">
                 <div class="board-generated-shift-cell board-generated-shift-time">
-                  <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?> - <?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?>
+                  <div class="board-generated-shift-start-box">
+                    <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?>
+                  </div>
                 </div>
                 <div class="board-generated-shift-cell board-generated-volunteers"><?= nl2br(htmlspecialchars((string) ($shift['volunteers'] ?: '-'))) ?></div>
                 <div class="board-generated-shift-cell board-generated-closure">

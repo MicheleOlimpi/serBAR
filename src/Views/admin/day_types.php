@@ -1,7 +1,7 @@
 <?php $currentColor = htmlspecialchars((string) ($editing['color_hex'] ?? '#FFFFFF')); ?>
 <h4>TIPI GIORNO</h4>
 <br>
-<form method="post" class="row g-2 mb-3">
+<form method="post" class="row g-2 mb-3" id="dayTypeForm">
   <input type="hidden" name="id" value="<?= (int) ($editing['id'] ?? 0) ?>">
   <input type="hidden" name="color_hex" id="colorHexInput" value="<?= $currentColor ?>">
 
@@ -96,9 +96,32 @@
   </div>
 </div>
 
+<div class="modal fade" id="duplicateDayTypeModal" tabindex="-1" aria-labelledby="duplicateDayTypeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="duplicateDayTypeModalLabel">ERRORE</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+      </div>
+      <div class="modal-body d-flex align-items-start gap-3">
+        <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-danger text-white" style="width:2rem;height:2rem;">
+          <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </span>
+        <p class="mb-0">Tipo giorno già esistenmte impossibile creare</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Chiudi</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <script>
   (() => {
+    const dayTypeForm = document.getElementById('dayTypeForm');
+    const dayTypeNameInput = dayTypeForm?.querySelector('input[name="name"]');
+    const dayTypeIdInput = dayTypeForm?.querySelector('input[name="id"]');
     const hiddenInput = document.getElementById('colorHexInput');
     const pickerInput = document.getElementById('colorPickerInput');
     const confirmBtn = document.getElementById('confirmColorBtn');
@@ -106,6 +129,11 @@
     const deleteButtons = document.querySelectorAll('.js-delete-day-type');
     const confirmDeleteBtn = document.getElementById('confirmDeleteDayTypeBtn');
     const deleteMessage = document.getElementById('deleteDayTypeMessage');
+    const duplicateDayTypeModalNode = document.getElementById('duplicateDayTypeModal');
+    const duplicateDayTypeModal = duplicateDayTypeModalNode ? new bootstrap.Modal(duplicateDayTypeModalNode) : null;
+    const dayTypeNames = Array.from(document.querySelectorAll('table tbody tr td:first-child'))
+      .map((cell) => cell.textContent.trim().toLowerCase())
+      .filter((name) => name !== '');
 
     const paintButton = (color) => {
       openBtn.style.backgroundColor = color;
@@ -131,6 +159,22 @@
       });
     });
 
+    dayTypeForm?.addEventListener('submit', (event) => {
+      const enteredName = dayTypeNameInput?.value.trim().toLowerCase() || '';
+      const isCreateMode = (dayTypeIdInput?.value || '0') === '0';
+      if (!isCreateMode || enteredName === '') {
+        return;
+      }
+      if (dayTypeNames.includes(enteredName)) {
+        event.preventDefault();
+        duplicateDayTypeModal?.show();
+      }
+    });
+
     paintButton(hiddenInput.value);
+
+    if (<?= !empty($duplicateDayTypeError) ? 'true' : 'false' ?>) {
+      duplicateDayTypeModal?.show();
+    }
   })();
 </script>
