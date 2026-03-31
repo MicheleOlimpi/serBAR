@@ -33,8 +33,8 @@
   --board-generated-day-number-size: 2rem;
   --board-generated-cell-border-color: #dee2e6;
   --board-generated-cell-padding: 0.5rem;
-  --board-generated-shift-time-width: 110px;
-  --board-generated-shift-start-box-width: 86px;
+  --board-generated-shift-time-width: 140px;
+  --board-generated-shift-start-box-width: 130px;
   --board-generated-shift-start-box-height: 38px;
   --board-generated-shift-volunteers-box-min-height: 38px;
   --board-generated-shift-volunteers-box-padding: 0.3rem 0.5rem;
