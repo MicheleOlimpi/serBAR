@@ -118,7 +118,7 @@
 
 
 <script>
-  (() => {
+  document.addEventListener('DOMContentLoaded', () => {
     const dayTypeForm = document.getElementById('dayTypeForm');
     const dayTypeNameInput = dayTypeForm?.querySelector('input[name="name"]');
     const dayTypeIdInput = dayTypeForm?.querySelector('input[name="id"]');
@@ -130,7 +130,9 @@
     const confirmDeleteBtn = document.getElementById('confirmDeleteDayTypeBtn');
     const deleteMessage = document.getElementById('deleteDayTypeMessage');
     const duplicateDayTypeModalNode = document.getElementById('duplicateDayTypeModal');
-    const duplicateDayTypeModal = duplicateDayTypeModalNode ? new bootstrap.Modal(duplicateDayTypeModalNode) : null;
+    const duplicateDayTypeModal = duplicateDayTypeModalNode && typeof bootstrap !== 'undefined'
+      ? new bootstrap.Modal(duplicateDayTypeModalNode)
+      : null;
     const dayTypeNames = Array.from(document.querySelectorAll('table tbody tr td:first-child'))
       .map((cell) => cell.textContent.trim().toLowerCase())
       .filter((name) => name !== '');
@@ -141,8 +143,8 @@
       openBtn.style.color = '#fff';
     };
 
-    pickerInput.addEventListener('input', () => paintButton(pickerInput.value));
-    confirmBtn.addEventListener('click', () => {
+    pickerInput?.addEventListener('input', () => paintButton(pickerInput.value));
+    confirmBtn?.addEventListener('click', () => {
       hiddenInput.value = pickerInput.value;
       paintButton(pickerInput.value);
     });
@@ -171,10 +173,12 @@
       }
     });
 
-    paintButton(hiddenInput.value);
+    if (hiddenInput?.value) {
+      paintButton(hiddenInput.value);
+    }
 
     if (<?= !empty($duplicateDayTypeError) ? 'true' : 'false' ?>) {
       duplicateDayTypeModal?.show();
     }
-  })();
+  });
 </script>
