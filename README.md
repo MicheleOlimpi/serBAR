@@ -109,22 +109,24 @@ Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le va
 4. Se il DB non è configurato/disponibile, comparirà l'interfaccia di installazione.
 5. La configurazione DB viene salvata in `config/app.php`.
 
+## FUNZIONI PRINCIPALI
+- Installazione guidata DB e creazione schema
+- Gestione multiutente con ruoli (`admin`, `supervisor`, `user`)
+- Dashboard riassuntiva per tutti i tipi di utente
+- Interfaccia di amministrazione per:
+  - Gestione tabelloni con editing con supporto a selezione rapida utenti, anotazioni e responsabile chiusura
+  - Stampa tabelloni stampabile/esportabile PDF via stampa browser
+  - Gestione utenti
+  - tipi di giorno
+  - tipi di turni
+  - Calendario annuale
+- Interfaccia per consultazione turni, recapiti volontari e segnalazioni dedicata all'utenza standard, eventualmente disabilitabile anche parzialmente
+- Interfaccia al pubblico accessibile solo tramite token, eventualmente disabilitabile.
+
 ## CREDENZIALI POST INSTALLAZIONE
 - username: admin password:admin per l'account amministrativo per configurazione, gestione turni e consultazione
 - username: user password:user per l'account utente standard solo per consultazione
 - username: supervisor password:supervisor per l'account di gestione turni
-
-## FUNZIONI PRINCIPALI
-- Installazione guidata DB, creazione schema e pagina di riepilogo finale
-- Login/logout con ruoli (`admin`, `supervisor`, `user`)
-- Dashboard amministratore
-- CRUD utenti (password hash), tipo giorno, numero turni, calendario annuale
-- Creazione/modifica/eliminazione tabelloni mensili
-- Gestione turni giornalieri e annotazioni
-- Editing tabellone con supporto a selezione rapida utenti e responsabile chiusura
-- Vista stampabile/esportabile PDF via stampa browser
-- Interfaccia per consultazione e segnalazioni dedicata all'utenza standard, eventualmente disabilitabile anche parzialmente
-- Interfaccia al pubblico accessibile solo tramite token, eventualmente disabilitabile.
 
 ## GESTIONE DELLE FESTIVITA'
 Vengono gestite le festività nazionali, cattoliche e eventuali giorni speciali sia fisse che mobili.
@@ -139,4 +141,7 @@ Vengono gestite le festività nazionali, cattoliche e eventuali giorni speciali 
    - Domenica delle Palme
    - Pasqua
    - Lunedì dell'angelo
+     
 ## MESSAGGISTICA INTERNA
+
+E' disponibile un sistema di messaggiustica interna, con stato del messaggio variabile dagli admin/supervisor, consultabile dagli users
