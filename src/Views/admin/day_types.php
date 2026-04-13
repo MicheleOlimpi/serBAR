@@ -18,11 +18,8 @@ $isEditingFixedNameType = $editing !== null
       required
       value="<?= htmlspecialchars((string) ($editing['name'] ?? '')) ?>"
       <?= $isEditingFixedNameType ? 'readonly' : '' ?>
-      aria-label="Nome tipo giorno"
+      aria-label="<?= $isEditingFixedNameType ? 'Per questo tipo di giorno non puoi modificare il nome' : 'Nome tipo giorno' ?>"
     >
-    <?php if ($isEditingFixedNameType): ?>
-      <small class="text-muted">Per questo tipo di giorno puoi modificare solo il colore.</small>
-    <?php endif; ?>
   </div>
   <div class="col-md-2">
     <button
