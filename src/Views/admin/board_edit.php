@@ -129,8 +129,9 @@ $boardGeneratedHeaderSubtitle = $monthName . ' ' . (int) ($board['year'] ?? 0);
                   </div>
                 </div>
                 <div class="board-generated-shift-cell board-generated-closure">
-                  <div class="board-generated-closure-box">
-                    <?php if (!empty($shift['closes_bar']) && trim((string) ($shift['responsabile_chiusura'] ?? '')) !== ''): ?>
+                  <?php $hasClosureResponsible = !empty($shift['closes_bar']) && trim((string) ($shift['responsabile_chiusura'] ?? '')) !== ''; ?>
+                  <div class="board-generated-closure-box <?= $hasClosureResponsible ? '' : 'board-generated-closure-box-empty' ?>">
+                    <?php if ($hasClosureResponsible): ?>
                       <?= htmlspecialchars((string) $shift['responsabile_chiusura']) ?>
                     <?php endif; ?>
                   </div>
