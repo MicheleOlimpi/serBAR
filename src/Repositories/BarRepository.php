@@ -164,8 +164,19 @@ class BarRepository
         }
 
         if (!empty($data['id'])) {
+            $dayTypeId = (int) $data['id'];
+            $existingDayType = $this->dayTypeById($dayTypeId);
+            if ($existingDayType === null) {
+                return;
+            }
+
+            $fixedNameTypeIds = [1, 2, 3, 4];
+            $updatedName = in_array($dayTypeId, $fixedNameTypeIds, true)
+                ? trim((string) ($existingDayType['name'] ?? $name))
+                : $name;
+
             $this->pdo->prepare('UPDATE day_types SET name=?, color_hex=? WHERE id=?')
-                ->execute([$name, $colorHex, (int) $data['id']]);
+                ->execute([$updatedName, $colorHex, $dayTypeId]);
             return;
         }
         $this->pdo->prepare('INSERT INTO day_types (name, color_hex, is_locked) VALUES (?,?,0)')

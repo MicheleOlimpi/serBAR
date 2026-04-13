@@ -362,6 +362,10 @@ textarea::placeholder,
   justify-content: center;
 }
 
+.board-generated-closure-box-empty {
+  border-color: transparent;
+}
+
 @media (max-width: 767.98px) {
   .board-generated-shift-grid {
     grid-template-columns: 1fr;

@@ -1,11 +1,29 @@
-<?php $currentColor = htmlspecialchars((string) ($editing['color_hex'] ?? '#FFFFFF')); ?>
+<?php
+$currentColor = htmlspecialchars((string) ($editing['color_hex'] ?? '#FFFFFF'));
+$nonEditableNameTypeIds = [1, 2, 3, 4];
+$isEditingFixedNameType = $editing !== null
+    && in_array((int) ($editing['id'] ?? 0), $nonEditableNameTypeIds, true);
+?>
 <h4>TIPI GIORNO</h4>
 <br>
 <form method="post" class="row g-2 mb-3" id="dayTypeForm">
   <input type="hidden" name="id" value="<?= (int) ($editing['id'] ?? 0) ?>">
   <input type="hidden" name="color_hex" id="colorHexInput" value="<?= $currentColor ?>">
 
-  <div class="col-md-7"><input name="name" class="form-control" placeholder="nome" required value="<?= htmlspecialchars((string) ($editing['name'] ?? '')) ?>"></div>
+  <div class="col-md-7">
+    <input
+      name="name"
+      class="form-control"
+      placeholder="nome"
+      required
+      value="<?= htmlspecialchars((string) ($editing['name'] ?? '')) ?>"
+      <?= $isEditingFixedNameType ? 'readonly' : '' ?>
+      aria-label="Nome tipo giorno"
+    >
+    <?php if ($isEditingFixedNameType): ?>
+      <small class="text-muted">Per questo tipo di giorno puoi modificare solo il colore.</small>
+    <?php endif; ?>
+  </div>
   <div class="col-md-2">
     <button
       type="button"
