@@ -35,8 +35,27 @@ $statusBadgeMap = [
     <?php if (($notificationCount ?? 0) > 0): ?>
       <p class="mb-0"><?= htmlspecialchars((string) ($greeting ?? '')) ?> <?= htmlspecialchars((string) ($username ?? '')) ?>, benvenuto. Ci sono <?= (int) ($notificationCount ?? 0) ?> segnalazioni da verificare.</p>
     <?php else: ?>
+      <p class="mb-0"><?= htmlspecialchars((string) ($greeting ?? '')) ?> <?= htmlspecialchars((string) ($username ?? '')) ?>, benvenuto.</p>
       <p class="mb-0">Non ci sono segnalazioni da verificare.</p>
     <?php endif; ?>
+    <?php
+    $currentBoardStatus = is_array($currentMonthBoardStatus ?? null) ? $currentMonthBoardStatus : ['month' => (int) date('n'), 'year' => (int) date('Y'), 'exists' => false];
+    $nextBoardStatus = is_array($nextMonthBoardStatus ?? null) ? $nextMonthBoardStatus : ['month' => (int) date('n'), 'year' => (int) date('Y'), 'exists' => false, 'total_shifts' => 0, 'empty_shifts' => 0];
+    $currentMonthLabel = $monthNames[(int) ($currentBoardStatus['month'] ?? 0)] ?? (string) ($currentBoardStatus['month'] ?? '');
+    $nextMonthLabel = $monthNames[(int) ($nextBoardStatus['month'] ?? 0)] ?? (string) ($nextBoardStatus['month'] ?? '');
+    ?>
+    <p class="mb-0 mt-2">
+      Tabellone <?= htmlspecialchars($currentMonthLabel . ' ' . (string) ($currentBoardStatus['year'] ?? '')) ?>:
+      <strong><?= !empty($currentBoardStatus['exists']) ? 'creato' : 'non creato' ?></strong>.
+    </p>
+    <p class="mb-0">
+      Tabellone <?= htmlspecialchars($nextMonthLabel . ' ' . (string) ($nextBoardStatus['year'] ?? '')) ?>:
+      <strong><?= !empty($nextBoardStatus['exists']) ? 'creato' : 'non creato' ?></strong>
+      <?php if (!empty($nextBoardStatus['exists'])): ?>
+        . Turni totali: <strong><?= (int) ($nextBoardStatus['total_shifts'] ?? 0) ?></strong> (turni vuoti: <strong><?= (int) ($nextBoardStatus['empty_shifts'] ?? 0) ?></strong>)
+      <?php endif; ?>
+      .
+    </p>
   </div>
 </div>
 <div class="row">
