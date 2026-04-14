@@ -82,6 +82,8 @@ class AppController
                 'greeting' => $greeting,
                 'username' => (string) (Auth::user()['username'] ?? ''),
                 'notificationCount' => $notificationCount,
+                'currentMonthBoardStatus' => $this->boardStatusForMonthOffset(0),
+                'nextMonthBoardStatus' => $this->boardStatusForMonthOffset(1),
             ]);
             return;
         }
@@ -639,5 +641,37 @@ class AppController
         if (!Auth::isAdmin()) {
             View::redirect('./');
         }
+    }
+
+    private function boardStatusForMonthOffset(int $monthOffset): array
+    {
+        $targetDate = new \DateTimeImmutable('first day of this month');
+        if ($monthOffset !== 0) {
+            $targetDate = $targetDate->modify(sprintf('+%d month', $monthOffset));
+        }
+
+        $month = (int) $targetDate->format('n');
+        $year = (int) $targetDate->format('Y');
+        $board = $this->repo->boardByMonthYear($month, $year);
+
+        if ($board === null) {
+            return [
+                'month' => $month,
+                'year' => $year,
+                'exists' => false,
+                'total_shifts' => 0,
+                'empty_shifts' => 0,
+            ];
+        }
+
+        $stats = $this->repo->boardShiftStats((int) $board['id']);
+
+        return [
+            'month' => $month,
+            'year' => $year,
+            'exists' => true,
+            'total_shifts' => (int) ($stats['total_shifts'] ?? 0),
+            'empty_shifts' => (int) ($stats['empty_shifts'] ?? 0),
+        ];
     }
 }

@@ -527,6 +527,33 @@ class BarRepository
         return $r ?: null;
     }
 
+    public function boardByMonthYear(int $month, int $year): ?array
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM boards WHERE month=? AND year=? LIMIT 1');
+        $stmt->execute([$month, $year]);
+        $board = $stmt->fetch();
+        return $board ?: null;
+    }
+
+    public function boardShiftStats(int $boardId): array
+    {
+        $stmt = $this->pdo->prepare(
+            "SELECT
+                COUNT(*) AS total_shifts,
+                SUM(CASE WHEN bds.volunteers IS NULL OR TRIM(bds.volunteers) = '' THEN 1 ELSE 0 END) AS empty_shifts
+            FROM board_day_shifts bds
+            JOIN board_days bd ON bd.id = bds.board_day_id
+            WHERE bd.board_id = ?"
+        );
+        $stmt->execute([$boardId]);
+        $row = $stmt->fetch();
+
+        return [
+            'total_shifts' => (int) ($row['total_shifts'] ?? 0),
+            'empty_shifts' => (int) ($row['empty_shifts'] ?? 0),
+        ];
+    }
+
     public function boardDays(int $boardId): array
     {
         $stmt = $this->pdo->prepare(
