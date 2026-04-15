@@ -50,11 +50,13 @@ $statusBadgeMap = [
     </p>
     <p class="mb-0">
       Tabellone <?= htmlspecialchars($nextMonthLabel . ' ' . (string) ($nextBoardStatus['year'] ?? '')) ?>:
-      <strong><?= !empty($nextBoardStatus['exists']) ? 'creato' : 'non creato' ?></strong>
+      <strong><?= !empty($nextBoardStatus['exists']) ? 'creato' : 'non creato' ?></strong>.
       <?php if (!empty($nextBoardStatus['exists'])): ?>
-        . Turni totali: <strong><?= (int) ($nextBoardStatus['total_shifts'] ?? 0) ?></strong> (turni vuoti: <strong><?= (int) ($nextBoardStatus['empty_shifts'] ?? 0) ?></strong>)
+      <?php $coveredShifts =($nextBoardStatus['total_shifts'] - $nextBoardStatus['empty_shifts']); 
+      $percentShifts =100-($nextBoardStatus['empty_shifts'] / $nextBoardStatus['total_shifts']) * 100; ?>
+      Turni coperti <strong><?= (int) ($coveredShifts ?? 0) ?></strong>/<strong><?= (int) ($nextBoardStatus['total_shifts'] ?? 0) ?> (<?= (int) $percentShifts?>%)</strong>
+      Turni ancora da coprire <strong><?= (int) ($nextBoardStatus['empty_shifts'] ?? 0) ?></strong>.
       <?php endif; ?>
-      .
     </p>
   </div>
 </div>
