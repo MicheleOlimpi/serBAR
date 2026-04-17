@@ -117,7 +117,12 @@ $boardGeneratedHeaderSubtitle = $monthName . ' ' . (int) ($board['year'] ?? 0);
             </div>
           <?php else: ?>
             <?php if ($generate): ?>
-              <div class="board-generated-shift-grid">
+              <?php
+                $isClosureShift = !empty($shift['closes_bar']);
+                $hasClosureResponsible = $isClosureShift && trim((string) ($shift['responsabile_chiusura'] ?? '')) !== '';
+                $closureIcon = $hasClosureResponsible ? 'exit.svg' : 'exit-empty.svg';
+              ?>
+              <div class="board-generated-shift-grid <?= $isClosureShift ? '' : 'board-generated-shift-grid-no-closure' ?>">
                 <div class="board-generated-shift-cell board-generated-shift-time">
                   <div class="board-generated-shift-start-box">
                     <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?> - <?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?>
@@ -128,13 +133,17 @@ $boardGeneratedHeaderSubtitle = $monthName . ' ' . (int) ($board['year'] ?? 0);
                     <?= nl2br(htmlspecialchars((string) ($shift['volunteers'] ?: '-'))) ?>
                   </div>
                 </div>
-                <div class="board-generated-shift-cell board-generated-closure">
-                  <?php $hasClosureResponsible = !empty($shift['closes_bar']) && trim((string) ($shift['responsabile_chiusura'] ?? '')) !== ''; ?>
-                  <div class="board-generated-closure-box <?= $hasClosureResponsible ? '' : 'board-generated-closure-box-empty' ?>">
-                    <?php if ($hasClosureResponsible): ?>
-                      <?= htmlspecialchars((string) $shift['responsabile_chiusura']) ?>
-                    <?php endif; ?>
-                  </div>
+                <div class="board-generated-shift-cell board-generated-closure <?= $isClosureShift ? '' : 'board-generated-closure-hidden' ?>">
+                  <?php if ($isClosureShift): ?>
+                    <div class="board-generated-closure-content">
+                      <img src="./<?= htmlspecialchars($closureIcon) ?>" alt="" class="board-generated-closure-icon" aria-hidden="true">
+                      <div class="board-generated-closure-box <?= $hasClosureResponsible ? '' : 'board-generated-closure-box-empty' ?>">
+                        <?php if ($hasClosureResponsible): ?>
+                          <?= htmlspecialchars((string) $shift['responsabile_chiusura']) ?>
+                        <?php endif; ?>
+                      </div>
+                    </div>
+                  <?php endif; ?>
                 </div>
               </div>
             <?php else: ?>
