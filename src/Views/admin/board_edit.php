@@ -138,9 +138,7 @@ $boardGeneratedHeaderSubtitle = $monthName . ' ' . (int) ($board['year'] ?? 0);
                     <div class="board-generated-closure-content">
                       <img src="./<?= htmlspecialchars($closureIcon) ?>" alt="" class="board-generated-closure-icon" aria-hidden="true">
                       <div class="board-generated-closure-box <?= $hasClosureResponsible ? '' : 'board-generated-closure-box-empty' ?>">
-                        <?php if ($hasClosureResponsible): ?>
-                          <?= htmlspecialchars((string) $shift['responsabile_chiusura']) ?>
-                        <?php endif; ?>
+                        <?= htmlspecialchars((string) ($hasClosureResponsible ? $shift['responsabile_chiusura'] : '-')) ?>
                       </div>
                     </div>
                   <?php endif; ?>
