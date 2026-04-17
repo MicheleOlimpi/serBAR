@@ -320,6 +320,10 @@ textarea::placeholder,
   align-items: start;
 }
 
+.board-generated-shift-grid-no-closure {
+  grid-template-columns: var(--board-generated-shift-time-width) minmax(0, 1fr);
+}
+
 .board-generated-shift-cell {
   min-width: 0;
 }
@@ -365,8 +369,24 @@ textarea::placeholder,
   text-overflow: ellipsis;
 }
 
+.board-generated-closure-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.board-generated-closure-icon {
+  height: var(--board-generated-closure-box-min-height);
+  width: auto;
+  display: inline-block;
+}
+
 .board-generated-closure-box-empty {
   border-color: transparent;
+}
+
+.board-generated-closure-hidden {
+  display: none;
 }
 
 @media (max-width: 767.98px) {
