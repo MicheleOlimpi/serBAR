@@ -320,10 +320,6 @@ textarea::placeholder,
   align-items: start;
 }
 
-.board-generated-shift-grid-no-closure {
-  grid-template-columns: var(--board-generated-shift-time-width) minmax(0, 1fr);
-}
-
 .board-generated-shift-cell {
   min-width: 0;
 }
@@ -383,10 +379,6 @@ textarea::placeholder,
 
 .board-generated-closure-box-empty {
   border-color: transparent;
-}
-
-.board-generated-closure-hidden {
-  display: none;
 }
 
 @media (max-width: 767.98px) {
