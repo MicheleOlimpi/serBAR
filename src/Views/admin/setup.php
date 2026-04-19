@@ -59,6 +59,17 @@
     <div class="form-text">Massimo 10 caratteri. Disponibile solo con interfaccia al pubblico attiva.</div>
   </div>
 
+  <div class="mb-3">
+    <button
+      class="btn btn-outline-primary"
+      type="button"
+      id="open_public_interface"
+      <?= !empty($settings['public_interface_enabled']) && $settings['public_interface_enabled'] === '1' ? '' : 'disabled' ?>
+    >
+      Apri interfaccia al pubblico
+    </button>
+  </div>
+
   <hr>
 
   <h5 class="mb-3">Impostazioni mail</h5>
@@ -183,6 +194,7 @@
 <script>
   const publicInterfaceToggle = document.getElementById('public_interface_enabled');
   const publicInterfacePasskey = document.getElementById('public_interface_passkey');
+  const openPublicInterfaceButton = document.getElementById('open_public_interface');
   const consultationInterfaceToggle = document.getElementById('consultation_interface_enabled');
   const consultationNotificationsToggle = document.getElementById('consultation_notifications_enabled');
   const consultationDirectoryToggle = document.getElementById('consultation_directory_enabled');
@@ -199,7 +211,25 @@
       return;
     }
 
-    publicInterfacePasskey.disabled = !publicInterfaceToggle.checked;
+    const publicInterfaceEnabled = publicInterfaceToggle.checked;
+    publicInterfacePasskey.disabled = !publicInterfaceEnabled;
+
+    if (openPublicInterfaceButton) {
+      openPublicInterfaceButton.disabled = !publicInterfaceEnabled;
+    }
+  };
+
+  const openPublicInterface = () => {
+    if (!publicInterfaceToggle || !publicInterfacePasskey || !publicInterfaceToggle.checked) {
+      return;
+    }
+
+    const passkey = publicInterfacePasskey.value.trim();
+    const url = new URL(window.location.href);
+    url.search = '';
+    url.searchParams.set('action', 'panel');
+    url.searchParams.set('passkey', passkey);
+    window.open(url.toString(), '_blank', 'noopener');
   };
 
   const toggleConsultationSettings = () => {
@@ -234,6 +264,10 @@
 
   if (publicInterfaceToggle) {
     publicInterfaceToggle.addEventListener('change', togglePublicInterfacePasskey);
+  }
+
+  if (openPublicInterfaceButton) {
+    openPublicInterfaceButton.addEventListener('click', openPublicInterface);
   }
 
   if (consultationInterfaceToggle) {
