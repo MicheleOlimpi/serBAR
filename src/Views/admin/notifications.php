@@ -10,7 +10,7 @@ $statusLabels = [
 ];
 
 $statusTextColorMap = [
-    'inviata' => '#6c757d',
+    'inviata' => '#dc3545',
     'letto' => '#0dcaf0',
     'in_corso' => '#fd7e14',
     'chiuso' => '#198754',
@@ -160,7 +160,7 @@ $statusTextColorMap = [
 
 <script>
   const statusColorMap = {
-    inviata: '#6c757d',
+    inviata: '#dc3545',
     letto: '#0dcaf0',
     in_corso: '#fd7e14',
     chiuso: '#198754',

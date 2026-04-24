@@ -9,6 +9,7 @@ INSERT IGNORE INTO app_settings (setting_key, setting_value) VALUES
   ('consultation_notifications_enabled','1'),
   ('public_interface_enabled','1'),
   ('public_interface_passkey',''),
+  ('public_interface_refresh_seconds','60'),
   ('email_sending_enabled','0'),
   ('smtp_auth_enabled','1'),
   ('smtp_auth_type','tls'),
