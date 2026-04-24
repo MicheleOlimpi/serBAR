@@ -60,6 +60,21 @@
   </div>
 
   <div class="mb-3">
+    <label class="form-label" for="public_interface_refresh_seconds">Aggiornamento automatico (secondi)</label>
+    <input
+      class="form-control"
+      type="number"
+      min="10"
+      max="240"
+      id="public_interface_refresh_seconds"
+      name="public_interface_refresh_seconds"
+      value="<?= htmlspecialchars((string) ($settings['public_interface_refresh_seconds'] ?? '60'), ENT_QUOTES, 'UTF-8') ?>"
+      <?= !empty($settings['public_interface_enabled']) && $settings['public_interface_enabled'] === '1' ? '' : 'disabled' ?>
+    >
+    <div class="form-text">Minimo 10 secondi, massimo 240 secondi.</div>
+  </div>
+
+  <div class="mb-3">
     <button
       class="btn btn-outline-primary"
       type="button"
@@ -194,6 +209,7 @@
 <script>
   const publicInterfaceToggle = document.getElementById('public_interface_enabled');
   const publicInterfacePasskey = document.getElementById('public_interface_passkey');
+  const publicInterfaceRefreshSeconds = document.getElementById('public_interface_refresh_seconds');
   const openPublicInterfaceButton = document.getElementById('open_public_interface');
   const consultationInterfaceToggle = document.getElementById('consultation_interface_enabled');
   const consultationNotificationsToggle = document.getElementById('consultation_notifications_enabled');
@@ -213,6 +229,9 @@
 
     const publicInterfaceEnabled = publicInterfaceToggle.checked;
     publicInterfacePasskey.disabled = !publicInterfaceEnabled;
+    if (publicInterfaceRefreshSeconds) {
+      publicInterfaceRefreshSeconds.disabled = !publicInterfaceEnabled;
+    }
 
     if (openPublicInterfaceButton) {
       openPublicInterfaceButton.disabled = !publicInterfaceEnabled;
@@ -264,6 +283,22 @@
 
   if (publicInterfaceToggle) {
     publicInterfaceToggle.addEventListener('change', togglePublicInterfacePasskey);
+  }
+
+  if (publicInterfaceRefreshSeconds) {
+    publicInterfaceRefreshSeconds.addEventListener('change', () => {
+      const currentValue = Number.parseInt(publicInterfaceRefreshSeconds.value, 10);
+      if (Number.isNaN(currentValue)) {
+        publicInterfaceRefreshSeconds.value = '60';
+        return;
+      }
+
+      if (currentValue < 10) {
+        publicInterfaceRefreshSeconds.value = '10';
+      } else if (currentValue > 240) {
+        publicInterfaceRefreshSeconds.value = '240';
+      }
+    });
   }
 
   if (openPublicInterfaceButton) {

@@ -22,6 +22,7 @@ class BarRepository
         'login_info1',
         'login_info2',
         'public_interface_passkey',
+        'public_interface_refresh_seconds',
         'smtp_server',
         'smtp_port',
         'smtp_username',
@@ -289,6 +290,7 @@ class BarRepository
             'login_info1' => 'ACLI Grassina',
             'login_info2' => 'Gestione turni',
             'public_interface_passkey' => '',
+            'public_interface_refresh_seconds' => '60',
             'smtp_server' => '',
             'smtp_port' => '587',
             'smtp_username' => '',
@@ -309,7 +311,18 @@ class BarRepository
             }
 
             if (in_array($key, self::SETUP_TEXT_KEYS, true)) {
-                $defaults[$key] = trim((string) ($row['setting_value'] ?? ''));
+                $value = trim((string) ($row['setting_value'] ?? ''));
+                if ($key === 'public_interface_refresh_seconds') {
+                    $seconds = (int) $value;
+                    if ($seconds < 10) {
+                        $seconds = 10;
+                    }
+                    if ($seconds > 240) {
+                        $seconds = 240;
+                    }
+                    $value = (string) $seconds;
+                }
+                $defaults[$key] = $value;
             }
         }
 
@@ -410,6 +423,17 @@ class BarRepository
                 if (!$publicInterfaceEnabled) {
                     $value = '';
                 }
+            }
+
+            if ($settingKey === 'public_interface_refresh_seconds') {
+                $seconds = (int) $value;
+                if ($seconds < 10) {
+                    $seconds = 10;
+                }
+                if ($seconds > 240) {
+                    $seconds = 240;
+                }
+                $value = (string) $seconds;
             }
 
             if ($settingKey === 'smtp_port') {

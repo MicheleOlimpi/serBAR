@@ -575,11 +575,14 @@ class AppController
         $now = new \DateTimeImmutable('now');
         $month = (int) $now->format('n');
         $year = (int) $now->format('Y');
+        $refreshSeconds = (int) ($setupSettings['public_interface_refresh_seconds'] ?? '60');
+        $refreshSeconds = max(10, min(240, $refreshSeconds));
 
         View::render('public/panel', [
             'month' => $month,
             'year' => $year,
             'shifts' => $this->repo->publicPanelMonthShifts($month, $year),
+            'refreshSeconds' => $refreshSeconds,
             'isPublicPanelView' => true,
         ]);
     }

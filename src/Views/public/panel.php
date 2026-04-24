@@ -144,3 +144,10 @@ if ($dayPointer !== 0) {
     </div>
   </div>
 <?php endif; ?>
+
+<?php $panelRefreshSeconds = max(10, min(240, (int) ($refreshSeconds ?? 60))); ?>
+<script>
+  window.setTimeout(() => {
+    window.location.reload();
+  }, <?= (int) ($panelRefreshSeconds * 1000) ?>);
+</script>

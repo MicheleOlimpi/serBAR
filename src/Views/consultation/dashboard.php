@@ -75,7 +75,7 @@ foreach ($selectedBoardShifts as $shift) {
 }
 
 $statusClassMap = [
-    'inviata' => 'text-bg-secondary',
+    'inviata' => 'text-bg-danger',
     'letto' => 'text-bg-info',
     'in_corso' => 'text-bg-warning text-dark',
     'chiuso' => 'text-bg-success',
