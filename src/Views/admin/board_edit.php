@@ -120,7 +120,7 @@ $boardGeneratedHeaderSubtitle = $monthName . ' ' . (int) ($board['year'] ?? 0);
               <?php
                 $isClosureShift = !empty($shift['closes_bar']);
                 $hasClosureResponsible = $isClosureShift && trim((string) ($shift['responsabile_chiusura'] ?? '')) !== '';
-                $closureIcon = $hasClosureResponsible ? 'exit.svg' : 'exit-blank.svg';
+                $closureIcon = $hasClosureResponsible ? 'exit.svg' : 'exit-empty.svg';
               ?>
               <div class="board-generated-shift-grid">
                 <div class="board-generated-shift-cell board-generated-shift-time">
@@ -138,7 +138,7 @@ $boardGeneratedHeaderSubtitle = $monthName . ' ' . (int) ($board['year'] ?? 0);
                     <div class="board-generated-closure-content">
                       <img src="./<?= htmlspecialchars($closureIcon) ?>" alt="" class="board-generated-closure-icon" aria-hidden="true">
                       <div class="board-generated-closure-box <?= $hasClosureResponsible ? '' : 'board-generated-closure-box-empty' ?>">
-                        <?= htmlspecialchars((string) ($hasClosureResponsible ? $shift['responsabile_chiusura'] : '-')) ?>
+                        <?= htmlspecialchars((string) ($hasClosureResponsible ? $shift['responsabile_chiusura'] : ' ')) ?>
                       </div>
                     </div>
                   <?php else: ?>
