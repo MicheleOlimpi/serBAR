@@ -26,6 +26,17 @@ Il sistema dispone di tre interfacce web:
 Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le variabili CSS di Bootstrap 5 (`--bs-*`) per personalizzare colori, radius e aspetto generale senza modificare le viste.
 
 ## Novità recenti
+- **Pannello pubblico con aggiornamento automatico configurabile**:
+  - aggiunta una nuova impostazione applicativa per definire ogni quanti secondi aggiornare automaticamente il pannello pubblico;
+  - il valore è gestibile dall'area **Setup** admin e applicato direttamente alla vista pubblica.
+- **Segnalazioni “inviate” evidenziate meglio in admin**:
+  - nella pagina notifiche/segnalazioni lo stato **inviato** ora usa un colore rosso, così le richieste da lavorare risultano più immediate da individuare.
+- **Setup admin con accesso rapido al pannello pubblico**:
+  - aggiunto un pulsante dedicato che apre direttamente l'interfaccia pubblica, utile per verifiche immediate dopo la configurazione.
+- **Cartellone generato più coerente quando manca la chiusura**:
+  - mantenuto il layout a tre colonne anche nei giorni senza turno di chiusura;
+  - visualizzato il segnaposto `-` al posto del valore vuoto per rendere il risultato più leggibile;
+  - aggiornata la gestione dell'icona di chiusura nascosta per evitare stati grafici ambigui.
 - **Affidabilità avvio applicazione migliorata**:
   - se il database non è disponibile, l'app reindirizza automaticamente al percorso di installazione invece di interrompere il flusso di accesso.
 - **Login più robusto in caso di errore DB**:
