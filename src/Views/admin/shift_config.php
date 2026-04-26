@@ -34,11 +34,21 @@
 <table class="table table-striped">
   <tr><th>TIPO GIORNO</th><th>INIZIO</th><th>FINE</th><th>CHIUSURA BAR</th><th>PRIORITÀ</th><th>AZIONI</th></tr>
   <?php foreach($shifts as $shift): ?>
+    <?php
+      $closesBarValue = strtolower(trim((string) ($shift['closes_bar'] ?? '')));
+      $closesBar = $closesBarValue === 'si' || $closesBarValue === 'sì' || $closesBarValue === '1' || $closesBarValue === 'true';
+    ?>
     <tr>
       <td><?= htmlspecialchars($shift['day_type_name']) ?></td>
       <td><?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?></td>
       <td><?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?></td>
-      <td><?= !empty($shift['closes_bar']) ? 'Sì' : 'No' ?></td>
+      <td>
+        <?php if ($closesBar): ?>
+          <i class="fa-solid fa-check text-success" aria-label="Sì" title="Sì"></i>
+        <?php else: ?>
+          <i class="fa-solid fa-xmark text-danger" aria-label="No" title="No"></i>
+        <?php endif; ?>
+      </td>
       <td><?= (int) $shift['priority'] ?></td>
       <td class="d-flex gap-2">
         <a class="btn btn-sm btn-outline-primary" href="?action=shift_config&edit=<?= (int) $shift['id'] ?>" aria-label="Modifica" title="Modifica"><i class="fa-solid fa-pen" aria-hidden="true"></i></a>
