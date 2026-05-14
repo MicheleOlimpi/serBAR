@@ -29,6 +29,11 @@
   --board-generated-header-subtitle-font-size: 1.5rem;
   --board-generated-header-subtitle-font-weight: 400;
   --board-generated-header-subtitle-letter-spacing: normal;
+  --board-generated-header-month-color: inherit;
+  --board-generated-header-month-font-size: inherit;
+  --board-generated-header-month-font-weight: inherit;
+  --board-generated-header-month-letter-spacing: inherit;
+  --board-generated-header-month-text-transform: none;
   --board-generated-day-width: 200px;
   --board-generated-day-number-size: 2rem;
   --board-generated-cell-border-color: #dee2e6;
@@ -278,6 +283,14 @@ textarea::placeholder,
   font-weight: var(--board-generated-header-subtitle-font-weight);
   letter-spacing: var(--board-generated-header-subtitle-letter-spacing);
   line-height: 1.2;
+}
+
+.board-generated-header-month {
+  color: var(--board-generated-header-month-color);
+  font-size: var(--board-generated-header-month-font-size);
+  font-weight: var(--board-generated-header-month-font-weight);
+  letter-spacing: var(--board-generated-header-month-letter-spacing);
+  text-transform: var(--board-generated-header-month-text-transform);
 }
 
 .board-generated-table td {

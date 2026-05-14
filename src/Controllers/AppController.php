@@ -8,6 +8,7 @@ use App\Core\Auth;
 use App\Core\View;
 use App\Repositories\BarRepository;
 use App\Services\BoardService;
+use PHPMailer\PHPMailer\PHPMailer;
 
 class AppController
 {
@@ -600,6 +601,67 @@ class AppController
             'settings' => $this->repo->setupSettings(),
             'saved' => isset($_GET['saved']),
         ]);
+    }
+
+    public function setupMailTest(): void
+    {
+        $this->guardAdmin();
+        header('Content-Type: application/json; charset=utf-8');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['ok' => false, 'message' => 'Metodo non consentito.']);
+            return;
+        }
+
+        $server = trim((string) ($_POST['smtp_server'] ?? ''));
+        $port = (int) ($_POST['smtp_port'] ?? 0);
+        $username = trim((string) ($_POST['smtp_username'] ?? ''));
+        $password = (string) ($_POST['smtp_password'] ?? '');
+        $authEnabled = !empty($_POST['smtp_auth_enabled']);
+        $authType = strtolower(trim((string) ($_POST['smtp_auth_type'] ?? 'tls')));
+
+        if ($server === '' || $port < 1 || $port > 65535) {
+            http_response_code(422);
+            echo json_encode(['ok' => false, 'message' => 'Server SMTP o porta non validi.']);
+            return;
+        }
+
+        try {
+            $mail = new PHPMailer(true);
+            $mail->isSMTP();
+            $mail->Host = $server;
+            $mail->Port = $port;
+            $mail->Timeout = 10;
+            $mail->SMTPAutoTLS = false;
+            $mail->SMTPAuth = $authEnabled;
+
+            if ($authEnabled) {
+                $mail->Username = $username;
+                $mail->Password = $password;
+            }
+
+            if ($authType === 'ssl') {
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            } elseif ($authType === 'tls' || $authType === 'starttls') {
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            } else {
+                $mail->SMTPSecure = '';
+            }
+
+            if (!$mail->smtpConnect()) {
+                throw new \RuntimeException('Connessione SMTP fallita.');
+            }
+
+            $mail->smtpClose();
+            echo json_encode(['ok' => true, 'message' => 'Connessione al server mail riuscita.']);
+        } catch (\Throwable $exception) {
+            http_response_code(400);
+            echo json_encode([
+                'ok' => false,
+                'message' => 'Connessione non riuscita: ' . $exception->getMessage(),
+            ]);
+        }
     }
 
     public function notifications(): void

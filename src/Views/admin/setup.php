@@ -60,6 +60,12 @@
   </div>
 
   <div class="mb-3">
+    <button class="btn btn-outline-secondary" type="button" id="test_mail_setup" <?= !empty($settings['email_sending_enabled']) && $settings['email_sending_enabled'] === '1' ? '' : 'disabled' ?>>
+      Test connessione server mail
+    </button>
+  </div>
+
+  <div class="mb-3">
     <label class="form-label" for="public_interface_refresh_seconds">Aggiornamento automatico (secondi)</label>
     <input
       class="form-control"
@@ -206,6 +212,21 @@
   </div>
 </form>
 
+<div class="modal fade" id="mailTestResultModal" tabindex="-1" aria-labelledby="mailTestResultModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="mailTestResultModalLabel">Esito test server mail</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+      </div>
+      <div class="modal-body" id="mail_test_result_body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   const publicInterfaceToggle = document.getElementById('public_interface_enabled');
   const publicInterfacePasskey = document.getElementById('public_interface_passkey');
@@ -221,6 +242,10 @@
   const smtpUsername = document.getElementById('smtp_username');
   const smtpPassword = document.getElementById('smtp_password');
   const smtpAuthType = document.getElementById('smtp_auth_type');
+  const testMailSetupButton = document.getElementById('test_mail_setup');
+  const mailTestResultBody = document.getElementById('mail_test_result_body');
+  const mailTestResultModalElement = document.getElementById('mailTestResultModal');
+  const mailTestResultModal = mailTestResultModalElement ? new bootstrap.Modal(mailTestResultModalElement) : null;
 
   const togglePublicInterfacePasskey = () => {
     if (!publicInterfaceToggle || !publicInterfacePasskey) {
@@ -279,6 +304,47 @@
     if (smtpAuthType) {
       smtpAuthType.disabled = !emailEnabled || (smtpAuthToggle && !smtpAuthToggle.checked);
     }
+
+    if (testMailSetupButton) {
+      testMailSetupButton.disabled = !emailEnabled;
+    }
+  };
+
+  const testMailSetup = async () => {
+    if (!testMailSetupButton || !mailTestResultBody || !mailTestResultModal || testMailSetupButton.disabled) {
+      return;
+    }
+
+    testMailSetupButton.disabled = true;
+    testMailSetupButton.textContent = 'Test in corso...';
+
+    const formData = new FormData();
+    formData.set('smtp_server', smtpServer ? smtpServer.value : '');
+    formData.set('smtp_port', smtpPort ? smtpPort.value : '');
+    formData.set('smtp_username', smtpUsername ? smtpUsername.value : '');
+    formData.set('smtp_password', smtpPassword ? smtpPassword.value : '');
+    if (smtpAuthToggle && smtpAuthToggle.checked) {
+      formData.set('smtp_auth_enabled', '1');
+    }
+    formData.set('smtp_auth_type', smtpAuthType ? smtpAuthType.value : 'none');
+
+    try {
+      const response = await fetch('?action=setup_mail_test', {
+        method: 'POST',
+        body: formData,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      });
+      const result = await response.json();
+      const isSuccess = Boolean(result && result.ok);
+      mailTestResultBody.innerHTML = '<div class="alert ' + (isSuccess ? 'alert-success' : 'alert-danger') + ' mb-0">' + (result && result.message ? result.message : 'Esito non disponibile.') + '</div>';
+      mailTestResultModal.show();
+    } catch (error) {
+      mailTestResultBody.innerHTML = '<div class="alert alert-danger mb-0">Errore durante il test: ' + (error && error.message ? error.message : 'connessione non disponibile') + '</div>';
+      mailTestResultModal.show();
+    } finally {
+      testMailSetupButton.textContent = 'Test connessione server mail';
+      toggleEmailSettings();
+    }
   };
 
   if (publicInterfaceToggle) {
@@ -315,6 +381,9 @@
 
   if (smtpAuthToggle) {
     smtpAuthToggle.addEventListener('change', toggleEmailSettings);
+  }
+  if (testMailSetupButton) {
+    testMailSetupButton.addEventListener('click', testMailSetup);
   }
 
   togglePublicInterfacePasskey();
