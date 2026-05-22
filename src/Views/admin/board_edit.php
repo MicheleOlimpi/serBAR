@@ -16,7 +16,8 @@ $monthNames = [
 ];
 $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) ($board['month'] ?? 0));
 $boardGeneratedHeaderTitle = 'SERVIZIO BAR';
-$boardGeneratedHeaderSubtitle = $monthName . ' ' . (int) ($board['year'] ?? 0);
+$boardGeneratedHeaderMonth = $monthName;
+$boardGeneratedHeaderYear = (int) ($board['year'] ?? 0);
 ?>
 <?php if (!$generate): ?>
 <h4>TABELLONE <?= htmlspecialchars($monthName) ?> <?= (int) ($board['year'] ?? 0) ?></h4>
@@ -55,7 +56,10 @@ $boardGeneratedHeaderSubtitle = $monthName . ' ' . (int) ($board['year'] ?? 0);
 <tr>
   <td colspan="2" class="board-generated-header">
     <div class="board-generated-header-title"><?= htmlspecialchars($boardGeneratedHeaderTitle) ?></div>
-    <div class="board-generated-header-subtitle"><?= htmlspecialchars($boardGeneratedHeaderSubtitle) ?></div>
+    <div class="board-generated-header-subtitle">
+      <span class="board-generated-header-month"><?= htmlspecialchars($boardGeneratedHeaderMonth) ?></span>
+      <span class="board-generated-header-year"><?= $boardGeneratedHeaderYear ?></span>
+    </div>
     <br>
   </td>
 </tr>

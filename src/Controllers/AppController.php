@@ -592,13 +592,30 @@ class AppController
         $this->guardAdmin();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (isset($_POST['test_mail_connection'])) {
+                $result = $this->testSmtpConnectionFromPayload($_POST);
+                View::redirect('?action=setup&mail_test=' . urlencode(json_encode($result)));
+            }
+
             $this->repo->saveSetupSettings($_POST);
             View::redirect('?action=setup&saved=1');
+        }
+
+        $mailTestResult = null;
+        if (isset($_GET['mail_test'])) {
+            $decoded = json_decode((string) $_GET['mail_test'], true);
+            if (is_array($decoded) && isset($decoded['success'], $decoded['message'])) {
+                $mailTestResult = [
+                    'success' => (bool) $decoded['success'],
+                    'message' => (string) $decoded['message'],
+                ];
+            }
         }
 
         View::render('admin/setup', [
             'settings' => $this->repo->setupSettings(),
             'saved' => isset($_GET['saved']),
+            'mailTestResult' => $mailTestResult,
         ]);
     }
 
@@ -629,6 +646,40 @@ class AppController
             'editing' => $editing,
             'statuses' => ['inviata', 'letto', 'in_corso', 'chiuso'],
         ]);
+    }
+
+
+    private function testSmtpConnectionFromPayload(array $payload): array
+    {
+        if (empty($payload['email_sending_enabled'])) {
+            return ['success' => false, 'message' => "Invio email non attivo: abilitarlo prima del test."];
+        }
+
+        $host = trim((string) ($payload['smtp_server'] ?? ''));
+        $port = (int) ($payload['smtp_port'] ?? 0);
+        $authType = strtolower(trim((string) ($payload['smtp_auth_type'] ?? 'tls')));
+
+        if ($host === '' || $port < 1 || $port > 65535) {
+            return ['success' => false, 'message' => 'Parametri SMTP non validi (host/porta).'];
+        }
+
+        $transport = in_array($authType, ['ssl'], true) ? 'ssl://' : 'tcp://';
+        $errno = 0;
+        $errstr = '';
+        $connection = @stream_socket_client(
+            $transport . $host . ':' . $port,
+            $errno,
+            $errstr,
+            8,
+            STREAM_CLIENT_CONNECT
+        );
+
+        if (!is_resource($connection)) {
+            return ['success' => false, 'message' => 'Connessione fallita: ' . trim($errstr !== '' ? $errstr : ('Errore ' . $errno))];
+        }
+
+        fclose($connection);
+        return ['success' => true, 'message' => 'Connessione al server SMTP riuscita.'];
     }
 
     private function guard(): void
