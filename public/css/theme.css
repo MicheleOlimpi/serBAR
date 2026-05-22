@@ -22,12 +22,12 @@
   --board-day-weekday-weight: 600;
   --board-day-weekday-line-height: 1.2;
   --board-generated-header-title-color: currentColor;
-  --board-generated-header-title-font-size: 2rem;
+  --board-generated-header-title-font-size: 3rem;
   --board-generated-header-title-font-weight: 700;
-  --board-generated-header-title-letter-spacing: normal;
+  --board-generated-header-title-letter-spacing: 0.5rem;
   --board-generated-header-subtitle-color: currentColor;
-  --board-generated-header-subtitle-font-size: 1.5rem;
-  --board-generated-header-subtitle-font-weight: 400;
+  --board-generated-header-subtitle-font-size: 2rem;
+  --board-generated-header-subtitle-font-weight: 700;
   --board-generated-header-subtitle-letter-spacing: normal;
   --board-generated-header-month-color: var(--board-generated-header-subtitle-color);
   --board-generated-header-month-font-size: var(--board-generated-header-subtitle-font-size);
