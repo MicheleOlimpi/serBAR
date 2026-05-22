@@ -8,6 +8,7 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
   <div class="col"><input name="username" class="form-control" placeholder="username" required></div>
   <div class="col"><input name="last_name" class="form-control" placeholder="cognome" required></div>
   <div class="col"><input name="first_name" class="form-control" placeholder="nome" required></div>
+  <div class="col"><input type="email" name="email" class="form-control" placeholder="email"></div>
   <div class="col"><input name="phone" class="form-control" placeholder="telefono"></div>
   <div class="col"><input type="password" name="password" class="form-control" placeholder="password" required></div>
   <div class="col"><select name="role" class="form-select"><option value="admin">admin</option><option value="user" selected>user</option><option value="supervisor">supervisor</option></select></div>
@@ -36,6 +37,7 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
           <input type="hidden" name="update_user_id" value="<?= (int) $u['id'] ?>">
           <input type="text" name="last_name" class="form-control form-control-sm" value="<?= htmlspecialchars($u['last_name']) ?>" required>
           <input type="text" name="first_name" class="form-control form-control-sm" value="<?= htmlspecialchars($u['first_name']) ?>" required>
+          <input type="email" name="email" class="form-control form-control-sm" value="<?= htmlspecialchars((string) ($u['email'] ?? '')) ?>" placeholder="Email">
           <input type="text" name="phone" class="form-control form-control-sm" value="<?= htmlspecialchars((string) ($u['phone'] ?? '')) ?>" placeholder="Telefono">
           <?php if ($isProtectedAdmin): ?>
             <input type="hidden" name="role" value="<?= htmlspecialchars($u['role']) ?>">

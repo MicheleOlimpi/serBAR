@@ -217,7 +217,14 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="mailTestModalLabel">Esito test collegamento mail</h5>
+        <h5 class="modal-title d-flex align-items-center gap-2" id="mailTestModalLabel">
+          <?php if (!empty($mailTestResult) && empty($mailTestResult['success'])): ?>
+            <i class="fa-solid fa-circle-exclamation text-danger" aria-hidden="true"></i>
+          <?php else: ?>
+            <i class="fa-solid fa-circle-info text-primary" aria-hidden="true"></i>
+          <?php endif; ?>
+          Esito test collegamento mail
+        </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
       </div>
       <div class="modal-body">

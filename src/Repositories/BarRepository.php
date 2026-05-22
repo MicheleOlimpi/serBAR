@@ -80,11 +80,12 @@ class BarRepository
             return;
         }
 
-        $this->pdo->prepare('INSERT INTO users (username,last_name,first_name,password_hash,role,phone,status) VALUES (?,?,?,?,?,?,?)')
+        $this->pdo->prepare('INSERT INTO users (username,last_name,first_name,email,password_hash,role,phone,status) VALUES (?,?,?,?,?,?,?,?)')
             ->execute([
                 $data['username'],
                 $data['last_name'],
                 $data['first_name'],
+                trim((string) ($data['email'] ?? '')),
                 password_hash($data['password'], PASSWORD_DEFAULT),
                 in_array((string) ($data['role'] ?? 'user'), ['admin', 'user', 'supervisor'], true) ? (string) $data['role'] : 'user',
                 (string) ($data['phone'] ?? ''),
@@ -92,10 +93,11 @@ class BarRepository
             ]);
     }
 
-    public function updateUserProfile(int $id, string $lastName, string $firstName, string $phone, string $role, string $status): void
+    public function updateUserProfile(int $id, string $lastName, string $firstName, string $email, string $phone, string $role, string $status): void
     {
         $lastName = trim($lastName);
         $firstName = trim($firstName);
+        $email = trim($email);
         $phone = trim($phone);
         $role = in_array($role, ['admin', 'user', 'supervisor'], true) ? $role : 'user';
         $status = $status === 'inattivo' ? 'inattivo' : 'attivo';
@@ -116,8 +118,8 @@ class BarRepository
             $role = (string) ($user['role'] ?? 'admin');
         }
 
-        $this->pdo->prepare('UPDATE users SET last_name=?, first_name=?, phone=?, role=?, status=? WHERE id=?')
-            ->execute([$lastName, $firstName, $phone, $role, $status, $id]);
+        $this->pdo->prepare('UPDATE users SET last_name=?, first_name=?, email=?, phone=?, role=?, status=? WHERE id=?')
+            ->execute([$lastName, $firstName, $email, $phone, $role, $status, $id]);
     }
 
     public function deleteUser(int $id): void
