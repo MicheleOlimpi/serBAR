@@ -15,5 +15,5 @@ INSERT IGNORE INTO app_settings (setting_key, setting_value) VALUES
   ('smtp_auth_type','tls'),
   ('smtp_password',''),
   ('smtp_port','587'),
-  ('smtp_server','exmample.smtp.local'),
+  ('smtp_server','example.smtp.local'),
   ('smtp_username','');
