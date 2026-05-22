@@ -256,6 +256,7 @@ class AppController
                     (int) $_POST['update_user_id'],
                     (string) ($_POST['last_name'] ?? ''),
                     (string) ($_POST['first_name'] ?? ''),
+                    (string) ($_POST['email'] ?? ''),
                     (string) ($_POST['phone'] ?? ''),
                     (string) ($_POST['role'] ?? 'user'),
                     (string) ($_POST['status'] ?? 'attivo')
