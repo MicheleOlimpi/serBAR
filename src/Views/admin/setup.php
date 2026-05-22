@@ -352,10 +352,12 @@
   toggleEmailSettings();
 
   <?php if (!empty($mailTestResult)): ?>
-  const mailTestModalElement = document.getElementById('mailTestModal');
-  if (mailTestModalElement && typeof bootstrap !== 'undefined') {
-    const mailTestModal = new bootstrap.Modal(mailTestModalElement);
-    mailTestModal.show();
-  }
+  window.addEventListener('load', () => {
+    const mailTestModalElement = document.getElementById('mailTestModal');
+    if (mailTestModalElement && typeof bootstrap !== 'undefined') {
+      const mailTestModal = new bootstrap.Modal(mailTestModalElement);
+      mailTestModal.show();
+    }
+  });
   <?php endif; ?>
 </script>
