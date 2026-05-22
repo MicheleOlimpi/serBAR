@@ -172,6 +172,12 @@
     </select>
   </div>
 
+  <div class="mb-3">
+    <button class="btn btn-outline-secondary" type="submit" name="test_mail_connection" value="1" id="test_mail_connection" <?= !empty($settings['email_sending_enabled']) && $settings['email_sending_enabled'] === '1' ? '' : 'disabled' ?>>
+      Testa collegamento server mail
+    </button>
+  </div>
+
   <hr>
 
   <h5 class="mb-3">Finestra di login</h5>
@@ -206,6 +212,25 @@
   </div>
 </form>
 
+
+<div class="modal fade" id="mailTestModal" tabindex="-1" aria-labelledby="mailTestModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="mailTestModalLabel">Esito test collegamento mail</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+      </div>
+      <div class="modal-body">
+        <?php if (!empty($mailTestResult)): ?>
+          <div class="alert <?= !empty($mailTestResult['success']) ? 'alert-success' : 'alert-danger' ?> mb-0" role="alert">
+            <?= htmlspecialchars((string) ($mailTestResult['message'] ?? ''), ENT_QUOTES, 'UTF-8') ?>
+          </div>
+        <?php endif; ?>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   const publicInterfaceToggle = document.getElementById('public_interface_enabled');
   const publicInterfacePasskey = document.getElementById('public_interface_passkey');
@@ -221,6 +246,7 @@
   const smtpUsername = document.getElementById('smtp_username');
   const smtpPassword = document.getElementById('smtp_password');
   const smtpAuthType = document.getElementById('smtp_auth_type');
+  const testMailConnectionButton = document.getElementById('test_mail_connection');
 
   const togglePublicInterfacePasskey = () => {
     if (!publicInterfaceToggle || !publicInterfacePasskey) {
@@ -279,6 +305,10 @@
     if (smtpAuthType) {
       smtpAuthType.disabled = !emailEnabled || (smtpAuthToggle && !smtpAuthToggle.checked);
     }
+
+    if (testMailConnectionButton) {
+      testMailConnectionButton.disabled = !emailEnabled;
+    }
   };
 
   if (publicInterfaceToggle) {
@@ -320,4 +350,12 @@
   togglePublicInterfacePasskey();
   toggleConsultationSettings();
   toggleEmailSettings();
+
+  <?php if (!empty($mailTestResult)): ?>
+  const mailTestModalElement = document.getElementById('mailTestModal');
+  if (mailTestModalElement && typeof bootstrap !== 'undefined') {
+    const mailTestModal = new bootstrap.Modal(mailTestModalElement);
+    mailTestModal.show();
+  }
+  <?php endif; ?>
 </script>

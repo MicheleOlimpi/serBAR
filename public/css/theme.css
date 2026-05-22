@@ -29,6 +29,10 @@
   --board-generated-header-subtitle-font-size: 1.5rem;
   --board-generated-header-subtitle-font-weight: 400;
   --board-generated-header-subtitle-letter-spacing: normal;
+  --board-generated-header-month-color: var(--board-generated-header-subtitle-color);
+  --board-generated-header-month-font-size: var(--board-generated-header-subtitle-font-size);
+  --board-generated-header-month-font-weight: var(--board-generated-header-subtitle-font-weight);
+  --board-generated-header-month-letter-spacing: var(--board-generated-header-subtitle-letter-spacing);
   --board-generated-day-width: 200px;
   --board-generated-day-number-size: 2rem;
   --board-generated-cell-border-color: #dee2e6;
