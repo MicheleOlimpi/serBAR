@@ -108,15 +108,9 @@ Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le va
     mantenendo la coerenza anche tra anni diversi.
 
 ## Avvio rapido
-1. Installare dipendenze:
-   ```bash
-   composer install
-   ```
-2. Avviare server locale:
-   ```bash
-   php -S 0.0.0.0:8080 -t public
-   ```
-3. Aprire `http://localhost:8080`.
+1. Copiare i files nel repository nella directory di installazione (es. /var/www/serBAR)
+2. Installare dipendenze: con composer install
+3. Aprire la pagina del programma (Es. http://localhost/serBAR)
 4. Se il DB non è configurato/disponibile, comparirà l'interfaccia di installazione.
 5. La configurazione DB viene salvata in `config/app.php`.
 
