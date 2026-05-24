@@ -240,13 +240,16 @@ class AppController
         $this->guardAdmin();
         $duplicateUsernameError = '';
         $passwordChangeError = '';
+        $emptyPasswordError = '';
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isset($_POST['change_password_user_id'])) {
                 $newPassword = (string) ($_POST['new_password'] ?? '');
                 $confirmPassword = (string) ($_POST['confirm_new_password'] ?? '');
 
-                if ($newPassword === '' || $newPassword !== $confirmPassword) {
+                if ($newPassword === '') {
+                    $emptyPasswordError = 'La password non può essere vuota.';
+                } elseif ($newPassword !== $confirmPassword) {
                     $passwordChangeError = 'Le due password non coincidono.';
                 } else {
                     $this->repo->changeUserPassword((int) $_POST['change_password_user_id'], $newPassword);
@@ -265,6 +268,8 @@ class AppController
                 $username = trim((string) ($_POST['username'] ?? ''));
                 if ($username !== '' && $this->repo->findUserByUsername($username) !== null) {
                     $duplicateUsernameError = 'Esiste già un utente con questa username.';
+                } elseif (trim((string) ($_POST['password'] ?? '')) === '') {
+                    $emptyPasswordError = 'La password non può essere vuota.';
                 } else {
                     $this->repo->saveUser($_POST);
                 }
@@ -278,6 +283,7 @@ class AppController
             'users' => $this->repo->allUsers(),
             'duplicateUsernameError' => $duplicateUsernameError,
             'passwordChangeError' => $passwordChangeError,
+            'emptyPasswordError' => $emptyPasswordError,
         ]);
     }
 
