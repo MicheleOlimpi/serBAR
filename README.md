@@ -37,12 +37,8 @@ Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le va
   - mantenuto il layout a tre colonne anche nei giorni senza turno di chiusura;
   - visualizzato il segnaposto `-` al posto del valore vuoto per rendere il risultato più leggibile;
   - aggiornata la gestione dell'icona di chiusura nascosta per evitare stati grafici ambigui.
-- **Affidabilità avvio applicazione migliorata**:
-  - se il database non è disponibile, l'app reindirizza automaticamente al percorso di installazione invece di interrompere il flusso di accesso.
 - **Login più robusto in caso di errore DB**:
   - aggiornato il flusso di autenticazione per gestire in modo più sicuro e prevedibile i problemi di connessione al database.
-- **Seed utenti separato e più manutenibile**:
-  - popolamento utenti estratto in `database/seed_users.sql` e integrato nel servizio di installazione per semplificare manutenzione e aggiornamenti.
 - **Gestione tabelloni vuoti migliorata (admin)**:
   - migliorata la resa della pagina tabelloni quando non sono presenti dati, con messaggi/interfaccia più chiari.
 - **Anagrafica santi completata nel seed calendario**:
@@ -58,43 +54,19 @@ Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le va
   - introdotte variabili dedicate per titolo/sottotitolo del tabellone e larghezze delle colonne principali.
 - **Navigazione supervisor ottimizzata**:
   - il ruolo `supervisor` non vede più la voce di menu **Setup**, mantenendo la barra di navigazione coerente con i permessi disponibili.
-- **Branding README aggiornato**:
-  - inserito il logo ufficiale **square** del progetto nell'intestazione;
-  - dimensionamento impostato a **150x150 px** per mantenere una resa coerente su GitHub.
 - **Installazione guidata migliorata**:
   - aggiunta una schermata di avanzamento durante il setup iniziale;
   - introdotto un riepilogo finale più chiaro al termine dell'installazione;
   - interfaccia di installazione semplificata (navbar nascosta e contenuti centrati).
-- **Nuove impostazioni per interfaccia di consultazione**:
-  - aggiunti parametri dedicati nella configurazione applicativa per controllare la parte pubblica/consultazione.
-- **Gestione giorni di chiusura settimanali (area admin)**:
-  - introdotta una sezione dedicata per impostare i giorni di chiusura ricorrenti;
-  - corretta la visualizzazione dei nomi dei giorni nella pagina di modifica.
-- **Dashboard consultazione più leggibile**:
-  - badge giorno colorato in base al tipo giorno per migliorare la leggibilità immediata.
 - **Interfaccia admin tabelloni aggiornata**:
   - aggiunta una vista tabellone generata a schermo intero per una consultazione più immediata;
   - migliorata la navigazione nell'elenco tabelloni con accesso rapido alla nuova vista.
-- **Modale eliminazione utenti (area admin) migliorata**:
-  - conferma di eliminazione centrata e resa più chiara nella gestione utenti.
-- **Nuovo ruolo `supervisor`**:
-  - aggiunto nella gestione utenti in area admin;
-  - abilitato l'accesso alle funzionalità amministrative come alternativa al ruolo `admin`.
 - **Modali più personalizzabili**:
   - introdotte variabili CSS dedicate (`--modal-icon-color`, `--modal-icon-size`) per icone delle finestre di conferma;
   - uniformata la resa visiva delle modali nelle sezioni principali di amministrazione.
-- **Gestione segnalazioni potenziata**:
-  - aggiunta una pagina dedicata alla **segnalazione libera** in area consultazione;
-  - migliorata la UI di gestione segnalazioni lato admin;
-  - introdotta la conferma tramite **modale di sicurezza** prima dell'eliminazione.
 - **Conferme di eliminazione più sicure (area admin)**:
   - modali di conferma per eliminazione utenti e tabelloni;
   - flusso di cancellazione dei tipi giorno corretto e reso più chiaro.
-- **Tipi giorno migliorati**:
-  - gestione colori ottimizzata in amministrazione;
-  - aggiornamento della creazione schema/installazione per supportare le nuove impostazioni.
-- **Aggiornamento risorse grafiche**:
-  - file logo aggiornati nell'interfaccia applicativa.
 - **Editor tabellone mensile (area admin) migliorato**:
   - badge giorno più leggibile (numero giorno più grande, metadati compatti);
   - disposizione dei campi turno ottimizzata su desktop/mobile;
@@ -103,9 +75,6 @@ Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le va
   - in modifica tabellone è disponibile un selettore con elenco utenti attivi;
   - i nominativi dei volontari possono essere aggiunti in forma abbreviata (es. `M. Rossi`);
   - il responsabile chiusura è selezionabile rapidamente solo per i turni che chiudono il bar.
-- **Campo “Santo” allineato correttamente**:
-  - nella vista tabellone il santo viene recuperato in base al giorno/mese,
-    mantenendo la coerenza anche tra anni diversi.
 
 ## Avvio rapido
 1. Copiare i files nel repository nella directory di installazione (es. /var/www/serBAR)
@@ -148,5 +117,4 @@ Vengono gestite le festività nazionali, cattoliche e eventuali giorni speciali 
    - Lunedì dell'angelo
      
 ## MESSAGGISTICA INTERNA
-
-E' disponibile un sistema di messaggiustica interna, con stato del messaggio variabile dagli admin/supervisor, consultabile dagli users
+  - E' disponibile un sistema di messaggiustica interna, con stato del messaggio variabile dagli admin/supervisor, consultabile dagli users
