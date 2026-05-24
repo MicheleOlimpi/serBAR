@@ -3,6 +3,7 @@
 <?php
 $duplicateUsernameError = (string) ($duplicateUsernameError ?? '');
 $passwordChangeError = (string) ($passwordChangeError ?? '');
+$emptyPasswordError = (string) ($emptyPasswordError ?? '');
 ?>
 <form method="post" class="row g-2 mb-4">
   <div class="col"><input name="username" class="form-control" placeholder="username" required></div>
@@ -10,7 +11,7 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
   <div class="col"><input name="first_name" class="form-control" placeholder="nome" required></div>
   <div class="col"><input type="email" name="email" class="form-control" placeholder="email"></div>
   <div class="col"><input name="phone" class="form-control" placeholder="telefono"></div>
-  <div class="col"><input type="password" name="password" class="form-control" placeholder="password" required></div>
+  <div class="col"><input type="password" name="password" class="form-control" placeholder="password"></div>
   <div class="col"><select name="role" class="form-select"><option value="admin">admin</option><option value="user" selected>user</option><option value="supervisor">supervisor</option></select></div>
   <div class="col">
     <select name="status" class="form-select js-status-select" data-active-class="text-success" data-inactive-class="text-danger">
@@ -133,6 +134,26 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
   </div>
 </div>
 
+<div class="modal fade" id="emptyPasswordModal" tabindex="-1" aria-labelledby="emptyPasswordModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title d-flex align-items-center gap-2" id="emptyPasswordModalLabel">
+          <i class="fa-solid fa-circle-exclamation modal-icon" aria-hidden="true"></i>
+          Password non valida
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+      </div>
+      <div class="modal-body">
+        <?= htmlspecialchars($emptyPasswordError !== '' ? $emptyPasswordError : 'La password non può essere vuota.') ?>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -149,11 +170,11 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
           <?php endif; ?>
           <div class="mb-3">
             <label for="newPasswordInput" class="form-label">Nuova password</label>
-            <input type="password" class="form-control" id="newPasswordInput" name="new_password" required>
+            <input type="password" class="form-control" id="newPasswordInput" name="new_password">
           </div>
           <div>
             <label for="confirmPasswordInput" class="form-label">Ripeti nuova password</label>
-            <input type="password" class="form-control" id="confirmPasswordInput" name="confirm_new_password" required>
+            <input type="password" class="form-control" id="confirmPasswordInput" name="confirm_new_password">
           </div>
         </div>
         <div class="modal-footer">
@@ -189,9 +210,19 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
   const changePasswordUsername = document.getElementById('changePasswordUsername');
   const changePasswordModalElement = document.getElementById('changePasswordModal');
   const duplicateUsernameModalElement = document.getElementById('duplicateUsernameModal');
+  const emptyPasswordModalElement = document.getElementById('emptyPasswordModal');
   const changePasswordForm = document.getElementById('changePasswordForm');
   const newPasswordInput = document.getElementById('newPasswordInput');
   const confirmPasswordInput = document.getElementById('confirmPasswordInput');
+  const createUserForm = document.querySelector('form.row.g-2.mb-4');
+  const createUserPasswordInput = createUserForm ? createUserForm.querySelector('input[name="password"]') : null;
+
+  const showEmptyPasswordModal = () => {
+    if (emptyPasswordModalElement && typeof bootstrap !== 'undefined') {
+      const emptyPasswordModal = new bootstrap.Modal(emptyPasswordModalElement);
+      emptyPasswordModal.show();
+    }
+  };
 
   document.querySelectorAll('.js-delete-user').forEach((button) => {
     button.addEventListener('click', () => {
@@ -217,7 +248,10 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
 
   if (changePasswordForm && newPasswordInput && confirmPasswordInput) {
     changePasswordForm.addEventListener('submit', (event) => {
-      if (newPasswordInput.value !== confirmPasswordInput.value) {
+      if (newPasswordInput.value.trim() === '') {
+        event.preventDefault();
+        showEmptyPasswordModal();
+      } else if (newPasswordInput.value !== confirmPasswordInput.value) {
         event.preventDefault();
         confirmPasswordInput.setCustomValidity('Le password non coincidono.');
         confirmPasswordInput.reportValidity();
@@ -231,6 +265,15 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
     });
   }
 
+  if (createUserForm && createUserPasswordInput) {
+    createUserForm.addEventListener('submit', (event) => {
+      if (createUserPasswordInput.value.trim() === '') {
+        event.preventDefault();
+        showEmptyPasswordModal();
+      }
+    });
+  }
+
   if (duplicateUsernameModalElement && <?= $duplicateUsernameError !== '' ? 'true' : 'false' ?>) {
     const duplicateModal = new bootstrap.Modal(duplicateUsernameModalElement);
     duplicateModal.show();
@@ -239,5 +282,10 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
   if (changePasswordModalElement && <?= $passwordChangeError !== '' ? 'true' : 'false' ?>) {
     const passwordModal = new bootstrap.Modal(changePasswordModalElement);
     passwordModal.show();
+  }
+
+  if (emptyPasswordModalElement && <?= $emptyPasswordError !== '' ? 'true' : 'false' ?>) {
+    const emptyPasswordModal = new bootstrap.Modal(emptyPasswordModalElement);
+    emptyPasswordModal.show();
   }
 </script>

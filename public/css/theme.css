@@ -63,6 +63,7 @@
   --navbar-active-color: #ffffff;
   --navbar-brand-color: #ffffff;
   --navbar-toggler-border-color: rgba(248, 250, 252, 0.35);
+  --navbar-toggler-icon-color: #f8fafc;
   --navbar-user-color: #e2e8f0;
   --navbar-logout-color: #f8fafc;
   --navbar-logout-border-color: rgba(248, 250, 252, 0.55);
@@ -106,6 +107,17 @@
 
 .app-navbar .navbar-toggler {
   border-color: var(--navbar-toggler-border-color);
+}
+
+.app-navbar .navbar-toggler-icon {
+  color: var(--navbar-toggler-icon-color);
+  background-image:
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-size: 100% 2px, 100% 2px, 100% 2px;
+  background-position: center 20%, center 50%, center 80%;
 }
 
 .app-navbar-user {
