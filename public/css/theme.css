@@ -62,8 +62,8 @@
   --navbar-hover-color: #ffffff;
   --navbar-active-color: #ffffff;
   --navbar-brand-color: #ffffff;
-  --navbar-toggler-border-color: rgba(248, 250, 252, 0.35);
-  --navbar-toggler-icon-color: #f8fafc;
+  --navbar-toggler-border-color: #802d2d;
+  --navbar-toggler-icon-color: #802d2d;
   --navbar-user-color: #e2e8f0;
   --navbar-logout-color: #f8fafc;
   --navbar-logout-border-color: rgba(248, 250, 252, 0.55);
