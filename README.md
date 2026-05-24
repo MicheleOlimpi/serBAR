@@ -12,7 +12,7 @@ Applicazione PHP 8 (PSR-4) con MariaDB per la gestione dei turni di servizio BAR
 Viene gestita anche la comunicazione di eventuali messaggi sullo stile di un software di ticketing.<br>
 Il sistema dispone di tre interfacce web:
 - Amministrativa, dedicata ai gestori
-- Di consultazione/comunicazione, dedicata ai volontari
+- Di consultazione/comunicazione, disabilitabile, dedicata ai volontari
 - Al pubblico, disabilitabile, per la visualizzazione dei turni al pubblico.
 
 ## STACK
