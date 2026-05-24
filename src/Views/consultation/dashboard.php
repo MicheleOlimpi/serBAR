@@ -168,7 +168,7 @@ $statusLabels = [
                 <tr>
                   <th>Data</th>
                   <th>Utente</th>
-                  <th>Testo (prime 20)</th>
+                  <th>Testo</th>
                   <th>Stato</th>
                 </tr>
               </thead>
