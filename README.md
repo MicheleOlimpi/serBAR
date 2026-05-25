@@ -26,44 +26,27 @@ Il sistema dispone di tre interfacce web:
 Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le variabili CSS di Bootstrap 5 (`--bs-*`) per personalizzare colori, radius e aspetto generale senza modificare le viste.
 
 ## NOVITA' RECENTI
-- **Pannello pubblico con aggiornamento automatico configurabile**:
-  - aggiunta una nuova impostazione applicativa per definire ogni quanti secondi aggiornare automaticamente il pannello pubblico;
-  - il valore è gestibile dall'area **Setup** admin e applicato direttamente alla vista pubblica.
-- **Setup admin con accesso rapido al pannello pubblico**:
-  - aggiunto un pulsante dedicato che apre direttamente l'interfaccia pubblica, utile per verifiche immediate dopo la configurazione.
-- **Cartellone generato più coerente quando manca la chiusura**:
-  - mantenuto il layout a tre colonne anche nei giorni senza turno di chiusura;
-  - visualizzato il segnaposto `-` al posto del valore vuoto per rendere il risultato più leggibile;
-  - aggiornata la gestione dell'icona di chiusura nascosta per evitare stati grafici ambigui.
-- **Login più robusto in caso di errore DB**:
-  - aggiornato il flusso di autenticazione per gestire in modo più sicuro e prevedibile i problemi di connessione al database.
-- **Gestione tabelloni vuoti migliorata (admin)**:
-  - migliorata la resa della pagina tabelloni quando non sono presenti dati, con messaggi/interfaccia più chiari.
-- **Tabellone generato più completo e leggibile**:
-  - aggiunta la colonna **Chiusura** nella vista generata/stampabile del tabellone per evidenziare il responsabile di chiusura;
-  - i turni del tabellone generato sono ora centrati verticalmente per migliorare l'impaginazione;
-  - inserita una riga di separazione sotto l'intestazione del mese per rendere più chiaro il layout.
-- **Tema del tabellone generato più personalizzabile**:
-  - spostati nel file tema centralizzato gli stili della vista generata, così header, celle, spaziature e dimensioni possono essere configurati via variabili CSS;
-  - introdotte variabili dedicate per titolo/sottotitolo del tabellone e larghezze delle colonne principali.
-- **Navigazione supervisor ottimizzata**:
-  - il ruolo `supervisor` non vede più la voce di menu **Setup**, mantenendo la barra di navigazione coerente con i permessi disponibili.
-- **Interfaccia admin tabelloni aggiornata**:
-  - aggiunta una vista tabellone generata a schermo intero per una consultazione più immediata;
-- **Modali più personalizzabili**:
-  - introdotte variabili CSS dedicate (`--modal-icon-color`, `--modal-icon-size`) per icone delle finestre di conferma;
-  - uniformata la resa visiva delle modali nelle sezioni principali di amministrazione.
-- **Conferme di eliminazione più sicure (area admin)**:
-  - modali di conferma per eliminazione utenti e tabelloni;
-  - flusso di cancellazione dei tipi giorno corretto e reso più chiaro.
-- **Editor tabellone mensile (area admin) migliorato**:
-  - badge giorno più leggibile (numero giorno più grande, metadati compatti);
-  - disposizione dei campi turno ottimizzata su desktop/mobile;
-  - ordinamento turni per priorità e orario.
-- **Ricerca e inserimento rapido volontari/responsabile**:
-  - in modifica tabellone è disponibile un selettore con elenco utenti attivi;
-  - i nominativi dei volontari possono essere aggiunti in forma abbreviata (es. `M. Rossi`);
-  - il responsabile chiusura è selezionabile rapidamente solo per i turni che chiudono il bar.
+- **Identità applicativa aggiornata**:
+  - titolo pagina aggiornato da `ACLI servizio BAR` a `serBAR`.
+- **Utenti e credenziali più robusti**:
+  - aggiunto il campo email nella gestione utenti;
+  - bloccato il salvataggio con username troppo lunghi;
+  - bloccato il salvataggio di password vuote;
+  - migliorata la chiarezza del placeholder password per l'utente `supervisor` in fase di setup.
+- **Comunicazioni e segnalazioni migliorate**:
+  - aggiunto il badge colore dello stato direttamente nel titolo della modale segnalazione;
+  - introdotte modali di dettaglio più complete per notifiche e comunicazioni;
+  - rinominata la colonna riepilogo testo in segnalazioni da `Testo (prime 20)` a `Testo`.
+- **Setup e test email più comodi**:
+  - aggiunta l'icona di esito per il test SMTP;
+  - corretta l'apertura della modale test connessione mail dopo il caricamento Bootstrap;
+  - corretto un refuso nell'indirizzo server SMTP nella documentazione.
+- **Personalizzazione UI estesa**:
+  - migliorata la tematizzazione dell'icona hamburger su mobile (incluso colore personalizzabile);
+  - aggiunta intestazione mese calendario personalizzabile;
+  - aggiornati stili di titolo e sottotitolo header nel tema.
+- **Documentazione aggiornata**:
+  - sezione installazione/avvio rapido e descrizione interfacce riallineate alle ultime modifiche.
 
 ## INSTALLAZIONE
 1. Copiare i files nel repository nella directory di installazione (es. /var/www/serBAR)
