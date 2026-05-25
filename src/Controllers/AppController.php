@@ -266,11 +266,16 @@ class AppController
                 );
             } else {
                 $username = trim((string) ($_POST['username'] ?? ''));
-                if ($username !== '' && $this->repo->findUserByUsername($username) !== null) {
+                if ($username === '') {
+                    $duplicateUsernameError = "La username non può essere vuota.";
+                } elseif ((function_exists('mb_strlen') ? mb_strlen($username) : strlen($username)) < 5) {
+                    $duplicateUsernameError = 'La username deve avere almeno 5 caratteri.';
+                } elseif ($this->repo->findUserByUsername($username) !== null) {
                     $duplicateUsernameError = 'Esiste già un utente con questa username.';
                 } elseif (trim((string) ($_POST['password'] ?? '')) === '') {
                     $emptyPasswordError = 'La password non può essere vuota.';
                 } else {
+                    $_POST['username'] = $username;
                     $this->repo->saveUser($_POST);
                 }
             }
