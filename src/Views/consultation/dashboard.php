@@ -202,6 +202,7 @@ $statusLabels = [
                         data-bs-target="#notificationDetailModal"
                         data-username="<?= htmlspecialchars((string) $n['username'], ENT_QUOTES, 'UTF-8') ?>"
                         data-status="<?= htmlspecialchars($statusLabels[$n['status']] ?? $n['status'], ENT_QUOTES, 'UTF-8') ?>"
+                        data-status-class="<?= htmlspecialchars($statusClass, ENT_QUOTES, 'UTF-8') ?>"
                         data-message="<?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?>"
                       ><?= htmlspecialchars($messagePreview !== '' ? $messagePreview : '-') ?></button>
                     </td>
@@ -235,10 +236,12 @@ $statusLabels = [
 <script>
 document.querySelectorAll('.js-notification-detail').forEach((button) => {
   button.addEventListener('click', () => {
-    const title = 'segnalazione da:' + (button.dataset.username || '') + ' ' + (button.dataset.status || '');
+    const username = button.dataset.username || '';
+    const status = button.dataset.status || '';
+    const statusClass = button.dataset.statusClass || 'text-bg-secondary';
     const modalTitle = document.getElementById('notificationDetailModalLabel');
     const modalMessage = document.getElementById('notificationDetailMessage');
-    if (modalTitle) modalTitle.textContent = title;
+    if (modalTitle) modalTitle.innerHTML = 'Segnalazione da: ' + username + ' <span class="badge ' + statusClass + '">' + status + '</span>'; 
     if (modalMessage) modalMessage.textContent = button.dataset.message || '';
   });
 });

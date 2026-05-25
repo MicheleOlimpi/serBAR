@@ -97,6 +97,7 @@ $statusBadgeMap = [
                 : substr($message, 0, 30);
               $isTrimmed = function_exists('mb_strlen') ? mb_strlen($message) > 30 : strlen($message) > 30;
               ?>
+              <?php $statusClass = $statusBadgeMap[(string) ($n['status'] ?? '')] ?? 'text-bg-secondary'; ?>
               <li>
                 <?= htmlspecialchars($notificationDate) ?> -
                 <?= htmlspecialchars((string) $n['username']) ?> -
@@ -107,9 +108,9 @@ $statusBadgeMap = [
                   data-bs-target="#notificationDetailModal"
                   data-username="<?= htmlspecialchars((string) $n['username'], ENT_QUOTES, 'UTF-8') ?>"
                   data-status="<?= htmlspecialchars($statusLabels[(string) ($n['status'] ?? '')] ?? (string) ($n['status'] ?? 'Sconosciuto'), ENT_QUOTES, 'UTF-8') ?>"
+                  data-status-class="<?= htmlspecialchars($statusClass, ENT_QUOTES, 'UTF-8') ?>"
                   data-message="<?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?>"
                 ><?= htmlspecialchars($shortMessage . ($isTrimmed ? '…' : '')) ?></button>
-                <?php $statusClass = $statusBadgeMap[(string) ($n['status'] ?? '')] ?? 'text-bg-secondary'; ?>
                 <span class="badge <?= $statusClass ?> ms-1"><?= htmlspecialchars($statusLabels[(string) ($n['status'] ?? '')] ?? (string) ($n['status'] ?? 'Sconosciuto')) ?></span>
               </li>
             <?php endforeach; ?>
@@ -138,10 +139,12 @@ $statusBadgeMap = [
 <script>
 document.querySelectorAll('.js-notification-detail').forEach((button) => {
   button.addEventListener('click', () => {
-    const title = 'segnalazione da:' + (button.dataset.username || '') + ' ' + (button.dataset.status || '');
+    const username = button.dataset.username || '';
+    const status = button.dataset.status || '';
+    const statusClass = button.dataset.statusClass || 'text-bg-secondary';
     const modalTitle = document.getElementById('notificationDetailModalLabel');
     const modalMessage = document.getElementById('notificationDetailMessage');
-    if (modalTitle) modalTitle.textContent = title;
+    if (modalTitle) modalTitle.innerHTML = 'Segnalazione da: ' + username + ' <span class="badge ' + statusClass + '">' + status + '</span>'; 
     if (modalMessage) modalMessage.textContent = button.dataset.message || '';
   });
 });
