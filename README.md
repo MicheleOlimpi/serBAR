@@ -25,12 +25,10 @@ Il sistema dispone di tre interfacce web:
 ## TEMA
 Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le variabili CSS di Bootstrap 5 (`--bs-*`) per personalizzare colori, radius e aspetto generale senza modificare le viste.
 
-## Novità recenti
+## NOVITA' RECENTI
 - **Pannello pubblico con aggiornamento automatico configurabile**:
   - aggiunta una nuova impostazione applicativa per definire ogni quanti secondi aggiornare automaticamente il pannello pubblico;
   - il valore è gestibile dall'area **Setup** admin e applicato direttamente alla vista pubblica.
-- **Segnalazioni “inviate” evidenziate meglio in admin**:
-  - nella pagina notifiche/segnalazioni lo stato **inviato** ora usa un colore rosso, così le richieste da lavorare risultano più immediate da individuare.
 - **Setup admin con accesso rapido al pannello pubblico**:
   - aggiunto un pulsante dedicato che apre direttamente l'interfaccia pubblica, utile per verifiche immediate dopo la configurazione.
 - **Cartellone generato più coerente quando manca la chiusura**:
@@ -41,10 +39,6 @@ Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le va
   - aggiornato il flusso di autenticazione per gestire in modo più sicuro e prevedibile i problemi di connessione al database.
 - **Gestione tabelloni vuoti migliorata (admin)**:
   - migliorata la resa della pagina tabelloni quando non sono presenti dati, con messaggi/interfaccia più chiari.
-- **Anagrafica santi completata nel seed calendario**:
-  - completato l'inserimento dei santi nel file `database/seed_calendar_days.sql` (inclusi gli aggiornamenti più recenti su agosto e settembre).
-- **Utente `supervisor` incluso nei dati iniziali**:
-  - aggiunto anche nel seed SQL per avere il profilo disponibile già in fase di installazione.
 - **Tabellone generato più completo e leggibile**:
   - aggiunta la colonna **Chiusura** nella vista generata/stampabile del tabellone per evidenziare il responsabile di chiusura;
   - i turni del tabellone generato sono ora centrati verticalmente per migliorare l'impaginazione;
@@ -54,13 +48,8 @@ Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le va
   - introdotte variabili dedicate per titolo/sottotitolo del tabellone e larghezze delle colonne principali.
 - **Navigazione supervisor ottimizzata**:
   - il ruolo `supervisor` non vede più la voce di menu **Setup**, mantenendo la barra di navigazione coerente con i permessi disponibili.
-- **Installazione guidata migliorata**:
-  - aggiunta una schermata di avanzamento durante il setup iniziale;
-  - introdotto un riepilogo finale più chiaro al termine dell'installazione;
-  - interfaccia di installazione semplificata (navbar nascosta e contenuti centrati).
 - **Interfaccia admin tabelloni aggiornata**:
   - aggiunta una vista tabellone generata a schermo intero per una consultazione più immediata;
-  - migliorata la navigazione nell'elenco tabelloni con accesso rapido alla nuova vista.
 - **Modali più personalizzabili**:
   - introdotte variabili CSS dedicate (`--modal-icon-color`, `--modal-icon-size`) per icone delle finestre di conferma;
   - uniformata la resa visiva delle modali nelle sezioni principali di amministrazione.
@@ -76,7 +65,7 @@ Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le va
   - i nominativi dei volontari possono essere aggiunti in forma abbreviata (es. `M. Rossi`);
   - il responsabile chiusura è selezionabile rapidamente solo per i turni che chiudono il bar.
 
-## Avvio rapido
+## INSTALLAZIONE
 1. Copiare i files nel repository nella directory di installazione (es. /var/www/serBAR)
 2. Installare dipendenze: con composer install
 3. Aprire la pagina del programma (Es. http://localhost/serBAR)
