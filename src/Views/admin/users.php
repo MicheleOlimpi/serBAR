@@ -6,7 +6,7 @@ $passwordChangeError = (string) ($passwordChangeError ?? '');
 $emptyPasswordError = (string) ($emptyPasswordError ?? '');
 ?>
 <form method="post" class="row g-2 mb-4">
-  <div class="col"><input name="username" class="form-control" placeholder="username" required></div>
+  <div class="col"><input name="username" class="form-control" placeholder="username" minlength="5" required></div>
   <div class="col"><input name="last_name" class="form-control" placeholder="cognome" required></div>
   <div class="col"><input name="first_name" class="form-control" placeholder="nome" required></div>
   <div class="col"><input type="email" name="email" class="form-control" placeholder="email"></div>
