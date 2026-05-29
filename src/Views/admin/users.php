@@ -7,12 +7,13 @@ $emptyPasswordError = (string) ($emptyPasswordError ?? '');
 ?>
 <form method="post" class="row g-2 mb-4">
   <div class="col"><input name="username" class="form-control" placeholder="username" minlength="5" required></div>
+  <div class="col"><input name="alias" class="form-control" placeholder="alias"></div>
   <div class="col"><input name="last_name" class="form-control" placeholder="cognome" required></div>
   <div class="col"><input name="first_name" class="form-control" placeholder="nome" required></div>
   <div class="col"><input type="email" name="email" class="form-control" placeholder="email"></div>
   <div class="col"><input name="phone" class="form-control" placeholder="telefono"></div>
   <div class="col"><input type="password" name="password" class="form-control" placeholder="password"></div>
-  <div class="col"><select name="role" class="form-select"><option value="admin">admin</option><option value="user" selected>user</option><option value="supervisor">supervisor</option></select></div>
+  <div class="col"><select name="role" class="form-select js-create-role"><option value="admin">admin</option><option value="user" selected>user</option><option value="supervisor">supervisor</option><option value="operator">operator</option></select></div>
   <div class="col">
     <select name="status" class="form-select js-status-select" data-active-class="text-success" data-inactive-class="text-danger">
       <option value="attivo" selected>attivo</option>
@@ -30,12 +31,14 @@ $emptyPasswordError = (string) ($emptyPasswordError ?? '');
   </tr>
   <?php foreach($users as $u): ?>
     <?php $isProtectedAdmin = strtolower((string) $u['username']) === 'admin'; ?>
+    <?php $isOperator = (string) ($u['role'] ?? '') === 'operator'; ?>
     <?php $updateFormId = 'update-user-form-' . (int) $u['id']; ?>
     <tr>
       <td><?= htmlspecialchars($u['username']) ?></td>
       <td>
         <form method="post" id="<?= htmlspecialchars($updateFormId) ?>" class="d-flex flex-wrap gap-1">
           <input type="hidden" name="update_user_id" value="<?= (int) $u['id'] ?>">
+          <input type="text" name="alias" class="form-control form-control-sm" value="<?= htmlspecialchars((string) ($u['alias'] ?? '')) ?>" placeholder="Alias">
           <input type="text" name="last_name" class="form-control form-control-sm" value="<?= htmlspecialchars($u['last_name']) ?>" required>
           <input type="text" name="first_name" class="form-control form-control-sm" value="<?= htmlspecialchars($u['first_name']) ?>" required>
           <input type="email" name="email" class="form-control form-control-sm" value="<?= htmlspecialchars((string) ($u['email'] ?? '')) ?>" placeholder="Email">
@@ -49,6 +52,7 @@ $emptyPasswordError = (string) ($emptyPasswordError ?? '');
               <option value="admin" <?= $u['role'] === 'admin' ? 'selected' : '' ?>>admin</option>
               <option value="user" <?= $u['role'] === 'user' ? 'selected' : '' ?>>user</option>
               <option value="supervisor" <?= $u['role'] === 'supervisor' ? 'selected' : '' ?>>supervisor</option>
+              <option value="operator" <?= $u['role'] === 'operator' ? 'selected' : '' ?>>operator</option>
             </select>
             <select name="status" class="form-select form-select-sm js-status-select" data-active-class="text-success" data-inactive-class="text-danger">
               <option value="attivo" <?= $u['status'] === 'attivo' ? 'selected' : '' ?>>attivo</option>
@@ -70,6 +74,7 @@ $emptyPasswordError = (string) ($emptyPasswordError ?? '');
           data-username="<?= htmlspecialchars($u['username']) ?>"
           data-bs-toggle="modal"
           data-bs-target="#changePasswordModal"
+          <?= $isOperator ? 'disabled' : '' ?>
         >
           <i class="fa-solid fa-key" aria-hidden="true"></i>
         </button>
@@ -216,6 +221,7 @@ $emptyPasswordError = (string) ($emptyPasswordError ?? '');
   const confirmPasswordInput = document.getElementById('confirmPasswordInput');
   const createUserForm = document.querySelector('form.row.g-2.mb-4');
   const createUserPasswordInput = createUserForm ? createUserForm.querySelector('input[name="password"]') : null;
+  const createUserRoleSelect = createUserForm ? createUserForm.querySelector('select[name="role"]') : null;
 
   const showEmptyPasswordModal = () => {
     if (emptyPasswordModalElement && typeof bootstrap !== 'undefined') {
@@ -265,9 +271,21 @@ $emptyPasswordError = (string) ($emptyPasswordError ?? '');
     });
   }
 
-  if (createUserForm && createUserPasswordInput) {
+  if (createUserForm && createUserPasswordInput && createUserRoleSelect) {
+    const applyCreatePasswordState = () => {
+      const isOperator = createUserRoleSelect.value === 'operator';
+      createUserPasswordInput.disabled = isOperator;
+      createUserPasswordInput.placeholder = isOperator ? 'password preimpostata' : 'password';
+      if (isOperator) {
+        createUserPasswordInput.value = '';
+      }
+    };
+
+    createUserRoleSelect.addEventListener('change', applyCreatePasswordState);
+    applyCreatePasswordState();
+
     createUserForm.addEventListener('submit', (event) => {
-      if (createUserPasswordInput.value.trim() === '') {
+      if (createUserRoleSelect.value !== 'operator' && createUserPasswordInput.value.trim() === '') {
         event.preventDefault();
         showEmptyPasswordModal();
       }
