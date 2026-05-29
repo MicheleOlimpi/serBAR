@@ -21,7 +21,7 @@ class AppController
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user = $this->repo->findUserByUsername(trim($_POST['username'] ?? ''));
-            if ($user && $user['status'] === 'attivo' && password_verify($_POST['password'] ?? '', $user['password_hash'])) {
+            if ($user && $user['status'] === 'attivo' && ($user['role'] ?? '') !== 'operator' && password_verify($_POST['password'] ?? '', $user['password_hash'])) {
                 if (($user['role'] ?? '') !== 'admin') {
                     $setupSettings = $this->repo->setupSettings();
                     if (($setupSettings['consultation_interface_enabled'] ?? '1') !== '1') {
@@ -257,6 +257,7 @@ class AppController
             } elseif (isset($_POST['update_user_id'])) {
                 $this->repo->updateUserProfile(
                     (int) $_POST['update_user_id'],
+                    (string) ($_POST['alias'] ?? ''),
                     (string) ($_POST['last_name'] ?? ''),
                     (string) ($_POST['first_name'] ?? ''),
                     (string) ($_POST['email'] ?? ''),
@@ -272,7 +273,7 @@ class AppController
                     $duplicateUsernameError = 'La username deve avere almeno 5 caratteri.';
                 } elseif ($this->repo->findUserByUsername($username) !== null) {
                     $duplicateUsernameError = 'Esiste già un utente con questa username.';
-                } elseif (trim((string) ($_POST['password'] ?? '')) === '') {
+                } elseif ((string) ($_POST['role'] ?? 'user') !== 'operator' && trim((string) ($_POST['password'] ?? '')) === '') {
                     $emptyPasswordError = 'La password non può essere vuota.';
                 } else {
                     $_POST['username'] = $username;

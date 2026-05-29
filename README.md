@@ -57,7 +57,7 @@ Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le va
 
 ## FUNZIONI PRINCIPALI
 - Installazione guidata DB e creazione schema
-- Gestione multiutente con ruoli (`admin`, `supervisor`, `user`)
+- Gestione multiutente con ruoli (`admin`, `supervisor`, `user`, `operator`)
 - Dashboard riassuntiva per tutti i tipi di utente
 - Interfaccia di amministrazione per:
   - Gestione tabelloni con editing con supporto a selezione rapida utenti, anotazioni e responsabile chiusura
@@ -73,6 +73,7 @@ Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le va
 - username: admin password:admin per l'account amministrativo per configurazione, gestione turni e consultazione
 - username: user password:user per l'account utente standard solo per consultazione
 - username: supervisor password:supervisor per l'account di gestione turni
+- Il ruolo `operator` identifica operatori censiti in anagrafica: la password viene preimpostata a `NoPass@serBAR` alla creazione, ma il login alle interfacce di consultazione e amministrazione resta bloccato.
 
 ## GESTIONE DELLE FESTIVITA'
 Vengono gestite le festività nazionali, cattoliche e eventuali giorni speciali sia fisse che mobili.

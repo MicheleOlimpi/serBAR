@@ -31,6 +31,8 @@ class BarRepository
     ];
     private const PROGRAM_INFO_KEYS = ['program_name', 'program_author', 'program_version'];
     private const LOGIN_INFO_KEYS = ['login_info1', 'login_info2'];
+    private const USER_ROLES = ['admin', 'user', 'supervisor', 'operator'];
+    private const OPERATOR_DEFAULT_PASSWORD = 'NoPass@serBAR';
 
     public function __construct(private PDO $pdo)
     {
@@ -80,33 +82,38 @@ class BarRepository
             return;
         }
 
-        $this->pdo->prepare('INSERT INTO users (username,last_name,first_name,email,password_hash,role,phone,status) VALUES (?,?,?,?,?,?,?,?)')
+        $role = $this->normalizeUserRole((string) ($data['role'] ?? 'user'));
+        $password = $role === 'operator' ? self::OPERATOR_DEFAULT_PASSWORD : (string) ($data['password'] ?? '');
+
+        $this->pdo->prepare('INSERT INTO users (username,alias,last_name,first_name,email,password_hash,role,phone,status) VALUES (?,?,?,?,?,?,?,?,?)')
             ->execute([
                 $data['username'],
+                trim((string) ($data['alias'] ?? '')),
                 $data['last_name'],
                 $data['first_name'],
                 trim((string) ($data['email'] ?? '')),
-                password_hash($data['password'], PASSWORD_DEFAULT),
-                in_array((string) ($data['role'] ?? 'user'), ['admin', 'user', 'supervisor'], true) ? (string) $data['role'] : 'user',
+                password_hash($password, PASSWORD_DEFAULT),
+                $role,
                 (string) ($data['phone'] ?? ''),
                 $data['status'],
             ]);
     }
 
-    public function updateUserProfile(int $id, string $lastName, string $firstName, string $email, string $phone, string $role, string $status): void
+    public function updateUserProfile(int $id, string $alias, string $lastName, string $firstName, string $email, string $phone, string $role, string $status): void
     {
+        $alias = trim($alias);
         $lastName = trim($lastName);
         $firstName = trim($firstName);
         $email = trim($email);
         $phone = trim($phone);
-        $role = in_array($role, ['admin', 'user', 'supervisor'], true) ? $role : 'user';
+        $role = $this->normalizeUserRole($role);
         $status = $status === 'inattivo' ? 'inattivo' : 'attivo';
 
         if ($id < 1 || $lastName === '' || $firstName === '') {
             return;
         }
 
-        $stmt = $this->pdo->prepare('SELECT username, status FROM users WHERE id=? LIMIT 1');
+        $stmt = $this->pdo->prepare('SELECT username, role, status FROM users WHERE id=? LIMIT 1');
         $stmt->execute([$id]);
         $user = $stmt->fetch();
         if (!$user) {
@@ -118,8 +125,8 @@ class BarRepository
             $role = (string) ($user['role'] ?? 'admin');
         }
 
-        $this->pdo->prepare('UPDATE users SET last_name=?, first_name=?, email=?, phone=?, role=?, status=? WHERE id=?')
-            ->execute([$lastName, $firstName, $email, $phone, $role, $status, $id]);
+        $this->pdo->prepare('UPDATE users SET alias=?, last_name=?, first_name=?, email=?, phone=?, role=?, status=? WHERE id=?')
+            ->execute([$alias, $lastName, $firstName, $email, $phone, $role, $status, $id]);
     }
 
     public function deleteUser(int $id): void
@@ -141,8 +148,20 @@ class BarRepository
             return;
         }
 
+        $stmt = $this->pdo->prepare('SELECT role FROM users WHERE id=? LIMIT 1');
+        $stmt->execute([$id]);
+        $user = $stmt->fetch();
+        if (!$user || (string) ($user['role'] ?? '') === 'operator') {
+            return;
+        }
+
         $this->pdo->prepare('UPDATE users SET password_hash=? WHERE id=?')
             ->execute([password_hash($newPassword, PASSWORD_DEFAULT), $id]);
+    }
+
+    private function normalizeUserRole(string $role): string
+    {
+        return in_array($role, self::USER_ROLES, true) ? $role : 'user';
     }
 
     public function dayTypes(): array
