@@ -305,12 +305,17 @@ class InstallerService
             $pdo->exec("INSERT IGNORE INTO day_types (id, name, color_hex, is_locked) VALUES (1,'feriale','#FFFFFF',1),(2,'prefestivo','#FF9090',1),(3,'festivo','#FF0000',1),(4,'chiuso','#A0A0A0',1),(5,'Orario continuato','#59d1d9',1)");
             $this->seedUsers($pdo);
             $this->seedAppSettings($pdo);
-            $pdo->exec("INSERT IGNORE INTO daily_shift_config(id, day_type_id, start_time, end_time, closes_bar, priority) VALUES (1,1,'15:00:00','20:00:00',0,1),(2,1,'20:00:00','23:00:00',1,2),(3,2,'15:00:00','20:00:00',0,1),(4,2,'20:00:00','23:00:00',1,2),(5,3,'08:00:00','12:00:00',1,1),(6,3,'15:00:00','20:00:00',0,2),(7,3,'20:00:00','23:00:00',1,3),(8,4,'00:00:00','00:00:00',0,1),(9,5,'08:00:00','23:00:00',1,1)");
+            $this->seedDailyShiftConfig($pdo);
             $this->seedWeekdayClose($pdo);
             $this->seedCalendarDays($pdo);
         } catch (Throwable $e) {
             throw new \RuntimeException('Errore popolamento dati iniziali: ' . $e->getMessage(), 0, $e);
         }
+    }
+
+    private function seedDailyShiftConfig(PDO $pdo): void
+    {
+        $this->seedFromSqlFile($pdo, 'database/seed_daily_shift_config', 'daily_shift_config');
     }
 
     private function seedWeekdayClose(PDO $pdo): void
