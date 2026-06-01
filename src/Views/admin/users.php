@@ -40,36 +40,64 @@ $emptyPasswordError = (string) ($emptyPasswordError ?? '');
     <?php $isOperator = (string) ($u['role'] ?? '') === 'operator'; ?>
     <?php $userEmail = trim((string) ($u['email'] ?? '')); ?>
     <?php $receiveSystemMail = (string) ($u['receive_system_mail'] ?? 'no') === 'si' && $userEmail !== '' ? 'si' : 'no'; ?>
-    <?php $updateFormId = 'update-user-form-' . (int) $u['id']; ?>
+    <?php $userId = (int) $u['id']; ?>
+    <?php $updateFormId = 'update-user-form-' . $userId; ?>
     <tr>
       <td><?= htmlspecialchars($u['username']) ?></td>
       <td>
-        <form method="post" id="<?= htmlspecialchars($updateFormId) ?>" class="d-flex flex-wrap gap-1">
-          <input type="hidden" name="update_user_id" value="<?= (int) $u['id'] ?>">
-          <input type="text" name="alias" class="form-control form-control-sm" value="<?= htmlspecialchars((string) ($u['alias'] ?? '')) ?>" placeholder="Alias">
-          <input type="text" name="last_name" class="form-control form-control-sm" value="<?= htmlspecialchars($u['last_name']) ?>" required>
-          <input type="text" name="first_name" class="form-control form-control-sm" value="<?= htmlspecialchars($u['first_name']) ?>" required>
-          <input type="email" name="email" class="form-control form-control-sm js-user-email" value="<?= htmlspecialchars($userEmail) ?>" placeholder="Email">
-          <select name="receive_system_mail" class="form-select form-select-sm js-receive-system-mail" title="Email di sistema" <?= $userEmail === '' ? 'disabled' : '' ?>>
-            <option value="no" <?= $receiveSystemMail === 'no' ? 'selected' : '' ?>>no</option>
-            <option value="si" <?= $receiveSystemMail === 'si' ? 'selected' : '' ?>>si</option>
-          </select>
-          <input type="text" name="phone" class="form-control form-control-sm" value="<?= htmlspecialchars((string) ($u['phone'] ?? '')) ?>" placeholder="Telefono">
+        <form method="post" id="<?= htmlspecialchars($updateFormId) ?>" class="user-data-fields">
+          <input type="hidden" name="update_user_id" value="<?= $userId ?>">
+          <div class="user-data-field">
+            <label class="user-data-label" for="user-alias-<?= $userId ?>">Alias</label>
+            <input type="text" id="user-alias-<?= $userId ?>" name="alias" class="form-control form-control-sm" value="<?= htmlspecialchars((string) ($u['alias'] ?? '')) ?>" placeholder="Alias">
+          </div>
+          <div class="user-data-field">
+            <label class="user-data-label" for="user-last-name-<?= $userId ?>">Cognome</label>
+            <input type="text" id="user-last-name-<?= $userId ?>" name="last_name" class="form-control form-control-sm" value="<?= htmlspecialchars($u['last_name']) ?>" required>
+          </div>
+          <div class="user-data-field">
+            <label class="user-data-label" for="user-first-name-<?= $userId ?>">Nome</label>
+            <input type="text" id="user-first-name-<?= $userId ?>" name="first_name" class="form-control form-control-sm" value="<?= htmlspecialchars($u['first_name']) ?>" required>
+          </div>
+          <div class="user-data-field">
+            <label class="user-data-label" for="user-email-<?= $userId ?>">Email</label>
+            <input type="email" id="user-email-<?= $userId ?>" name="email" class="form-control form-control-sm js-user-email" value="<?= htmlspecialchars($userEmail) ?>" placeholder="Email">
+          </div>
+          <div class="user-data-field">
+            <label class="user-data-label" for="user-system-mail-<?= $userId ?>">Email sistema</label>
+            <select id="user-system-mail-<?= $userId ?>" name="receive_system_mail" class="form-select form-select-sm js-receive-system-mail" title="Email di sistema" <?= $userEmail === '' ? 'disabled' : '' ?>>
+              <option value="no" <?= $receiveSystemMail === 'no' ? 'selected' : '' ?>>no</option>
+              <option value="si" <?= $receiveSystemMail === 'si' ? 'selected' : '' ?>>si</option>
+            </select>
+          </div>
+          <div class="user-data-field">
+            <label class="user-data-label" for="user-phone-<?= $userId ?>">Telefono</label>
+            <input type="text" id="user-phone-<?= $userId ?>" name="phone" class="form-control form-control-sm" value="<?= htmlspecialchars((string) ($u['phone'] ?? '')) ?>" placeholder="Telefono">
+          </div>
           <?php if ($isProtectedAdmin): ?>
             <input type="hidden" name="role" value="<?= htmlspecialchars($u['role']) ?>">
             <input type="hidden" name="status" value="<?= htmlspecialchars($u['status']) ?>">
-            <span class="form-control form-control-sm bg-light">Ruolo/Stato bloccati</span>
+            <div class="user-data-field user-data-field-wide">
+              <span class="user-data-label">Ruolo/Stato</span>
+              <span class="form-control form-control-sm bg-light">Ruolo/Stato bloccati</span>
+            </div>
           <?php else: ?>
-            <select name="role" class="form-select form-select-sm">
-              <option value="admin" <?= $u['role'] === 'admin' ? 'selected' : '' ?>>admin</option>
-              <option value="user" <?= $u['role'] === 'user' ? 'selected' : '' ?>>user</option>
-              <option value="supervisor" <?= $u['role'] === 'supervisor' ? 'selected' : '' ?>>supervisor</option>
-              <option value="operator" <?= $u['role'] === 'operator' ? 'selected' : '' ?>>operator</option>
-            </select>
-            <select name="status" class="form-select form-select-sm js-status-select" data-active-class="text-success" data-inactive-class="text-danger">
-              <option value="attivo" <?= $u['status'] === 'attivo' ? 'selected' : '' ?>>attivo</option>
-              <option value="inattivo" <?= $u['status'] === 'inattivo' ? 'selected' : '' ?>>inattivo</option>
-            </select>
+            <div class="user-data-field">
+              <label class="user-data-label" for="user-role-<?= $userId ?>">Ruolo</label>
+              <select id="user-role-<?= $userId ?>" name="role" class="form-select form-select-sm">
+                <option value="admin" <?= $u['role'] === 'admin' ? 'selected' : '' ?>>admin</option>
+                <option value="user" <?= $u['role'] === 'user' ? 'selected' : '' ?>>user</option>
+                <option value="supervisor" <?= $u['role'] === 'supervisor' ? 'selected' : '' ?>>supervisor</option>
+                <option value="operator" <?= $u['role'] === 'operator' ? 'selected' : '' ?>>operator</option>
+              </select>
+            </div>
+            <div class="user-data-field">
+              <label class="user-data-label" for="user-status-<?= $userId ?>">Stato</label>
+              <select id="user-status-<?= $userId ?>" name="status" class="form-select form-select-sm js-status-select" data-active-class="text-success" data-inactive-class="text-danger">
+                <option value="attivo" <?= $u['status'] === 'attivo' ? 'selected' : '' ?>>attivo</option>
+                <option value="inattivo" <?= $u['status'] === 'inattivo' ? 'selected' : '' ?>>inattivo</option>
+              </select>
+            </div>
           <?php endif; ?>
         </form>
         </td>
