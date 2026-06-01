@@ -173,6 +173,40 @@
   vertical-align: middle;
 }
 
+.user-data-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.35rem 0.75rem;
+  align-items: center;
+}
+
+.user-data-field {
+  display: grid;
+  grid-template-columns: minmax(6.5rem, max-content) minmax(7rem, 1fr);
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.user-data-field-wide {
+  grid-column: span 2;
+}
+
+.user-data-label {
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+@media (max-width: 767.98px) {
+  .user-data-field,
+  .user-data-field-wide {
+    grid-column: auto;
+  }
+}
+
 .day-number {
   font-size: var(--board-day-number-size);
   font-weight: var(--board-day-number-weight);
