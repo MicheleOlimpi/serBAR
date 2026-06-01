@@ -261,6 +261,7 @@ class AppController
                     (string) ($_POST['last_name'] ?? ''),
                     (string) ($_POST['first_name'] ?? ''),
                     (string) ($_POST['email'] ?? ''),
+                    (string) ($_POST['receive_system_mail'] ?? 'no'),
                     (string) ($_POST['phone'] ?? ''),
                     (string) ($_POST['role'] ?? 'user'),
                     (string) ($_POST['status'] ?? 'attivo')
