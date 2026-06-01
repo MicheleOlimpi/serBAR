@@ -13,8 +13,8 @@ $emptyPasswordError = (string) ($emptyPasswordError ?? '');
   <div class="col"><input type="email" name="email" class="form-control js-user-email" placeholder="email"></div>
   <div class="col">
     <select name="receive_system_mail" class="form-select js-receive-system-mail" title="Email di sistema">
-      <option value="no" selected>mail sistema: no</option>
-      <option value="si">mail sistema: si</option>
+      <option value="no" selected>no</option>
+      <option value="si">si</option>
     </select>
   </div>
   <div class="col"><input name="phone" class="form-control" placeholder="telefono"></div>
@@ -51,8 +51,8 @@ $emptyPasswordError = (string) ($emptyPasswordError ?? '');
           <input type="text" name="first_name" class="form-control form-control-sm" value="<?= htmlspecialchars($u['first_name']) ?>" required>
           <input type="email" name="email" class="form-control form-control-sm js-user-email" value="<?= htmlspecialchars($userEmail) ?>" placeholder="Email">
           <select name="receive_system_mail" class="form-select form-select-sm js-receive-system-mail" title="Email di sistema" <?= $userEmail === '' ? 'disabled' : '' ?>>
-            <option value="no" <?= $receiveSystemMail === 'no' ? 'selected' : '' ?>>mail sistema: no</option>
-            <option value="si" <?= $receiveSystemMail === 'si' ? 'selected' : '' ?>>mail sistema: si</option>
+            <option value="no" <?= $receiveSystemMail === 'no' ? 'selected' : '' ?>>no</option>
+            <option value="si" <?= $receiveSystemMail === 'si' ? 'selected' : '' ?>>si</option>
           </select>
           <input type="text" name="phone" class="form-control form-control-sm" value="<?= htmlspecialchars((string) ($u['phone'] ?? '')) ?>" placeholder="Telefono">
           <?php if ($isProtectedAdmin): ?>
