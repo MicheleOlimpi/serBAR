@@ -1,3 +1,18 @@
+<?php
+$normalizeDayTypeColor = static function (?string $color): string {
+    $color = trim((string) $color);
+    return preg_match('/^#[0-9A-Fa-f]{6}$/', $color) === 1 ? $color : '#FFFFFF';
+};
+
+$getContrastColor = static function (string $hexColor): string {
+    $red = hexdec(substr($hexColor, 1, 2));
+    $green = hexdec(substr($hexColor, 3, 2));
+    $blue = hexdec(substr($hexColor, 5, 2));
+    $luminance = (($red * 299) + ($green * 587) + ($blue * 114)) / 1000;
+
+    return $luminance >= 140 ? '#212529' : '#FFFFFF';
+};
+?>
 <h4>TURNI GIORNALIERI</h4>
 <br>
 <?php if (!empty($error)): ?>
@@ -37,9 +52,13 @@
     <?php
       $closesBarValue = strtolower(trim((string) ($shift['closes_bar'] ?? '')));
       $closesBar = $closesBarValue === 'si' || $closesBarValue === 'sì' || $closesBarValue === '1' || $closesBarValue === 'true';
+      $dayTypeColor = $normalizeDayTypeColor($shift['day_type_color'] ?? null);
+      $dayTypeTextColor = $getContrastColor($dayTypeColor);
     ?>
     <tr>
-      <td><?= htmlspecialchars($shift['day_type_name']) ?></td>
+      <td style="--bs-table-bg: <?= htmlspecialchars($dayTypeColor) ?>; --bs-table-accent-bg: <?= htmlspecialchars($dayTypeColor) ?>; background-color: <?= htmlspecialchars($dayTypeColor) ?>; color: <?= htmlspecialchars($dayTypeTextColor) ?>;">
+        <?= htmlspecialchars($shift['day_type_name']) ?>
+      </td>
       <td><?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?></td>
       <td><?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?></td>
       <td>

@@ -240,7 +240,7 @@ class BarRepository
 
     public function shiftConfigs(): array
     {
-        $sql = 'SELECT c.*, d.name as day_type_name
+        $sql = 'SELECT c.*, d.name as day_type_name, d.color_hex as day_type_color
                 FROM daily_shift_config c
                 JOIN day_types d ON d.id=c.day_type_id
                 ORDER BY d.name ASC, c.priority ASC, c.start_time ASC';
