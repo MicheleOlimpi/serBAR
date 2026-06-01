@@ -315,7 +315,7 @@ class InstallerService
 
     private function seedDailyShiftConfig(PDO $pdo): void
     {
-        $this->seedFromSqlFile($pdo, 'database/seed_daily_shift_config', 'daily_shift_config');
+        $this->seedFromSqlFile($pdo, 'database/seed_daily_shift_config.sql', 'daily_shift_config');
     }
 
     private function seedWeekdayClose(PDO $pdo): void
