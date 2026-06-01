@@ -10,7 +10,13 @@ $emptyPasswordError = (string) ($emptyPasswordError ?? '');
   <div class="col"><input name="alias" class="form-control" placeholder="alias"></div>
   <div class="col"><input name="last_name" class="form-control" placeholder="cognome" required></div>
   <div class="col"><input name="first_name" class="form-control" placeholder="nome" required></div>
-  <div class="col"><input type="email" name="email" class="form-control" placeholder="email"></div>
+  <div class="col"><input type="email" name="email" class="form-control js-user-email" placeholder="email"></div>
+  <div class="col">
+    <select name="receive_system_mail" class="form-select js-receive-system-mail" title="Email di sistema">
+      <option value="no" selected>mail sistema: no</option>
+      <option value="si">mail sistema: si</option>
+    </select>
+  </div>
   <div class="col"><input name="phone" class="form-control" placeholder="telefono"></div>
   <div class="col"><input type="password" name="password" class="form-control" placeholder="password"></div>
   <div class="col"><select name="role" class="form-select js-create-role"><option value="admin">admin</option><option value="user" selected>user</option><option value="supervisor">supervisor</option><option value="operator">operator</option></select></div>
@@ -32,6 +38,8 @@ $emptyPasswordError = (string) ($emptyPasswordError ?? '');
   <?php foreach($users as $u): ?>
     <?php $isProtectedAdmin = strtolower((string) $u['username']) === 'admin'; ?>
     <?php $isOperator = (string) ($u['role'] ?? '') === 'operator'; ?>
+    <?php $userEmail = trim((string) ($u['email'] ?? '')); ?>
+    <?php $receiveSystemMail = (string) ($u['receive_system_mail'] ?? 'no') === 'si' && $userEmail !== '' ? 'si' : 'no'; ?>
     <?php $updateFormId = 'update-user-form-' . (int) $u['id']; ?>
     <tr>
       <td><?= htmlspecialchars($u['username']) ?></td>
@@ -41,7 +49,11 @@ $emptyPasswordError = (string) ($emptyPasswordError ?? '');
           <input type="text" name="alias" class="form-control form-control-sm" value="<?= htmlspecialchars((string) ($u['alias'] ?? '')) ?>" placeholder="Alias">
           <input type="text" name="last_name" class="form-control form-control-sm" value="<?= htmlspecialchars($u['last_name']) ?>" required>
           <input type="text" name="first_name" class="form-control form-control-sm" value="<?= htmlspecialchars($u['first_name']) ?>" required>
-          <input type="email" name="email" class="form-control form-control-sm" value="<?= htmlspecialchars((string) ($u['email'] ?? '')) ?>" placeholder="Email">
+          <input type="email" name="email" class="form-control form-control-sm js-user-email" value="<?= htmlspecialchars($userEmail) ?>" placeholder="Email">
+          <select name="receive_system_mail" class="form-select form-select-sm js-receive-system-mail" title="Email di sistema" <?= $userEmail === '' ? 'disabled' : '' ?>>
+            <option value="no" <?= $receiveSystemMail === 'no' ? 'selected' : '' ?>>mail sistema: no</option>
+            <option value="si" <?= $receiveSystemMail === 'si' ? 'selected' : '' ?>>mail sistema: si</option>
+          </select>
           <input type="text" name="phone" class="form-control form-control-sm" value="<?= htmlspecialchars((string) ($u['phone'] ?? '')) ?>" placeholder="Telefono">
           <?php if ($isProtectedAdmin): ?>
             <input type="hidden" name="role" value="<?= htmlspecialchars($u['role']) ?>">
@@ -222,6 +234,25 @@ $emptyPasswordError = (string) ($emptyPasswordError ?? '');
   const createUserForm = document.querySelector('form.row.g-2.mb-4');
   const createUserPasswordInput = createUserForm ? createUserForm.querySelector('input[name="password"]') : null;
   const createUserRoleSelect = createUserForm ? createUserForm.querySelector('select[name="role"]') : null;
+
+  document.querySelectorAll('form').forEach((form) => {
+    const emailInput = form.querySelector('.js-user-email');
+    const receiveSystemMailSelect = form.querySelector('.js-receive-system-mail');
+    if (!emailInput || !receiveSystemMailSelect) {
+      return;
+    }
+
+    const applyReceiveSystemMailState = () => {
+      const hasEmail = emailInput.value.trim() !== '';
+      receiveSystemMailSelect.disabled = !hasEmail;
+      if (!hasEmail) {
+        receiveSystemMailSelect.value = 'no';
+      }
+    };
+
+    emailInput.addEventListener('input', applyReceiveSystemMailState);
+    applyReceiveSystemMailState();
+  });
 
   const showEmptyPasswordModal = () => {
     if (emptyPasswordModalElement && typeof bootstrap !== 'undefined') {

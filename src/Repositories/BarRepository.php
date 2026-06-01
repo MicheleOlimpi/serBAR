@@ -32,6 +32,7 @@ class BarRepository
     private const PROGRAM_INFO_KEYS = ['program_name', 'program_author', 'program_version'];
     private const LOGIN_INFO_KEYS = ['login_info1', 'login_info2'];
     private const USER_ROLES = ['admin', 'user', 'supervisor', 'operator'];
+    private const SYSTEM_MAIL_VALUES = ['si', 'no'];
     private const OPERATOR_DEFAULT_PASSWORD = 'NoPass@serBAR';
 
     public function __construct(private PDO $pdo)
@@ -84,14 +85,17 @@ class BarRepository
 
         $role = $this->normalizeUserRole((string) ($data['role'] ?? 'user'));
         $password = $role === 'operator' ? self::OPERATOR_DEFAULT_PASSWORD : (string) ($data['password'] ?? '');
+        $email = trim((string) ($data['email'] ?? ''));
+        $receiveSystemMail = $this->normalizeReceiveSystemMail((string) ($data['receive_system_mail'] ?? 'no'), $email);
 
-        $this->pdo->prepare('INSERT INTO users (username,alias,last_name,first_name,email,password_hash,role,phone,status) VALUES (?,?,?,?,?,?,?,?,?)')
+        $this->pdo->prepare('INSERT INTO users (username,alias,last_name,first_name,email,receive_system_mail,password_hash,role,phone,status) VALUES (?,?,?,?,?,?,?,?,?,?)')
             ->execute([
                 $data['username'],
                 trim((string) ($data['alias'] ?? '')),
                 $data['last_name'],
                 $data['first_name'],
-                trim((string) ($data['email'] ?? '')),
+                $email,
+                $receiveSystemMail,
                 password_hash($password, PASSWORD_DEFAULT),
                 $role,
                 (string) ($data['phone'] ?? ''),
@@ -99,12 +103,13 @@ class BarRepository
             ]);
     }
 
-    public function updateUserProfile(int $id, string $alias, string $lastName, string $firstName, string $email, string $phone, string $role, string $status): void
+    public function updateUserProfile(int $id, string $alias, string $lastName, string $firstName, string $email, string $receiveSystemMail, string $phone, string $role, string $status): void
     {
         $alias = trim($alias);
         $lastName = trim($lastName);
         $firstName = trim($firstName);
         $email = trim($email);
+        $receiveSystemMail = $this->normalizeReceiveSystemMail($receiveSystemMail, $email);
         $phone = trim($phone);
         $role = $this->normalizeUserRole($role);
         $status = $status === 'inattivo' ? 'inattivo' : 'attivo';
@@ -125,8 +130,8 @@ class BarRepository
             $role = (string) ($user['role'] ?? 'admin');
         }
 
-        $this->pdo->prepare('UPDATE users SET alias=?, last_name=?, first_name=?, email=?, phone=?, role=?, status=? WHERE id=?')
-            ->execute([$alias, $lastName, $firstName, $email, $phone, $role, $status, $id]);
+        $this->pdo->prepare('UPDATE users SET alias=?, last_name=?, first_name=?, email=?, receive_system_mail=?, phone=?, role=?, status=? WHERE id=?')
+            ->execute([$alias, $lastName, $firstName, $email, $receiveSystemMail, $phone, $role, $status, $id]);
     }
 
     public function deleteUser(int $id): void
@@ -157,6 +162,20 @@ class BarRepository
 
         $this->pdo->prepare('UPDATE users SET password_hash=? WHERE id=?')
             ->execute([password_hash($newPassword, PASSWORD_DEFAULT), $id]);
+    }
+
+    private function normalizeReceiveSystemMail(string $receiveSystemMail, string $email): string
+    {
+        $receiveSystemMail = strtolower(trim($receiveSystemMail));
+        if (!in_array($receiveSystemMail, self::SYSTEM_MAIL_VALUES, true)) {
+            return 'no';
+        }
+
+        if ($receiveSystemMail === 'si' && trim($email) === '') {
+            return 'no';
+        }
+
+        return $receiveSystemMail;
     }
 
     private function normalizeUserRole(string $role): string
