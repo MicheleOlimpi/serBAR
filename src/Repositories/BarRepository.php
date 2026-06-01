@@ -32,6 +32,7 @@ class BarRepository
     private const PROGRAM_INFO_KEYS = ['program_name', 'program_author', 'program_version'];
     private const LOGIN_INFO_KEYS = ['login_info1', 'login_info2'];
     private const USER_ROLES = ['admin', 'user', 'supervisor', 'operator'];
+    private const USER_STATUSES = ['attivo', 'inattivo'];
     private const SYSTEM_MAIL_VALUES = ['si', 'no'];
     private const OPERATOR_DEFAULT_PASSWORD = 'NoPass@serBAR';
 
@@ -99,7 +100,7 @@ class BarRepository
                 password_hash($password, PASSWORD_DEFAULT),
                 $role,
                 (string) ($data['phone'] ?? ''),
-                $data['status'],
+                $this->normalizeUserStatus((string) ($data['status'] ?? 'attivo')),
             ]);
     }
 
@@ -112,7 +113,7 @@ class BarRepository
         $receiveSystemMail = $this->normalizeReceiveSystemMail($receiveSystemMail, $email);
         $phone = trim($phone);
         $role = $this->normalizeUserRole($role);
-        $status = $status === 'inattivo' ? 'inattivo' : 'attivo';
+        $status = $this->normalizeUserStatus($status);
 
         if ($id < 1 || $lastName === '' || $firstName === '') {
             return;
@@ -181,6 +182,11 @@ class BarRepository
     private function normalizeUserRole(string $role): string
     {
         return in_array($role, self::USER_ROLES, true) ? $role : 'user';
+    }
+
+    private function normalizeUserStatus(string $status): string
+    {
+        return in_array($status, self::USER_STATUSES, true) ? $status : 'attivo';
     }
 
     public function dayTypes(): array
