@@ -101,12 +101,6 @@ if ($dayPointer !== 0) {
   <div class="alert alert-info mx-auto" style="max-width: 720px;">Nessun turno pubblicato per il mese corrente.</div>
 <?php else: ?>
   <div class="public-panel-calendar">
-    <div class="public-panel-weekdays">
-      <?php foreach ($weekdayHeaders as $weekdayHeader): ?>
-        <div class="public-panel-weekday-header text-uppercase"><?= htmlspecialchars($weekdayHeader) ?></div>
-      <?php endforeach; ?>
-    </div>
-
     <div class="public-panel-weeks">
       <?php foreach ($weeks as $week): ?>
         <div class="public-panel-week-row">
@@ -129,7 +123,7 @@ if ($dayPointer !== 0) {
                         <?php foreach ($day['shifts'] as $groupShift): ?>
                           <tr>
                             <td class="text-nowrap"><?= htmlspecialchars($groupShift['start_time']) ?></td>
-                            <td><?= htmlspecialchars($groupShift['volunteers'] !== '' ? $groupShift['volunteers'] : '-') ?></td>
+                            <td><?= htmlspecialchars($groupShift['volunteers'] !== '' ? $groupShift['volunteers'] : ' ') ?></td>
                           </tr>
                         <?php endforeach; ?>
                       </tbody>
