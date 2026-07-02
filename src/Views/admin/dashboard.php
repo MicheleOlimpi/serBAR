@@ -98,7 +98,15 @@ $statusBadgeMap = [
               $isTrimmed = function_exists('mb_strlen') ? mb_strlen($message) > 30 : strlen($message) > 30;
               ?>
               <?php $statusClass = $statusBadgeMap[(string) ($n['status'] ?? '')] ?? 'text-bg-secondary'; ?>
-              <li>
+              <li
+                class="notification-clickable-row js-notification-row"
+                role="button"
+                tabindex="0"
+                data-username="<?= htmlspecialchars((string) $n['username'], ENT_QUOTES, 'UTF-8') ?>"
+                data-status="<?= htmlspecialchars($statusLabels[(string) ($n['status'] ?? '')] ?? (string) ($n['status'] ?? 'Sconosciuto'), ENT_QUOTES, 'UTF-8') ?>"
+                data-status-class="<?= htmlspecialchars($statusClass, ENT_QUOTES, 'UTF-8') ?>"
+                data-message="<?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?>"
+              >
                 <?= htmlspecialchars($notificationDate) ?> -
                 <?= htmlspecialchars((string) $n['username']) ?> -
                 <button
@@ -137,15 +145,32 @@ $statusBadgeMap = [
   </div>
 </div>
 <script>
+const showNotificationDetail = (source) => {
+  const username = source.dataset.username || '';
+  const status = source.dataset.status || '';
+  const statusClass = source.dataset.statusClass || 'text-bg-secondary';
+  const modalTitle = document.getElementById('notificationDetailModalLabel');
+  const modalMessage = document.getElementById('notificationDetailMessage');
+  const modalElement = document.getElementById('notificationDetailModal');
+  if (modalTitle) modalTitle.innerHTML = 'Segnalazione da: ' + username + ' <span class="badge ' + statusClass + '">' + status + '</span>';
+  if (modalMessage) modalMessage.textContent = source.dataset.message || '';
+  if (modalElement && window.bootstrap) bootstrap.Modal.getOrCreateInstance(modalElement).show();
+};
+
+document.querySelectorAll('.js-notification-row').forEach((row) => {
+  row.addEventListener('click', () => showNotificationDetail(row));
+  row.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      showNotificationDetail(row);
+    }
+  });
+});
+
 document.querySelectorAll('.js-notification-detail').forEach((button) => {
-  button.addEventListener('click', () => {
-    const username = button.dataset.username || '';
-    const status = button.dataset.status || '';
-    const statusClass = button.dataset.statusClass || 'text-bg-secondary';
-    const modalTitle = document.getElementById('notificationDetailModalLabel');
-    const modalMessage = document.getElementById('notificationDetailMessage');
-    if (modalTitle) modalTitle.innerHTML = 'Segnalazione da: ' + username + ' <span class="badge ' + statusClass + '">' + status + '</span>'; 
-    if (modalMessage) modalMessage.textContent = button.dataset.message || '';
+  button.addEventListener('click', (event) => {
+    event.stopPropagation();
+    showNotificationDetail(button);
   });
 });
 </script>

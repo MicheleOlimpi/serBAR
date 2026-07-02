@@ -436,3 +436,7 @@ textarea::placeholder,
     grid-template-columns: 1fr;
   }
 }
+
+.notification-clickable-row {
+  cursor: pointer;
+}
