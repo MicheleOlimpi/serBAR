@@ -677,7 +677,7 @@ class BarRepository
         $stmtConfig->execute([$dayTypeId]);
         $configs = $stmtConfig->fetchAll();
 
-        $stmtCurrent = $this->pdo->prepare('SELECT id, priority, volunteers, responsabile_chiusura FROM board_day_shifts WHERE board_day_id=?');
+        $stmtCurrent = $this->pdo->prepare('SELECT id, priority, start_time, end_time, volunteers, responsabile_chiusura FROM board_day_shifts WHERE board_day_id=?');
         $stmtCurrent->execute([$boardDayId]);
         $currentRows = $stmtCurrent->fetchAll();
 
@@ -692,13 +692,16 @@ class BarRepository
         foreach ($configs as $config) {
             $priority = (int) $config['priority'];
             $priorities[] = $priority;
-            $volunteers = $currentByPriority[$priority]['volunteers'] ?? null;
-            $responsabileChiusura = $currentByPriority[$priority]['responsabile_chiusura'] ?? null;
+            $currentRow = $currentByPriority[$priority] ?? [];
+            $volunteers = $currentRow['volunteers'] ?? null;
+            $responsabileChiusura = $currentRow['responsabile_chiusura'] ?? null;
+            $startTime = $currentRow['start_time'] ?? $config['start_time'];
+            $endTime = $currentRow['end_time'] ?? $config['end_time'];
             $upsert->execute([
                 $boardDayId,
                 (int) $config['id'],
-                $config['start_time'],
-                $config['end_time'],
+                $startTime,
+                $endTime,
                 (int) $config['closes_bar'],
                 $priority,
                 $volunteers,
@@ -718,9 +721,18 @@ class BarRepository
         }
     }
 
-    public function updateBoardDayShiftVolunteers(int $shiftId, string $volunteers, ?string $responsabileChiusura): void
+    public function updateBoardDayShift(int $shiftId, string $volunteers, ?string $responsabileChiusura, string $timeRange): void
     {
-        $this->pdo->prepare('UPDATE board_day_shifts SET volunteers=?, responsabile_chiusura=? WHERE id=?')->execute([$volunteers, $responsabileChiusura, $shiftId]);
+        $times = $this->parseTimeRange($timeRange);
+
+        if ($times === null) {
+            $this->pdo->prepare('UPDATE board_day_shifts SET volunteers=?, responsabile_chiusura=? WHERE id=?')
+                ->execute([$volunteers, $responsabileChiusura, $shiftId]);
+            return;
+        }
+
+        $this->pdo->prepare('UPDATE board_day_shifts SET start_time=?, end_time=?, volunteers=?, responsabile_chiusura=? WHERE id=?')
+            ->execute([$times['start_time'], $times['end_time'], $volunteers, $responsabileChiusura, $shiftId]);
     }
 
     public function createNotification(int $userId, string $msg): void
@@ -857,6 +869,18 @@ class BarRepository
     private function isValidTime(string $time): bool
     {
         return (bool) preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $time);
+    }
+
+    private function parseTimeRange(string $timeRange): ?array
+    {
+        if (!preg_match('/^([01]?\d|2[0-3]):([0-5]\d)\s*-\s*([01]?\d|2[0-3]):([0-5]\d)$/', $timeRange, $matches)) {
+            return null;
+        }
+
+        return [
+            'start_time' => sprintf('%02d:%s:00', (int) $matches[1], $matches[2]),
+            'end_time' => sprintf('%02d:%s:00', (int) $matches[3], $matches[4]),
+        ];
     }
 
     private function hasPriorityConflict(int $dayTypeId, int $priority, ?int $excludeId = null): bool

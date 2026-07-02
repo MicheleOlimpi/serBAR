@@ -47,6 +47,7 @@ $boardGeneratedHeaderYear = (int) ($board['year'] ?? 0);
   .day-type-selector { max-width: 140px; }
   .day-number { font-size: 1.75rem; font-weight: 700; line-height: 1; }
   .responsible-section-hidden { display: none; }
+  .shift-time-input { max-width: 150px; }
 
 </style>
 <?php if (Auth::isAdmin() && !$generate): ?><form method="post"><?php endif; ?>
@@ -100,9 +101,16 @@ $boardGeneratedHeaderYear = (int) ($board['year'] ?? 0);
           <?php if (!$generate && Auth::isAdmin()): ?>
             <div class="shift-grid">
               <div>
-                <div class="small fw-semibold">
-                  <?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?> - <?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?>
-                </div>
+                <label class="form-label small fw-semibold mb-1" for="shift-time-<?= (int) $shift['id'] ?>">Orario</label>
+                <input
+                  id="shift-time-<?= (int) $shift['id'] ?>"
+                  class="form-control form-control-sm shift-time-input"
+                  name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][time_range]"
+                  value="<?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5) . ' - ' . substr((string) $shift['end_time'], 0, 5)) ?>"
+                  placeholder="HH:MM - HH:MM"
+                  inputmode="numeric"
+                  pattern="^([01]?[0-9]|2[0-3]):[0-5][0-9]\s*-\s*([01]?[0-9]|2[0-3]):[0-5][0-9]$"
+                >
               </div>
               <div>
                 <input id="volunteers-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][volunteers]" value="<?= htmlspecialchars((string) ($shift['volunteers'] ?? '')) ?>" placeholder="Volontari in turno">
