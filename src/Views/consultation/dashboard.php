@@ -163,7 +163,7 @@ $statusLabels = [
           <div class="alert alert-info mb-0">Non ci sono ancora segnalazioni.</div>
         <?php else: ?>
           <div class="table-responsive">
-            <table class="table table-sm align-middle mb-0">
+            <table class="table table-sm table-hover align-middle mb-0">
               <thead class="table-light">
                 <tr>
                   <th>Data</th>
@@ -191,7 +191,15 @@ $statusLabels = [
                         ? ((function_exists('mb_substr') ? mb_substr($message, 0, 20) : substr($message, 0, 20)) . '…')
                         : $message;
                   ?>
-                  <tr>
+                  <tr
+                    class="notification-clickable-row js-notification-row"
+                    role="button"
+                    tabindex="0"
+                    data-username="<?= htmlspecialchars((string) $n['username'], ENT_QUOTES, 'UTF-8') ?>"
+                    data-status="<?= htmlspecialchars($statusLabels[$n['status']] ?? $n['status'], ENT_QUOTES, 'UTF-8') ?>"
+                    data-status-class="<?= htmlspecialchars($statusClass, ENT_QUOTES, 'UTF-8') ?>"
+                    data-message="<?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?>"
+                  >
                     <td><?= htmlspecialchars($createdAtFormatted) ?></td>
                     <td><?= htmlspecialchars($n['username']) ?></td>
                     <td>
@@ -234,15 +242,32 @@ $statusLabels = [
   </div>
 </div>
 <script>
+const showNotificationDetail = (source) => {
+  const username = source.dataset.username || '';
+  const status = source.dataset.status || '';
+  const statusClass = source.dataset.statusClass || 'text-bg-secondary';
+  const modalTitle = document.getElementById('notificationDetailModalLabel');
+  const modalMessage = document.getElementById('notificationDetailMessage');
+  const modalElement = document.getElementById('notificationDetailModal');
+  if (modalTitle) modalTitle.innerHTML = 'Segnalazione da: ' + username + ' <span class="badge ' + statusClass + '">' + status + '</span>';
+  if (modalMessage) modalMessage.textContent = source.dataset.message || '';
+  if (modalElement && window.bootstrap) bootstrap.Modal.getOrCreateInstance(modalElement).show();
+};
+
+document.querySelectorAll('.js-notification-row').forEach((row) => {
+  row.addEventListener('click', () => showNotificationDetail(row));
+  row.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      showNotificationDetail(row);
+    }
+  });
+});
+
 document.querySelectorAll('.js-notification-detail').forEach((button) => {
-  button.addEventListener('click', () => {
-    const username = button.dataset.username || '';
-    const status = button.dataset.status || '';
-    const statusClass = button.dataset.statusClass || 'text-bg-secondary';
-    const modalTitle = document.getElementById('notificationDetailModalLabel');
-    const modalMessage = document.getElementById('notificationDetailMessage');
-    if (modalTitle) modalTitle.innerHTML = 'Segnalazione da: ' + username + ' <span class="badge ' + statusClass + '">' + status + '</span>'; 
-    if (modalMessage) modalMessage.textContent = button.dataset.message || '';
+  button.addEventListener('click', (event) => {
+    event.stopPropagation();
+    showNotificationDetail(button);
   });
 });
 </script>
