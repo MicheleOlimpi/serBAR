@@ -86,7 +86,7 @@ $consultationNavItems['information'] = ['label' => 'Informazioni', 'href' => '?a
         </ul>
         <div class="d-flex align-items-center gap-2">
           <span class="app-navbar-user"><?= htmlspecialchars($u['username']) ?></span>
-          <a class="btn btn-sm app-navbar-logout" href="?action=logout" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">Logout</a>
+          <button type="button" class="btn btn-sm app-navbar-logout js-logout-confirm-trigger" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">Logout</button>
         </div>
       </div>
     <?php elseif ($u): ?>
@@ -107,7 +107,7 @@ $consultationNavItems['information'] = ['label' => 'Informazioni', 'href' => '?a
         </ul>
         <div class="d-flex align-items-center gap-2">
           <span class="app-navbar-user"><?= htmlspecialchars($u['username']) ?></span>
-          <a class="btn btn-sm app-navbar-logout" href="?action=logout" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">Logout</a>
+          <button type="button" class="btn btn-sm app-navbar-logout js-logout-confirm-trigger" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">Logout</button>
         </div>
       </div>
     <?php endif; ?>
