@@ -200,7 +200,7 @@ $emptyPasswordError = (string) ($emptyPasswordError ?? '');
 </div>
 
 <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <form method="post" id="changePasswordForm">
         <div class="modal-header">
