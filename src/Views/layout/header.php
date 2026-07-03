@@ -4,6 +4,10 @@ use App\Core\Auth;
 
 $u = Auth::user();
 $currentAction = (string) ($_GET['action'] ?? 'dashboard');
+$currentUrl = (string) (($_SERVER['REQUEST_URI'] ?? './') ?: './');
+$profilePasswordChangeError = (string) ($_SESSION['profile_password_change_error'] ?? '');
+$profilePasswordChangeSuccess = (string) ($_SESSION['profile_password_change_success'] ?? '');
+unset($_SESSION['profile_password_change_error'], $_SESSION['profile_password_change_success']);
 $isLoginPage = $currentAction === 'login';
 $isInstallView = (bool) ($isInstallView ?? false);
 $isCenteredLayout = $isLoginPage || $isInstallView;
@@ -84,10 +88,23 @@ $consultationNavItems['information'] = ['label' => 'Informazioni', 'href' => '?a
             </li>
           <?php endforeach; ?>
         </ul>
-        <div class="d-flex align-items-center gap-2">
-          <span class="app-navbar-user"><?= htmlspecialchars($u['username']) ?></span>
-          <a class="btn btn-sm app-navbar-logout" href="?action=logout">Logout</a>
-        </div>
+        <ul class="navbar-nav align-items-lg-center gap-lg-2">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle app-navbar-user" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fa-solid fa-user me-1" aria-hidden="true"></i><?= htmlspecialchars($u['username']) ?>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li>
+                <button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#profileChangePasswordModal">
+                  <i class="fa-solid fa-key me-2" aria-hidden="true"></i>Cambio password
+                </button>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-sm app-navbar-logout" href="?action=logout">Logout</a>
+          </li>
+        </ul>
       </div>
     <?php elseif ($u): ?>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#consultationNavbar" aria-controls="consultationNavbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -105,13 +122,119 @@ $consultationNavItems['information'] = ['label' => 'Informazioni', 'href' => '?a
             </li>
           <?php endforeach; ?>
         </ul>
-        <div class="d-flex align-items-center gap-2">
-          <span class="app-navbar-user"><?= htmlspecialchars($u['username']) ?></span>
-          <a class="btn btn-sm app-navbar-logout" href="?action=logout">Logout</a>
-        </div>
+        <ul class="navbar-nav align-items-lg-center gap-lg-2">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle app-navbar-user" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fa-solid fa-user me-1" aria-hidden="true"></i><?= htmlspecialchars($u['username']) ?>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li>
+                <button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#profileChangePasswordModal">
+                  <i class="fa-solid fa-key me-2" aria-hidden="true"></i>Cambio password
+                </button>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-sm app-navbar-logout" href="?action=logout">Logout</a>
+          </li>
+        </ul>
       </div>
     <?php endif; ?>
   </div>
 </nav>
+<?php endif; ?>
+<?php if ($u && !$isLoginPage && !$isInstallView && !$isBoardGenerateView && !$isPublicPanelView): ?>
+<div class="modal fade" id="profileChangePasswordModal" tabindex="-1" aria-labelledby="profileChangePasswordModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" id="profileChangePasswordForm" action="?action=change_password">
+        <input type="hidden" name="redirect_to" value="<?= htmlspecialchars($currentUrl) ?>">
+        <div class="modal-header">
+          <h5 class="modal-title" id="profileChangePasswordModalLabel">Cambio password utente</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+        </div>
+        <div class="modal-body">
+          <p>Utente: <strong><?= htmlspecialchars($u['username']) ?></strong></p>
+          <?php if ($profilePasswordChangeError !== ''): ?>
+            <div class="alert alert-danger"><?= htmlspecialchars($profilePasswordChangeError) ?></div>
+          <?php endif; ?>
+          <?php if ($profilePasswordChangeSuccess !== ''): ?>
+            <div class="alert alert-success"><?= htmlspecialchars($profilePasswordChangeSuccess) ?></div>
+          <?php endif; ?>
+          <div class="mb-3">
+            <label for="profileNewPasswordInput" class="form-label">Nuova password</label>
+            <input type="password" class="form-control" id="profileNewPasswordInput" name="new_password">
+          </div>
+          <div>
+            <label for="profileConfirmPasswordInput" class="form-label">Ripeti nuova password</label>
+            <input type="password" class="form-control" id="profileConfirmPasswordInput" name="confirm_new_password">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+          <button class="btn btn-primary">Salva</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="profileEmptyPasswordModal" tabindex="-1" aria-labelledby="profileEmptyPasswordModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title d-flex align-items-center gap-2" id="profileEmptyPasswordModalLabel">
+          <i class="fa-solid fa-circle-exclamation modal-icon" aria-hidden="true"></i>
+          Password non valida
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+      </div>
+      <div class="modal-body">La password non può essere vuota.</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const profileChangePasswordModalElement = document.getElementById('profileChangePasswordModal');
+    const profileEmptyPasswordModalElement = document.getElementById('profileEmptyPasswordModal');
+    const profileChangePasswordForm = document.getElementById('profileChangePasswordForm');
+    const profileNewPasswordInput = document.getElementById('profileNewPasswordInput');
+    const profileConfirmPasswordInput = document.getElementById('profileConfirmPasswordInput');
+
+    const showProfileEmptyPasswordModal = () => {
+      if (profileEmptyPasswordModalElement && typeof bootstrap !== 'undefined') {
+        const emptyPasswordModal = new bootstrap.Modal(profileEmptyPasswordModalElement);
+        emptyPasswordModal.show();
+      }
+    };
+
+    if (profileChangePasswordForm && profileNewPasswordInput && profileConfirmPasswordInput) {
+      profileChangePasswordForm.addEventListener('submit', (event) => {
+        if (profileNewPasswordInput.value.trim() === '') {
+          event.preventDefault();
+          showProfileEmptyPasswordModal();
+        } else if (profileNewPasswordInput.value !== profileConfirmPasswordInput.value) {
+          event.preventDefault();
+          profileConfirmPasswordInput.setCustomValidity('Le password non coincidono.');
+          profileConfirmPasswordInput.reportValidity();
+        } else {
+          profileConfirmPasswordInput.setCustomValidity('');
+        }
+      });
+
+      profileConfirmPasswordInput.addEventListener('input', () => {
+        profileConfirmPasswordInput.setCustomValidity('');
+      });
+    }
+
+    if (profileChangePasswordModalElement && <?= ($profilePasswordChangeError !== '' || $profilePasswordChangeSuccess !== '') ? 'true' : 'false' ?>) {
+      const passwordModal = new bootstrap.Modal(profileChangePasswordModalElement);
+      passwordModal.show();
+    }
+  });
+</script>
 <?php endif; ?>
 <div class="<?= $isPublicPanelView ? 'container-fluid py-4 px-3' : ($isBoardGenerateView ? 'container-fluid p-0' : ($isBoardEditView ? 'container-fluid pb-5 px-3' : 'container pb-5')) ?><?= $isCenteredLayout ? ' min-vh-100 d-flex align-items-center justify-content-center' : '' ?>"<?= $isBoardEditView ? ' style="width: 90vw; max-width: 90vw;"' : '' ?>>

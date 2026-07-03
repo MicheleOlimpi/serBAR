@@ -41,6 +41,7 @@ $routes = [
     '' => 'dashboard',
     'login' => 'login',
     'logout' => 'logout',
+    'change_password' => 'changePassword',
     'boards' => 'boards',
     'board_edit' => 'boardEdit',
     'users' => 'users',

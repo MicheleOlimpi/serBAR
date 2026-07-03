@@ -56,6 +56,30 @@ class AppController
         View::redirect('?action=login');
     }
 
+    public function changePassword(): void
+    {
+        $this->guard();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            View::redirect('./');
+        }
+
+        $newPassword = (string) ($_POST['new_password'] ?? '');
+        $confirmPassword = (string) ($_POST['confirm_new_password'] ?? '');
+        $redirectTo = $this->safeRedirectPath((string) ($_POST['redirect_to'] ?? './'));
+
+        if ($newPassword === '') {
+            $_SESSION['profile_password_change_error'] = 'La password non può essere vuota.';
+        } elseif ($newPassword !== $confirmPassword) {
+            $_SESSION['profile_password_change_error'] = 'Le due password non coincidono.';
+        } else {
+            $this->repo->changeUserPassword((int) (Auth::user()['id'] ?? 0), $newPassword);
+            $_SESSION['profile_password_change_success'] = 'Password cambiata correttamente.';
+        }
+
+        View::redirect($redirectTo);
+    }
+
     public function dashboard(): void
     {
         $this->guard();
@@ -710,6 +734,16 @@ class AppController
         if (!Auth::isAdmin()) {
             View::redirect('./');
         }
+    }
+
+    private function safeRedirectPath(string $path): string
+    {
+        $path = trim($path);
+        if ($path === '' || preg_match('/^[a-z][a-z0-9+.-]*:/i', $path) === 1 || str_starts_with($path, '//')) {
+            return './';
+        }
+
+        return $path;
     }
 
     private function boardStatusForMonthOffset(int $monthOffset): array
