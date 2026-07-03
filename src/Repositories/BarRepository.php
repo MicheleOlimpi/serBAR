@@ -48,6 +48,14 @@ class BarRepository
         return $row ?: null;
     }
 
+    public function findUserById(int $id): ?array
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM users WHERE id = ? LIMIT 1');
+        $stmt->execute([$id]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+
     public function activeUsers(): array
     {
         return $this->pdo->query("SELECT * FROM users WHERE status='attivo' ORDER BY last_name, first_name")->fetchAll();

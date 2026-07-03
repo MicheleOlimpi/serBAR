@@ -56,6 +56,45 @@ class AppController
         View::redirect('?action=login');
     }
 
+
+    public function changePassword(): void
+    {
+        $this->guard();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            View::redirect('./');
+        }
+
+        $currentUser = Auth::user();
+        $userId = (int) ($currentUser['id'] ?? 0);
+        $user = $this->repo->findUserById($userId);
+        $currentPassword = (string) ($_POST['current_password'] ?? '');
+        $newPassword = trim((string) ($_POST['new_password'] ?? ''));
+        $confirmPassword = trim((string) ($_POST['confirm_new_password'] ?? ''));
+
+        if (!$user || !password_verify($currentPassword, (string) ($user['password_hash'] ?? ''))) {
+            $_SESSION['password_change_error'] = 'La password attuale non è corretta.';
+        } elseif ($newPassword === '') {
+            $_SESSION['password_change_error'] = 'La nuova password non può essere vuota.';
+        } elseif ($newPassword !== $confirmPassword) {
+            $_SESSION['password_change_error'] = 'Le due password non coincidono.';
+        } else {
+            $this->repo->changeUserPassword($userId, $newPassword);
+            $updatedUser = $this->repo->findUserById($userId);
+            if ($updatedUser) {
+                Auth::login($updatedUser);
+            }
+            $_SESSION['password_change_success'] = 'Password aggiornata correttamente.';
+        }
+
+        $redirectTo = (string) ($_POST['redirect_to'] ?? './');
+        if ($redirectTo === '' || str_contains($redirectTo, '://') || str_starts_with($redirectTo, '//')) {
+            $redirectTo = './';
+        }
+
+        View::redirect($redirectTo);
+    }
+
     public function dashboard(): void
     {
         $this->guard();

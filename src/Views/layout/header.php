@@ -3,6 +3,9 @@
 use App\Core\Auth;
 
 $u = Auth::user();
+$passwordChangeSuccess = (string) ($_SESSION['password_change_success'] ?? '');
+$passwordChangeError = (string) ($_SESSION['password_change_error'] ?? '');
+unset($_SESSION['password_change_success'], $_SESSION['password_change_error']);
 $currentAction = (string) ($_GET['action'] ?? 'dashboard');
 $isLoginPage = $currentAction === 'login';
 $isInstallView = (bool) ($isInstallView ?? false);
@@ -84,9 +87,15 @@ $consultationNavItems['information'] = ['label' => 'Informazioni', 'href' => '?a
             </li>
           <?php endforeach; ?>
         </ul>
-        <div class="d-flex align-items-center gap-2">
-          <span class="app-navbar-user"><?= htmlspecialchars($u['username']) ?></span>
-          <button type="button" class="btn btn-sm app-navbar-logout js-logout-confirm-trigger" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">Logout</button>
+        <div class="dropdown">
+          <button class="btn btn-sm app-navbar-user dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <?= htmlspecialchars($u['username']) ?>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#changeOwnPasswordModal">Cambia password</button></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><button class="dropdown-item js-logout-confirm-trigger" type="button" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">Logout</button></li>
+          </ul>
         </div>
       </div>
     <?php elseif ($u): ?>
@@ -105,9 +114,15 @@ $consultationNavItems['information'] = ['label' => 'Informazioni', 'href' => '?a
             </li>
           <?php endforeach; ?>
         </ul>
-        <div class="d-flex align-items-center gap-2">
-          <span class="app-navbar-user"><?= htmlspecialchars($u['username']) ?></span>
-          <button type="button" class="btn btn-sm app-navbar-logout js-logout-confirm-trigger" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">Logout</button>
+        <div class="dropdown">
+          <button class="btn btn-sm app-navbar-user dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <?= htmlspecialchars($u['username']) ?>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#changeOwnPasswordModal">Cambia password</button></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><button class="dropdown-item js-logout-confirm-trigger" type="button" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">Logout</button></li>
+          </ul>
         </div>
       </div>
     <?php endif; ?>
@@ -115,6 +130,53 @@ $consultationNavItems['information'] = ['label' => 'Informazioni', 'href' => '?a
 </nav>
 <?php endif; ?>
 <?php if ($u && !$isLoginPage && !$isInstallView && !$isBoardGenerateView && !$isPublicPanelView): ?>
+<?php if ($passwordChangeSuccess !== ''): ?>
+<div class="container">
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <?= htmlspecialchars($passwordChangeSuccess) ?>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Chiudi"></button>
+  </div>
+</div>
+<?php endif; ?>
+<?php if ($passwordChangeError !== ''): ?>
+<div class="container">
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <?= htmlspecialchars($passwordChangeError) ?>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Chiudi"></button>
+  </div>
+</div>
+<?php endif; ?>
+<div class="modal fade" id="changeOwnPasswordModal" tabindex="-1" aria-labelledby="changeOwnPasswordModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form method="post" action="?action=change_password">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="changeOwnPasswordModalLabel">Cambia password</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="redirect_to" value="<?= htmlspecialchars((string) ($_SERVER['REQUEST_URI'] ?? './'), ENT_QUOTES, 'UTF-8') ?>">
+          <div class="mb-3">
+            <label class="form-label" for="currentPasswordInput">Password attuale</label>
+            <input class="form-control" id="currentPasswordInput" type="password" name="current_password" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="ownNewPasswordInput">Nuova password</label>
+            <input class="form-control" id="ownNewPasswordInput" type="password" name="new_password" required>
+          </div>
+          <div class="mb-0">
+            <label class="form-label" for="ownConfirmPasswordInput">Ripeti nuova password</label>
+            <input class="form-control" id="ownConfirmPasswordInput" type="password" name="confirm_new_password" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+          <button type="submit" class="btn btn-primary">Salva</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 <div class="modal fade" id="logoutConfirmModal" tabindex="-1" aria-labelledby="logoutConfirmModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
