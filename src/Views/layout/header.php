@@ -86,7 +86,7 @@ $consultationNavItems['information'] = ['label' => 'Informazioni', 'href' => '?a
         </ul>
         <div class="d-flex align-items-center gap-2">
           <span class="app-navbar-user"><?= htmlspecialchars($u['username']) ?></span>
-          <a class="btn btn-sm app-navbar-logout" href="?action=logout">Logout</a>
+          <a class="btn btn-sm app-navbar-logout" href="?action=logout" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">Logout</a>
         </div>
       </div>
     <?php elseif ($u): ?>
@@ -107,11 +107,30 @@ $consultationNavItems['information'] = ['label' => 'Informazioni', 'href' => '?a
         </ul>
         <div class="d-flex align-items-center gap-2">
           <span class="app-navbar-user"><?= htmlspecialchars($u['username']) ?></span>
-          <a class="btn btn-sm app-navbar-logout" href="?action=logout">Logout</a>
+          <a class="btn btn-sm app-navbar-logout" href="?action=logout" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">Logout</a>
         </div>
       </div>
     <?php endif; ?>
   </div>
 </nav>
+<?php endif; ?>
+<?php if ($u && !$isLoginPage && !$isInstallView && !$isBoardGenerateView && !$isPublicPanelView): ?>
+<div class="modal fade" id="logoutConfirmModal" tabindex="-1" aria-labelledby="logoutConfirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="logoutConfirmModalLabel">Conferma logout</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+      </div>
+      <div class="modal-body">
+        Si vuole veramente uscire?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+        <a class="btn btn-primary" href="?action=logout">Si</a>
+      </div>
+    </div>
+  </div>
+</div>
 <?php endif; ?>
 <div class="<?= $isPublicPanelView ? 'container-fluid py-4 px-3' : ($isBoardGenerateView ? 'container-fluid p-0' : ($isBoardEditView ? 'container-fluid pb-5 px-3' : 'container pb-5')) ?><?= $isCenteredLayout ? ' min-vh-100 d-flex align-items-center justify-content-center' : '' ?>"<?= $isBoardEditView ? ' style="width: 90vw; max-width: 90vw;"' : '' ?>>
