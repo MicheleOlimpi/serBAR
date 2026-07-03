@@ -146,7 +146,7 @@ $consultationNavItems['information'] = ['label' => 'Informazioni', 'href' => '?a
 <?php endif; ?>
 <?php if ($u && !$isLoginPage && !$isInstallView && !$isBoardGenerateView && !$isPublicPanelView): ?>
 <div class="modal fade" id="profileChangePasswordModal" tabindex="-1" aria-labelledby="profileChangePasswordModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <form method="post" id="profileChangePasswordForm" action="?action=change_password">
         <input type="hidden" name="redirect_to" value="<?= htmlspecialchars($currentUrl) ?>">
