@@ -158,20 +158,12 @@ $statusLabels = [
   <div class="col-12 col-xl-5">
     <div class="card border-0 shadow-sm">
       <div class="card-body p-4">
-        <h5 class="card-title mb-3">SEGNALAZIONI</h5>
+        <h5 class="card-title mb-3">Segnalazioni</h5>
         <?php if (empty($notifications)): ?>
-          <div class="alert alert-info mb-0">Non ci sono ancora segnalazioni.</div>
+          <div class="alert alert-info mb-0">Nessuna segnalazione disponibile.</div>
         <?php else: ?>
           <div class="table-responsive">
             <table class="table table-sm table-hover align-middle mb-0">
-              <thead class="table-light">
-                <tr>
-                  <th>Data</th>
-                  <th>Utente</th>
-                  <th>Testo</th>
-                  <th>Stato</th>
-                </tr>
-              </thead>
               <tbody>
                 <?php foreach ($notifications as $n): ?>
                   <?php $statusClass = $statusClassMap[$n['status']] ?? 'text-bg-secondary'; ?>
