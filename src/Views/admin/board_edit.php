@@ -50,7 +50,7 @@ $boardGeneratedHeaderYear = (int) ($board['year'] ?? 0);
   .shift-time-input { max-width: 150px; }
 
 </style>
-<?php if (Auth::isAdmin() && !$generate): ?><form method="post"><?php endif; ?>
+<?php if (Auth::isAdmin() && !$generate): ?><form method="post" id="board-edit-form"><input type="hidden" name="changed_day_id" id="changed-day-id" value=""><?php endif; ?>
 <div class="<?= $generate ? 'board-generated-wrap' : '' ?>">
 <table class="<?= $generate ? 'board-generated-table bg-white' : 'table table-sm table-bordered bg-white' ?>">
 <?php if ($generate): ?>
@@ -71,7 +71,7 @@ $boardGeneratedHeaderYear = (int) ($board['year'] ?? 0);
 <?php if ($shifts !== []): usort($shifts, static function (array $left, array $right): int {
   return [(int) ($left['priority'] ?? 0), (string) ($left['start_time'] ?? '')] <=> [(int) ($right['priority'] ?? 0), (string) ($right['start_time'] ?? '')];
 }); endif; ?>
-<tr>
+<tr id="day-<?= (int) $d['id'] ?>" <?= (!$generate && isset($_GET['focus_day']) && (int) $_GET['focus_day'] === (int) $d['id']) ? 'tabindex="-1" data-focus-day="1"' : '' ?>>
 <td class="<?= $generate ? 'board-generated-day' : 'day-cell' ?>">
   <div class="day-badge" style="background-color: <?= htmlspecialchars((string) ($d['day_type_color'] ?? '#6c757d')) ?>;">
     <div class="day-number"><?= (int) date('j', strtotime($d['day_date'])) ?></div>
@@ -81,7 +81,7 @@ $boardGeneratedHeaderYear = (int) ($board['year'] ?? 0);
     <?php if (!$generate): ?>
       <div class="day-meta mt-2">
         <?php if (Auth::isAdmin()): ?>
-          <select class="form-select form-select-sm day-type-selector" name="day[<?= $d['id'] ?>][day_type_id]">
+          <select class="form-select form-select-sm day-type-selector" name="day[<?= $d['id'] ?>][day_type_id]" data-day-id="<?= (int) $d['id'] ?>">
             <?php foreach($dayTypes as $t): ?><option value="<?= $t['id'] ?>" <?= $d['day_type_id']==$t['id']?'selected':'' ?>><?= htmlspecialchars($t['name']) ?></option><?php endforeach; ?>
           </select>
         <?php else: ?>
@@ -203,6 +203,27 @@ $boardGeneratedHeaderYear = (int) ($board['year'] ?? 0);
       <?= json_encode($fullName) ?>: <?= json_encode($abbreviation) ?>
       <?php endforeach; ?>
     };
+
+
+    const boardEditForm = document.getElementById('board-edit-form');
+    const changedDayInput = document.getElementById('changed-day-id');
+
+    document.querySelectorAll('.day-type-selector').forEach(function (selector) {
+      selector.addEventListener('change', function () {
+        if (!boardEditForm || !changedDayInput) {
+          return;
+        }
+
+        changedDayInput.value = selector.dataset.dayId || '';
+        boardEditForm.submit();
+      });
+    });
+
+    const focusedDay = document.querySelector('[data-focus-day="1"]');
+    if (focusedDay) {
+      focusedDay.focus({ preventScroll: true });
+      focusedDay.scrollIntoView({ block: 'center' });
+    }
 
     document.querySelectorAll('.volunteer-picker').forEach(function (picker) {
       const input = picker.querySelector('input');
