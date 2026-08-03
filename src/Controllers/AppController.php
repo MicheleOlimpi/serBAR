@@ -223,10 +223,6 @@ class AppController
             $changedDayId = (int) ($_POST['changed_day_id'] ?? 0);
             $postedDays = $_POST['day'] ?? [];
 
-            if ($changedDayId > 0 && isset($postedDays[$changedDayId])) {
-                $postedDays = [$changedDayId => $postedDays[$changedDayId]];
-            }
-
             foreach ($postedDays as $dayId => $dayData) {
                 $dayId = (int) $dayId;
                 $dayTypeId = (int) ($dayData['day_type_id'] ?? 0);
