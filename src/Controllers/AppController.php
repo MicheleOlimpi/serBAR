@@ -220,26 +220,46 @@ class AppController
             View::redirect('./');
         }
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::isAdmin()) {
-            foreach ($_POST['day'] ?? [] as $dayId => $dayData) {
+            $changedDayId = (int) ($_POST['changed_day_id'] ?? 0);
+            $postedDays = $_POST['day'] ?? [];
+
+            if ($changedDayId > 0 && isset($postedDays[$changedDayId])) {
+                $postedDays = [$changedDayId => $postedDays[$changedDayId]];
+            }
+
+            foreach ($postedDays as $dayId => $dayData) {
                 $dayId = (int) $dayId;
                 $dayTypeId = (int) ($dayData['day_type_id'] ?? 0);
+                $previousDayTypeId = $this->repo->boardDayTypeId($dayId);
+                $dayTypeChanged = $previousDayTypeId !== null && $previousDayTypeId !== $dayTypeId;
 
                 $this->repo->saveBoardDay([
                     'id' => $dayId,
                     'day_type_id' => $dayTypeId,
                     'notes' => $dayData['notes'] ?? null,
                 ]);
-                $this->repo->syncBoardDayShifts($dayId, $dayTypeId);
 
                 foreach ($dayData['shifts'] ?? [] as $shiftId => $shiftData) {
                     $this->repo->updateBoardDayShift(
                         (int) $shiftId,
                         trim((string) ($shiftData['volunteers'] ?? '')),
                         trim((string) ($shiftData['responsabile_chiusura'] ?? '')) !== '' ? trim((string) ($shiftData['responsabile_chiusura'] ?? '')) : null,
-                        trim((string) ($shiftData['time_range'] ?? ''))
+                        $dayTypeChanged ? '' : trim((string) ($shiftData['time_range'] ?? ''))
                     );
                 }
+
+                $this->repo->syncBoardDayShifts($dayId, $dayTypeId, $dayTypeChanged);
+
+                if ($dayTypeChanged && $changedDayId < 1) {
+                    $changedDayId = $dayId;
+                }
             }
+
+            $redirectUrl = '?action=board_edit&id=' . $boardId;
+            if ($changedDayId > 0) {
+                $redirectUrl .= '&focus_day=' . $changedDayId . '#day-' . $changedDayId;
+            }
+            View::redirect($redirectUrl);
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && !Auth::isAdmin() && isset($_POST['report_day'])) {

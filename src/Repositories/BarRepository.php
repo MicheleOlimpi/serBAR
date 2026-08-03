@@ -660,13 +660,22 @@ class BarRepository
         return $map;
     }
 
+    public function boardDayTypeId(int $boardDayId): ?int
+    {
+        $stmt = $this->pdo->prepare('SELECT day_type_id FROM board_days WHERE id=? LIMIT 1');
+        $stmt->execute([$boardDayId]);
+        $value = $stmt->fetchColumn();
+
+        return $value === false ? null : (int) $value;
+    }
+
     public function saveBoardDay(array $d): void
     {
         $this->pdo->prepare('UPDATE board_days SET day_type_id=?, notes=? WHERE id=?')
             ->execute([$d['day_type_id'], $d['notes'], $d['id']]);
     }
 
-    public function syncBoardDayShifts(int $boardDayId, int $dayTypeId): void
+    public function syncBoardDayShifts(int $boardDayId, int $dayTypeId, bool $resetTimes = false): void
     {
         if ($dayTypeId < 1) {
             $this->pdo->prepare('DELETE FROM board_day_shifts WHERE board_day_id=?')->execute([$boardDayId]);
@@ -695,8 +704,8 @@ class BarRepository
             $currentRow = $currentByPriority[$priority] ?? [];
             $volunteers = $currentRow['volunteers'] ?? null;
             $responsabileChiusura = $currentRow['responsabile_chiusura'] ?? null;
-            $startTime = $currentRow['start_time'] ?? $config['start_time'];
-            $endTime = $currentRow['end_time'] ?? $config['end_time'];
+            $startTime = $resetTimes ? $config['start_time'] : ($currentRow['start_time'] ?? $config['start_time']);
+            $endTime = $resetTimes ? $config['end_time'] : ($currentRow['end_time'] ?? $config['end_time']);
             $upsert->execute([
                 $boardDayId,
                 (int) $config['id'],
