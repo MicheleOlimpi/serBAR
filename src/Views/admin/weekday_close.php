@@ -1,5 +1,7 @@
 <h4>GIORNI CHIUSURA</h4>
 <br>
+<p class="text-muted mb-3">Giorni di chiusura settimanale da preimpostare durante la creazione delle tabelle turni.</p>
+<br>
 <?php if (!empty($saved)): ?>
   <div class="alert alert-success">Impostazioni salvate correttamente.</div>
 <?php endif; ?>
