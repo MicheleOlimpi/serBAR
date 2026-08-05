@@ -68,7 +68,7 @@ $statusTextColorMap = [
     <thead>
       <tr>
         <th>ID</th>
-        <th>CREATA IL</th>
+        <th>DATA</th>
         <th>UTENTE</th>
         <th>MESSAGGIO</th>
         <th>STATO</th>
