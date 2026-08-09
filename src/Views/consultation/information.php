@@ -25,7 +25,7 @@
 <div class="card shadow-sm">
   <div class="card-body">
     <h2 class="h5">Licenza del programma</h2>
-    <p class="mb-3">Visualizza la licenza del programma in una finestra modale Bootstrap.</p>
+    <p class="mb-3">Questo programma viene distribuito con licenza GNU General Public License.</p>
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#licenseModal">MOSTRA LICENZA</button>
   </div>
 </div>
