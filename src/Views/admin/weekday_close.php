@@ -12,8 +12,8 @@
       <thead>
         <tr>
           <th class="ps-3">GIORNO</th>
+          <th class="ps-3">CHIUSO</th>
           <th>DESCRIZIONE</th>
-          <th class="text-center">CHIUSO</th>
         </tr>
       </thead>
       <tbody>
@@ -22,6 +22,15 @@
           <?php $isClosed = (int) ($rule['is_closed'] ?? 0) === 1; ?>
           <tr>
             <td class="ps-3"><?= htmlspecialchars((string) ($rule['day_name'] ?? ucfirst($weekdayCode))) ?></td>
+            <td class="text-center">
+              <input
+                type="checkbox"
+                class="form-check-input weekday-close"
+                name="weekday_close[<?= htmlspecialchars($weekdayCode) ?>]"
+                value="1"
+                <?= $isClosed ? 'checked' : '' ?>
+              >
+            </td>
             <td>
               <input
                 type="text"
@@ -30,15 +39,6 @@
                 value="<?= htmlspecialchars((string) ($rule['description'] ?? '')) ?>"
                 placeholder="Descrizione"
                 <?= $isClosed ? '' : 'disabled' ?>
-              >
-            </td>
-            <td class="text-center">
-              <input
-                type="checkbox"
-                class="form-check-input weekday-close"
-                name="weekday_close[<?= htmlspecialchars($weekdayCode) ?>]"
-                value="1"
-                <?= $isClosed ? 'checked' : '' ?>
               >
             </td>
           </tr>
