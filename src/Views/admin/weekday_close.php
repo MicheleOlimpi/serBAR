@@ -19,24 +19,26 @@
       <tbody>
         <?php foreach ($rules as $rule): ?>
           <?php $weekdayCode = strtolower((string) ($rule['weekday_code'] ?? '')); ?>
+          <?php $isClosed = (int) ($rule['is_closed'] ?? 0) === 1; ?>
           <tr>
             <td class="ps-3"><?= htmlspecialchars((string) ($rule['day_name'] ?? ucfirst($weekdayCode))) ?></td>
             <td>
               <input
                 type="text"
-                class="form-control form-control-sm"
+                class="form-control form-control-sm weekday-description"
                 name="weekday_description[<?= htmlspecialchars($weekdayCode) ?>]"
                 value="<?= htmlspecialchars((string) ($rule['description'] ?? '')) ?>"
                 placeholder="Descrizione"
+                <?= $isClosed ? '' : 'disabled' ?>
               >
             </td>
             <td class="text-center">
               <input
                 type="checkbox"
-                class="form-check-input"
+                class="form-check-input weekday-close"
                 name="weekday_close[<?= htmlspecialchars($weekdayCode) ?>]"
                 value="1"
-                <?= (int) ($rule['is_closed'] ?? 0) === 1 ? 'checked' : '' ?>
+                <?= $isClosed ? 'checked' : '' ?>
               >
             </td>
           </tr>
@@ -44,7 +46,27 @@
       </tbody>
     </table>
   </div>
-  <div class="card-footer d-flex justify-content-end">
+  <div class="card-footer d-flex justify-content-center gap-2">
     <button type="submit" class="btn btn-success">Salva</button>
+    <button type="button" class="btn btn-secondary" onclick="window.location.reload()">Annulla</button>
   </div>
 </form>
+
+<script>
+document.querySelectorAll('.weekday-close').forEach((checkbox) => {
+  const row = checkbox.closest('tr');
+  const description = row ? row.querySelector('.weekday-description') : null;
+
+  if (!description) {
+    return;
+  }
+
+  checkbox.addEventListener('change', () => {
+    description.disabled = !checkbox.checked;
+
+    if (!checkbox.checked) {
+      description.value = '';
+    }
+  });
+});
+</script>
