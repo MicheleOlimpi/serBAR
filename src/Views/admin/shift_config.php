@@ -47,7 +47,7 @@ $getContrastColor = static function (string $hexColor): string {
 </form>
 <br>
 <table class="table table-striped">
-  <tr><th>TIPO GIORNO</th><th>INIZIO</th><th>FINE</th><th>CHIUSURA BAR</th><th>PRIORITÀ</th><th>AZIONI</th></tr>
+  <tr><th>TIPO GIORNO</th><th style="width:2em;">PRIORITÀ</th><th>INIZIO</th><th>FINE</th><th style="width:10em;">CHIUSURA BAR</th><th>AZIONI</th></tr>
   <?php foreach($shifts as $shift): ?>
     <?php
       $closesBarValue = strtolower(trim((string) ($shift['closes_bar'] ?? '')));
@@ -59,6 +59,7 @@ $getContrastColor = static function (string $hexColor): string {
       <td style="--bs-table-bg: <?= htmlspecialchars($dayTypeColor) ?>; --bs-table-accent-bg: <?= htmlspecialchars($dayTypeColor) ?>; background-color: <?= htmlspecialchars($dayTypeColor) ?>; color: <?= htmlspecialchars($dayTypeTextColor) ?>;">
         <?= htmlspecialchars($shift['day_type_name']) ?>
       </td>
+      <td><?= (int) $shift['priority'] ?></td>
       <td><?= htmlspecialchars(substr((string) $shift['start_time'], 0, 5)) ?></td>
       <td><?= htmlspecialchars(substr((string) $shift['end_time'], 0, 5)) ?></td>
       <td>
@@ -68,7 +69,6 @@ $getContrastColor = static function (string $hexColor): string {
           <i class="fa-solid fa-xmark text-danger" aria-label="No" title="No"></i>
         <?php endif; ?>
       </td>
-      <td><?= (int) $shift['priority'] ?></td>
       <td class="d-flex gap-2">
         <a class="btn btn-sm btn-outline-primary" href="?action=shift_config&edit=<?= (int) $shift['id'] ?>" aria-label="Modifica" title="Modifica"><i class="fa-solid fa-pen" aria-hidden="true"></i></a>
         <button
