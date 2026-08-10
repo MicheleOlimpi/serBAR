@@ -1,7 +1,7 @@
 INSERT IGNORE INTO app_settings (setting_key, setting_value) VALUES
   ('program_name','serBAR'),
   ('program_author','Michele Olimpi'),
-  ('program_version','V00.20260701'),
+  ('program_version','V00.20260810'),
   ('program_whatsNewSplash','0'),
   ('login_info1','ACLI Grassina'),
   ('login_info2','Gestione turni'),
