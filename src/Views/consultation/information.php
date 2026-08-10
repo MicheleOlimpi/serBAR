@@ -39,7 +39,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
       </div>
       <div class="modal-body">
-        <div class="justify-content-center my-3 spinner" style="display:none;"
+        <div class="justify-content-center my-3 spinner" style="display:none;">
           <div class="spinner-border" role="status" aria-hidden="true"></div>
         </div>
         <pre style="white-space:pre-wrap;max-height:60vh;overflow:auto;">Caricamento...</pre>
