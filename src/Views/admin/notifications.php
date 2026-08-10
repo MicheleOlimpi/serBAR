@@ -70,7 +70,7 @@ $statusTextColorMap = [
         <th>ID</th>
         <th>DATA</th>
         <th>UTENTE</th>
-        <th>MESSAGGIO</th>
+        <th style="width: 40em">MESSAGGIO</th>
         <th>STATO</th>
         <th>AZIONI</th>
       </tr>
