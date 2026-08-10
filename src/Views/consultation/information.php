@@ -39,7 +39,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
       </div>
       <div class="modal-body">
-        <div class="d-flex justify-content-center my-3 spinner" style="display:none;">
+        <div class="justify-content-center my-3 spinner" style="display:none;"
           <div class="spinner-border" role="status" aria-hidden="true"></div>
         </div>
         <pre style="white-space:pre-wrap;max-height:60vh;overflow:auto;">Caricamento...</pre>
@@ -59,9 +59,9 @@ document.addEventListener('DOMContentLoaded', function () {
   var spinner = licenseModal.querySelector('.spinner');
   var fetched = false;
 
-  licenseModal.addEventListener('show.bs.modal', function () {
+  licenseModal.addEventListener('shown.bs.modal', function () {
     if (fetched) return;
-    if (spinner) spinner.style.display = 'block';
+    if (spinner) spinner.style.display = 'flex';
     if (pre) pre.textContent = '';
 
     fetch('?action=license', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
