@@ -35,7 +35,8 @@
   --board-generated-header-month-letter-spacing: var(--board-generated-header-subtitle-letter-spacing);
   --board-generated-day-width: 200px;
   --board-generated-day-number-size: 2rem;
-  --board-generated-cell-border-color: #dee2e6;
+  --board-generated-dayCell-border-color: #707274;               /* Day cell color */
+  --board-generated-cell-border-color: ##dee2e6;                 /* Other cells color */
   --board-generated-cell-padding: 0.5rem;
   --board-generated-shift-time-width: 140px;
   --board-generated-shift-start-box-width: 130px;
@@ -46,7 +47,7 @@
   --board-generated-closure-box-min-height: 38px;
   --board-generated-closure-box-padding: 0.2rem 0.5rem;
   --board-generated-closure-box-border-radius: 0.4rem;
-  --board-generated-shift-gap: 0.75rem;
+  --board-generated-shift-gap: 0.75rem;                           /* Shift divider */
   --board-generated-shift-padding-y: 0.25rem;
   --board-generated-shift-divider-color: #dee2e6;
   --modal-icon-color: var(--bs-danger);
@@ -331,7 +332,7 @@ textarea::placeholder,
 }
 
 .board-generated-table td {
-  border: 1px solid var(--board-generated-cell-border-color);
+  border: 1px solid var(--board-generated-dayCell-border-color);
   vertical-align: top;
   padding: var(--board-generated-cell-padding);
 }
