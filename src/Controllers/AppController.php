@@ -396,10 +396,13 @@ class AppController
     {
         $this->guardAdmin();
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $calendarDayId = (int) ($_POST['save_id'] ?? 0);
-            $rowData = $_POST['row'][$calendarDayId] ?? null;
-            if ($calendarDayId > 0) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_calendar'])) {
+            foreach ($_POST['row'] ?? [] as $calendarDayId => $rowData) {
+                $calendarDayId = (int) $calendarDayId;
+                if ($calendarDayId < 1 || !is_array($rowData)) {
+                    continue;
+                }
+
                 $this->repo->updateCalendarDayDetails(
                     $calendarDayId,
                     trim((string) ($rowData['recurrence_name'] ?? '')),
@@ -408,6 +411,7 @@ class AppController
                     isset($rowData['is_special'])
                 );
             }
+
             View::redirect('?action=calendar');
         }
 
