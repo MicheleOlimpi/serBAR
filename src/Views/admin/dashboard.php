@@ -64,7 +64,7 @@ $statusBadgeMap = [
   <div class="col-md-6 mb-3">
     <div class="card h-100">
       <div class="card-body">
-        <h5>Ultimi 12 tabelloni</h5>
+        <h5>ULTIMI 12 TABELLONI</h5>
         <?php if ($boards === []): ?>
           <p class="text-muted mb-0">Nessun tabellone disponibile.</p>
         <?php else: ?>
@@ -83,7 +83,7 @@ $statusBadgeMap = [
   <div class="col-md-6 mb-3">
     <div class="card h-100">
       <div class="card-body">
-        <h5>Ultime 20 segnalazioni</h5>
+        <h5>ULTIME 20 SEGNALAZIONI</h5>
         <?php if ($notifications === []): ?>
           <p class="text-muted mb-0">Nessuna segnalazione disponibile.</p>
         <?php else: ?>
@@ -107,8 +107,6 @@ $statusBadgeMap = [
                 data-status-class="<?= htmlspecialchars($statusClass, ENT_QUOTES, 'UTF-8') ?>"
                 data-message="<?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?>"
               >
-                <?= htmlspecialchars($notificationDate) ?> -
-                <?= htmlspecialchars((string) $n['username']) ?> -
                 <button
                   type="button"
                   class="btn btn-link p-0 align-baseline js-notification-detail"
@@ -118,8 +116,8 @@ $statusBadgeMap = [
                   data-status="<?= htmlspecialchars($statusLabels[(string) ($n['status'] ?? '')] ?? (string) ($n['status'] ?? 'Sconosciuto'), ENT_QUOTES, 'UTF-8') ?>"
                   data-status-class="<?= htmlspecialchars($statusClass, ENT_QUOTES, 'UTF-8') ?>"
                   data-message="<?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?>"
-                ><?= htmlspecialchars($shortMessage . ($isTrimmed ? '…' : '')) ?></button>
-                <span class="badge <?= $statusClass ?> ms-1"><?= htmlspecialchars($statusLabels[(string) ($n['status'] ?? '')] ?? (string) ($n['status'] ?? 'Sconosciuto')) ?></span>
+                ><?= htmlspecialchars($notificationDate) ?> - <?= htmlspecialchars((string) $n['username']) ?> - <?= htmlspecialchars($shortMessage . ($isTrimmed ? '…' : '')) ?>
+                <span class="badge <?= $statusClass ?> ms-1"><?= htmlspecialchars($statusLabels[(string) ($n['status'] ?? '')] ?? (string) ($n['status'] ?? 'Sconosciuto')) ?></span></button>
               </li>
             <?php endforeach; ?>
           </ul>
