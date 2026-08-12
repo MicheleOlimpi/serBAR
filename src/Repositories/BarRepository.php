@@ -70,9 +70,9 @@ class BarRepository
 
     public function userDisplayNames(): array
     {
-        $sql = "SELECT id, first_name, last_name
+        $sql = "SELECT id, alias, first_name, last_name
                 FROM users
-                WHERE status='attivo'
+                WHERE status='attivo' AND LOWER(username) <> 'admin'
                 ORDER BY last_name ASC, first_name ASC";
 
         return $this->pdo->query($sql)->fetchAll();
