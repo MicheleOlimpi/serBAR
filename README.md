@@ -25,28 +25,34 @@ Il sistema dispone di tre interfacce web:
 ## TEMA
 Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le variabili CSS di Bootstrap 5 (`--bs-*`) per personalizzare colori, radius e aspetto generale senza modificare le viste.
 
-## NOVITA' RECENTI
-- **Identità applicativa aggiornata**:
-  - titolo pagina aggiornato da `ACLI servizio BAR` a `serBAR`.
-- **Utenti e credenziali più robusti**:
-  - aggiunto il campo email nella gestione utenti;
-  - bloccato il salvataggio con username troppo lunghi;
-  - bloccato il salvataggio di password vuote;
-  - migliorata la chiarezza del placeholder password per l'utente `supervisor` in fase di setup.
-- **Comunicazioni e segnalazioni migliorate**:
-  - aggiunto il badge colore dello stato direttamente nel titolo della modale segnalazione;
-  - introdotte modali di dettaglio più complete per notifiche e comunicazioni;
-  - rinominata la colonna riepilogo testo in segnalazioni da `Testo (prime 20)` a `Testo`.
-- **Setup e test email più comodi**:
-  - aggiunta l'icona di esito per il test SMTP;
-  - corretta l'apertura della modale test connessione mail dopo il caricamento Bootstrap;
-  - corretto un refuso nell'indirizzo server SMTP nella documentazione.
-- **Personalizzazione UI estesa**:
-  - migliorata la tematizzazione dell'icona hamburger su mobile (incluso colore personalizzabile);
-  - aggiunta intestazione mese calendario personalizzabile;
-  - aggiornati stili di titolo e sottotitolo header nel tema.
-- **Documentazione aggiornata**:
-  - sezione installazione/avvio rapido e descrizione interfacce riallineate alle ultime modifiche.
+## NOVITA' RECENTI (20260812)
+- **EDITING TABELLONE**
+  - Se viene cambiata la tipologia di giorno vengono aggiornati anche gli orari per quel tipo di giorno, viene salvato il cartellone e riportato il focus sul giorno modificato
+- **DASHBOARD Sia nella sezione pagina admin che consultation**
+  - Migliorato aspetto lista comunicazioni
+- **PAGINA CALENDARIO**
+  - Migliorato testo esplicativo
+- **PAGINA COMUNICAZIONI in admin**
+  - Migliorato la leggibilità delle comunicazioni
+  - "creato il" diventa "Data"
+- **PAGINA CONFIGURAZIONE TURNI**
+  - Migliorato leggibilità 
+- **AGGIUNTI NEL FILE seed_app_settings.sql:**
+  - print_forcedPageBreak con valore numerico predefinito 0 (per futuro uso)
+  - print_tableTitle con valore testo predefinito "SERVIZIO BAR" (per futuro uso)
+  - print_tableMoonPhases con valore bool predefinito false (per futuro uso)
+  - program_whatsNewSplash con valore bool predefinito false (per futuro uso)
+- **PAGINA GIORNI CHIUSURA
+  - Aggiunto testo esplicativo
+  - Invertito colonna "chiuso" con colonna "descrizione"**
+  - Se il campo "chiuso" non è flaggato, il campo descrizione non è editabile
+  - Se viene tolto il flag del campo chiuso elimina anche il contenuto del campo descrizione
+  - A destra del tasto "Salva" aggiunto un tasto "Annulla", che non salva i valori editati e ricarica la pagina
+- **PAGINA INFORMAZIONI Sia nella sezione pagina admin che consultation**
+  - Modificato testo licenza
+  - Se si preme il bottone licenza, mostra la licenza del programma in una finestra modale bootstrap
+- **STAMPA CARTELLONE**
+  - Celle dei giorni con riga più scura
 
 ## INSTALLAZIONE
 1. Copiare i files nel repository nella directory di installazione (es. /var/www/serBAR)
@@ -90,4 +96,4 @@ Vengono gestite le festività nazionali, cattoliche e eventuali giorni speciali 
    - Lunedì dell'angelo
      
 ## MESSAGGISTICA INTERNA
-  - E' disponibile un sistema di messaggiustica interna, con stato del messaggio variabile dagli admin/supervisor, consultabile dagli users
+  - E' disponibile un sistema di messaggistica interna, con stato del messaggio editabile dagli admin/supervisor, consultabile dagli users.
