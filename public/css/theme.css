@@ -36,7 +36,7 @@
   --board-generated-day-width: 200px;
   --board-generated-day-number-size: 2rem;
   --board-generated-dayCell-border-color: #707274;               /* Day cell color */
-  --board-generated-cell-border-color: ##dee2e6;                 /* Other cells color */
+  --board-generated-cell-border-color: #dee2e6;                  /* Other cells color */
   --board-generated-cell-padding: 0.5rem;
   --board-generated-shift-time-width: 140px;
   --board-generated-shift-start-box-width: 130px;
