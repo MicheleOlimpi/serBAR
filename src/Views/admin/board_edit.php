@@ -196,9 +196,10 @@ $boardGeneratedHeaderYear = (int) ($board['year'] ?? 0);
     const userAbbreviations = {
       <?php foreach ($activeUsers as $index => $activeUser):
         $fullName = trim($activeUser['first_name'] . ' ' . $activeUser['last_name']);
+        $alias = trim((string) ($activeUser['alias'] ?? ''));
         $firstInitial = strtoupper(substr(trim((string) $activeUser['first_name']), 0, 1));
         $lastName = trim((string) $activeUser['last_name']);
-        $abbreviation = trim(($firstInitial ? $firstInitial . '. ' : '') . $lastName);
+        $abbreviation = $alias !== '' ? $alias : trim(($firstInitial ? $firstInitial . '. ' : '') . $lastName);
       ?><?= $index > 0 ? ',' : '' ?>
       <?= json_encode($fullName) ?>: <?= json_encode($abbreviation) ?>
       <?php endforeach; ?>

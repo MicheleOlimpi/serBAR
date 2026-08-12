@@ -245,11 +245,15 @@ textarea::placeholder,
 .volunteer-picker-input::placeholder {
   color: var(--volunteer-picker-placeholder-color);
   opacity: var(--volunteer-picker-placeholder-opacity);
+  font-size:0.9em;
+  text-align:center;
 }
 
 .responsible-picker-input::placeholder {
   color: var(--responsible-picker-placeholder-color);
   opacity: var(--responsible-picker-placeholder-opacity);
+  font-size:0.9em;
+  text-align:center;
 }
 
 .public-panel-calendar {
