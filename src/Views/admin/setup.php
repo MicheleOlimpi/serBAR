@@ -76,7 +76,7 @@
 
   <div class="mb-3">
     <button
-      class="btn btn-outline-primary"
+      class="btn btn-primary"
       type="button"
       id="open_public_interface"
       <?= !empty($settings['public_interface_enabled']) && $settings['public_interface_enabled'] === '1' ? '' : 'disabled' ?>
@@ -173,7 +173,7 @@
   </div>
 
   <div class="mb-3">
-    <button class="btn btn-outline-secondary" type="submit" name="test_mail_connection" value="1" id="test_mail_connection" <?= !empty($settings['email_sending_enabled']) && $settings['email_sending_enabled'] === '1' ? '' : 'disabled' ?>>
+    <button class="btn btn-primary" type="submit" name="test_mail_connection" value="1" id="test_mail_connection" <?= !empty($settings['email_sending_enabled']) && $settings['email_sending_enabled'] === '1' ? '' : 'disabled' ?>>
       Testa collegamento server mail
     </button>
   </div>
@@ -207,8 +207,8 @@
   </div>
 
   <div>
-    <button class="btn btn-primary" type="submit">Salva</button>
-    <a class="btn btn-outline-dark" href="./">Indietro</a>
+    <button class="btn btn-success" type="submit">Salva</button>
+    <a class="btn btn-secondary" href="./">Indietro</a>
   </div>
 </form>
 
