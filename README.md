@@ -33,6 +33,7 @@ Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le va
   - Migliorato aspetto lista comunicazioni
 - **PAGINA CALENDARIO**
   - Migliorato testo esplicativo
+  - Adesso il salvataggio può essere effettuato con un unico bottone salva/annulla
 - **PAGINA COMUNICAZIONI in admin**
   - Migliorato la leggibilità delle comunicazioni
   - "creato il" diventa "Data"
