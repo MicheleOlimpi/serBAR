@@ -158,7 +158,7 @@ $statusLabels = [
   <div class="col-12 col-xl-5">
     <div class="card border-0 shadow-sm">
       <div class="card-body p-4">
-        <h5 class="card-title mb-3">Segnalazioni</h5>
+        <h5 class="card-title mb-3">SEGNALAZIONI</h5>
         <?php if (empty($notifications)): ?>
           <div class="alert alert-info mb-0">Nessuna segnalazione disponibile.</div>
         <?php else: ?>
@@ -192,10 +192,8 @@ $statusLabels = [
                     data-status-class="<?= htmlspecialchars($statusClass, ENT_QUOTES, 'UTF-8') ?>"
                     data-message="<?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?>"
                   >
-                    <td><?= htmlspecialchars($createdAtFormatted) ?></td>
-                    <td><?= htmlspecialchars($n['username']) ?></td>
-                    <td>
-                      <button
+                  <td>
+                  <button
                         type="button"
                         class="btn btn-link p-0 align-baseline js-notification-detail"
                         data-bs-toggle="modal"
@@ -204,9 +202,12 @@ $statusLabels = [
                         data-status="<?= htmlspecialchars($statusLabels[$n['status']] ?? $n['status'], ENT_QUOTES, 'UTF-8') ?>"
                         data-status-class="<?= htmlspecialchars($statusClass, ENT_QUOTES, 'UTF-8') ?>"
                         data-message="<?= htmlspecialchars($message, ENT_QUOTES, 'UTF-8') ?>"
-                      ><?= htmlspecialchars($messagePreview !== '' ? $messagePreview : '-') ?></button>
-                    </td>
+                      >
+                    <?= htmlspecialchars($createdAtFormatted) ?></td>
+                    <td><?= htmlspecialchars($n['username']) ?></td>
+                    <td><?= htmlspecialchars($messagePreview !== '' ? $messagePreview : '-') ?></td>
                     <td><span class="badge <?= $statusClass ?>"><?= htmlspecialchars($statusLabels[$n['status']] ?? $n['status']) ?></span></td>
+                    </button>
                   </tr>
                 <?php endforeach; ?>
               </tbody>
