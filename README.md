@@ -43,9 +43,9 @@ Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le va
   - print_tableTitle con valore testo predefinito "SERVIZIO BAR" (per futuro uso)
   - print_tableMoonPhases con valore bool predefinito false (per futuro uso)
   - program_whatsNewSplash con valore bool predefinito false (per futuro uso)
-- **PAGINA GIORNI CHIUSURA
+- **PAGINA GIORNI CHIUSURA**
   - Aggiunto testo esplicativo
-  - Invertito colonna "chiuso" con colonna "descrizione"**
+  - Invertito colonna "chiuso" con colonna "descrizione"
   - Se il campo "chiuso" non è flaggato, il campo descrizione non è editabile
   - Se viene tolto il flag del campo chiuso elimina anche il contenuto del campo descrizione
   - A destra del tasto "Salva" aggiunto un tasto "Annulla", che non salva i valori editati e ricarica la pagina
@@ -54,6 +54,8 @@ Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le va
   - Se si preme il bottone licenza, mostra la licenza del programma in una finestra modale bootstrap
 - **STAMPA CARTELLONE**
   - Celle dei giorni con riga più scura
+- **SETUP**
+  - cambiato colori bottonni per renderli coerenti con quelli del progamma
 
 ## INSTALLAZIONE
 1. Copiare i files nel repository nella directory di installazione (es. /var/www/serBAR)
