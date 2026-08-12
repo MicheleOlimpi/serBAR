@@ -115,15 +115,15 @@ $boardGeneratedHeaderYear = (int) ($board['year'] ?? 0);
               <div>
                 <input id="volunteers-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][volunteers]" value="<?= htmlspecialchars((string) ($shift['volunteers'] ?? '')) ?>" placeholder="Volontari in turno">
                 <div class="input-group input-group-sm volunteer-picker" data-target="volunteers-<?= (int) $shift['id'] ?>">
-                  <input type="text" class="form-control volunteer-picker-input" list="users-list" placeholder="Seleziona volontario">
-                  <button class="btn btn-outline-success" type="button" aria-label="Aggiungi volontario"><i class="fa-solid fa-circle-plus text-success" aria-hidden="true"></i></button>
+                  <input type="text" class="form-control volunteer-picker-input" list="users-list" placeholder="Seleziona volontari in turno cliccando qui">
+                  <button class="btn btn-success" type="button" aria-label="Aggiungi volontario"><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></button>
                 </div>
               </div>
               <div class="responsible-section <?= empty($shift['closes_bar']) ? 'responsible-section-hidden' : '' ?>">
                 <input id="responsabile-<?= (int) $shift['id'] ?>" class="form-control form-control-sm mb-2" name="day[<?= $d['id'] ?>][shifts][<?= (int) $shift['id'] ?>][responsabile_chiusura]" value="<?= htmlspecialchars((string) ($shift['responsabile_chiusura'] ?? '')) ?>" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?> placeholder="Chiusura">
                 <div class="input-group input-group-sm responsible-picker" data-target="responsabile-<?= (int) $shift['id'] ?>">
-                  <input type="text" class="form-control responsible-picker-input" list="users-list" placeholder="Seleziona chiusura" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?>>
-                  <button class="btn btn-outline-success" type="button" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?> aria-label="Imposta responsabile"><i class="fa-solid fa-circle-plus text-success" aria-hidden="true"></i></button>
+                  <input type="text" class="form-control responsible-picker-input" list="users-list" placeholder="Seleziona Volontari di chiusura cliccando qui" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?>>
+                  <button class="btn btn-success" type="button" <?= empty($shift['closes_bar']) ? 'disabled' : '' ?> aria-label="Aggiungi responsabile"><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></button>
                 </div>
               </div>
             </div>
