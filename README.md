@@ -28,6 +28,7 @@ Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le va
 ## NOVITA' RECENTI (20260812)
 - **EDITING TABELLONE**
   - Se viene cambiata la tipologia di giorno vengono aggiornati anche gli orari per quel tipo di giorno, viene salvato il cartellone e riportato il focus sul giorno modificato
+  - Se presente il valore alias nei dati del volontario selezionato per il turno viene utilizzato, altrimenti viene generato un testo basato su nome-cognome
 - **DASHBOARD Sia nella sezione pagina admin che consultation**
   - Migliorato aspetto lista comunicazioni
 - **PAGINA CALENDARIO**
