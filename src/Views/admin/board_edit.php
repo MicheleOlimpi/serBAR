@@ -194,7 +194,6 @@ $boardGeneratedHeaderYear = (int) ($board['year'] ?? 0);
     </table>
     <div class="board-generated-page-break"></div>
     <table class="board-generated-table bg-white">
-    <?php $renderGeneratedHeader(); ?>
   <?php endif; ?>
 <?php endif; ?>
 <?php endforeach; ?>
