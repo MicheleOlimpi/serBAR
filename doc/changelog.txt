@@ -1,1 +1,2 @@
-
+*MAIN*
++ Cartellone: Aggiunto interruzione pagina al raggiunto numero di turni impostato in impostazioni di stampa.
