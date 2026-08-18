@@ -375,6 +375,29 @@ class BarRepository
         return $defaults;
     }
 
+    public function printSettings(): array
+    {
+        $defaults = [
+            'print_forcedPageBreak' => '0',
+            'print_tableTitle' => 'SERVIZIO BAR',
+            'print_tableMoonPhases' => '0',
+        ];
+
+        $stmt = $this->pdo->query('SELECT setting_key, setting_value FROM app_settings');
+        if ($stmt === false) {
+            return $defaults;
+        }
+
+        foreach ($stmt->fetchAll() as $row) {
+            $key = (string) ($row['setting_key'] ?? '');
+            if (array_key_exists($key, $defaults)) {
+                $defaults[$key] = trim((string) ($row['setting_value'] ?? ''));
+            }
+        }
+
+        return $defaults;
+    }
+
     public function programInfoSettings(): array
     {
         $defaults = [
