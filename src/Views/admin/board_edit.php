@@ -15,7 +15,9 @@ $monthNames = [
   12 => 'Dicembre',
 ];
 $monthName = $monthNames[(int) ($board['month'] ?? 0)] ?? sprintf('%02d', (int) ($board['month'] ?? 0));
-$boardGeneratedHeaderTitle = 'SERVIZIO BAR';
+$boardGeneratedHeaderTitle = (string) ($printSettings['print_tableTitle'] ?? 'SERVIZIO BAR');
+$printForcedPageBreak = max(0, (int) ($printSettings['print_forcedPageBreak'] ?? 0));
+$printedShiftRows = 0;
 $boardGeneratedHeaderMonth = $monthName;
 $boardGeneratedHeaderYear = (int) ($board['year'] ?? 0);
 ?>
@@ -48,12 +50,13 @@ $boardGeneratedHeaderYear = (int) ($board['year'] ?? 0);
   .day-number { font-size: 1.75rem; font-weight: 700; line-height: 1; }
   .responsible-section-hidden { display: none; }
   .shift-time-input { max-width: 150px; }
+  .board-generated-page-break { break-after: page; page-break-after: always; height: 0; }
 
 </style>
 <?php if (Auth::isAdmin() && !$generate): ?><form method="post" id="board-edit-form"><input type="hidden" name="changed_day_id" id="changed-day-id" value=""><?php endif; ?>
 <div class="<?= $generate ? 'board-generated-wrap' : '' ?>">
 <table class="<?= $generate ? 'board-generated-table bg-white' : 'table table-sm table-bordered bg-white' ?>">
-<?php if ($generate): ?>
+<?php $renderGeneratedHeader = static function () use ($boardGeneratedHeaderTitle, $boardGeneratedHeaderMonth, $boardGeneratedHeaderYear): void { ?>
 <tr>
   <td colspan="2" class="board-generated-header">
     <div class="board-generated-header-title"><?= htmlspecialchars($boardGeneratedHeaderTitle) ?></div>
@@ -64,10 +67,13 @@ $boardGeneratedHeaderYear = (int) ($board['year'] ?? 0);
     <br>
   </td>
 </tr>
+<?php }; ?>
+<?php if ($generate): ?>
+<?php $renderGeneratedHeader(); ?>
 <?php else: ?>
 <tr><?php if(!Auth::isAdmin()):?><th>Segnala</th><?php endif; ?></tr>
 <?php endif; ?>
-<?php foreach($days as $d): $shifts = $dayShifts[$d['id']] ?? []; ?>
+<?php foreach($days as $dayIndex => $d): $shifts = $dayShifts[$d['id']] ?? []; ?>
 <?php if ($shifts !== []): usort($shifts, static function (array $left, array $right): int {
   return [(int) ($left['priority'] ?? 0), (string) ($left['start_time'] ?? '')] <=> [(int) ($right['priority'] ?? 0), (string) ($right['start_time'] ?? '')];
 }); endif; ?>
@@ -181,6 +187,16 @@ $boardGeneratedHeaderYear = (int) ($board['year'] ?? 0);
 <?php if(!Auth::isAdmin()): ?><td><form method="post"><input type="hidden" name="report_day" value="<?= $d['id'] ?>"><input name="message" class="form-control form-control-sm" placeholder="Segnalazione"><button class="btn btn-sm btn-warning mt-1">Invia</button></form></td><?php endif; ?>
 <?php endif; ?>
 </tr>
+<?php if ($generate && $printForcedPageBreak > 0): ?>
+  <?php $printedShiftRows += count($shifts); ?>
+  <?php if ($printedShiftRows >= $printForcedPageBreak && $dayIndex < count($days) - 1): ?>
+    <?php $printedShiftRows = 0; ?>
+    </table>
+    <div class="board-generated-page-break"></div>
+    <table class="board-generated-table bg-white">
+    <?php $renderGeneratedHeader(); ?>
+  <?php endif; ?>
+<?php endif; ?>
 <?php endforeach; ?>
 </table>
 </div>

@@ -273,6 +273,7 @@ class AppController
             'dayTypes' => $this->repo->dayTypes(),
             'dayShifts' => $this->repo->boardDayShiftsMap($boardId),
             'activeUsers' => $this->repo->userDisplayNames(),
+            'printSettings' => $this->repo->printSettings(),
         ]);
     }
 
