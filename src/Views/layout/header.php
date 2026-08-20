@@ -26,12 +26,21 @@ $adminNavItems = [
     'shift_config' => ['label' => 'Turni giornalieri', 'href' => '?action=shift_config', 'icon' => 'fa-clock-rotate-left'],
     'calendar' => ['label' => 'Calendario', 'href' => '?action=calendar', 'icon' => 'fa-calendar-days'],
     'weekday_close' => ['label' => 'Giorni chiusura', 'href' => '?action=weekday_close', 'icon' => 'fa-calendar-xmark'],
-    'setup' => ['label' => 'Setup', 'href' => '?action=setup', 'icon' => 'fa-gear'],
+    'setup' => [
+        'label' => 'Setup',
+        'href' => '?action=setup',
+        'icon' => 'fa-gear',
+        'children' => [
+            'setup' => ['label' => 'Setup sistema', 'href' => '?action=setup', 'icon' => 'fa-sliders'],
+            'setup_print_board' => ['label' => 'Stampa cartellone', 'href' => '?action=setup_print_board', 'icon' => 'fa-print'],
+        ],
+    ],
     'information' => ['label' => 'Informazioni', 'href' => '?action=information', 'icon' => 'fa-circle-info'],
 ];
 
 if (($u['role'] ?? '') === 'supervisor') {
-    unset($adminNavItems['setup']);
+    unset($adminNavItems['setup']['children']['setup']);
+    $adminNavItems['setup']['href'] = '?action=setup_print_board';
 }
 $consultationNavItems['dashboard'] = ['label' => 'dashboard', 'href' => './', 'icon' => 'fa-gauge'];
 
@@ -80,12 +89,32 @@ $consultationNavItems['information'] = ['label' => 'Informazioni', 'href' => '?a
       <div class="collapse navbar-collapse" id="adminNavbar">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <?php foreach ($adminNavItems as $action => $item): ?>
-            <?php $isActive = $currentAction === $action || ($action === 'dashboard' && ($currentAction === '' || $currentAction === 'dashboard')); ?>
-            <li class="nav-item">
-              <a class="nav-link <?= $isActive ? 'active' : '' ?>" href="<?= $item['href'] ?>">
-                <?php if (!empty($item['icon'])): ?><i class="fa-solid <?= htmlspecialchars($item['icon']) ?> me-1"></i><?php endif; ?><?= htmlspecialchars($item['label']) ?>
-              </a>
-            </li>
+            <?php
+              $children = $item['children'] ?? [];
+              $isActive = $currentAction === $action || ($action === 'dashboard' && ($currentAction === '' || $currentAction === 'dashboard')) || array_key_exists($currentAction, $children);
+            ?>
+            <?php if (!empty($children)): ?>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle <?= $isActive ? 'active' : '' ?>" href="<?= $item['href'] ?>" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <?php if (!empty($item['icon'])): ?><i class="fa-solid <?= htmlspecialchars($item['icon']) ?> me-1"></i><?php endif; ?><?= htmlspecialchars($item['label']) ?>
+                </a>
+                <ul class="dropdown-menu">
+                  <?php foreach ($children as $childAction => $child): ?>
+                    <li>
+                      <a class="dropdown-item <?= $currentAction === $childAction ? 'active' : '' ?>" href="<?= $child['href'] ?>">
+                        <?php if (!empty($child['icon'])): ?><i class="fa-solid <?= htmlspecialchars($child['icon']) ?> me-2"></i><?php endif; ?><?= htmlspecialchars($child['label']) ?>
+                      </a>
+                    </li>
+                  <?php endforeach; ?>
+                </ul>
+              </li>
+            <?php else: ?>
+              <li class="nav-item">
+                <a class="nav-link <?= $isActive ? 'active' : '' ?>" href="<?= $item['href'] ?>">
+                  <?php if (!empty($item['icon'])): ?><i class="fa-solid <?= htmlspecialchars($item['icon']) ?> me-1"></i><?php endif; ?><?= htmlspecialchars($item['label']) ?>
+                </a>
+              </li>
+            <?php endif; ?>
           <?php endforeach; ?>
         </ul>
         <ul class="navbar-nav align-items-lg-center gap-lg-2">

@@ -398,6 +398,30 @@ class BarRepository
         return $defaults;
     }
 
+
+    public function savePrintSettings(array $data): void
+    {
+        $upsert = $this->pdo->prepare('INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value=VALUES(setting_value)');
+
+        $forcedPageBreak = (int) ($data['print_forcedPageBreak'] ?? 0);
+        if ($forcedPageBreak < 0) {
+            $forcedPageBreak = 0;
+        }
+        if ($forcedPageBreak > 100) {
+            $forcedPageBreak = 100;
+        }
+
+        $tableTitle = trim((string) ($data['print_tableTitle'] ?? ''));
+        $tableTitle = preg_replace('/[^[:alnum:] ]/u', '', $tableTitle) ?? '';
+        $tableTitle = function_exists('mb_substr') ? mb_substr($tableTitle, 0, 30) : substr($tableTitle, 0, 30);
+
+        $moonPhases = (string) ($data['print_tableMoonPhases'] ?? '0') === '1' ? '1' : '0';
+
+        $upsert->execute(['print_forcedPageBreak', (string) $forcedPageBreak]);
+        $upsert->execute(['print_tableTitle', $tableTitle]);
+        $upsert->execute(['print_tableMoonPhases', $moonPhases]);
+    }
+
     public function programInfoSettings(): array
     {
         $defaults = [

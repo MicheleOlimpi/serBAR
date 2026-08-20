@@ -51,6 +51,7 @@ $routes = [
     'weekday_close' => 'weekdayClose',
     'notifications' => 'notifications',
     'setup' => 'setup',
+    'setup_print_board' => 'setupPrintBoard',
     'information' => 'information',
     'segnalazione' => 'segnalazione',
     'lista_volontari' => 'listaVolontari',
