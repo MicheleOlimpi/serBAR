@@ -19,7 +19,7 @@
       value="<?= htmlspecialchars((string) ($settings['print_forcedPageBreak'] ?? '0'), ENT_QUOTES, 'UTF-8') ?>"
       required
     >
-    <div class="form-text">Valore numerico da 0 a 100.</div>
+    <div class="form-text">Forza l'intrerruzione di pagina ogni turni stampati (0-100).</div>
   </div>
 
   <div class="mb-3">
@@ -33,7 +33,7 @@
       pattern="[A-Za-z0-9À-ÿ ]{0,30}"
       value="<?= htmlspecialchars((string) ($settings['print_tableTitle'] ?? 'SERVIZIO BAR'), ENT_QUOTES, 'UTF-8') ?>"
     >
-    <div class="form-text">Testo alfanumerico, massimo 30 caratteri.</div>
+    <div class="form-text">Titolo cartellone (30 caratteri).</div>
   </div>
 
   <div class="mb-4">
@@ -43,7 +43,7 @@
       <option value="1" <?= $moonPhases === '1' ? 'selected' : '' ?>>Sì</option>
       <option value="0" <?= $moonPhases === '0' ? 'selected' : '' ?>>No</option>
     </select>
-    <div class="form-text">“Sì” salva 1 nel database, “No” salva 0.</div>
+    <div class="form-text">Stampa le fasi lunari nel cartellone (non attivo)</div>
   </div>
 
   <div>
