@@ -19,6 +19,8 @@ $statusTextColorMap = [
 
 <h4>GESTIONE SEGNALAZIONI</h4>
 <br>
+<p class="text-muted mb-3">Gestione segnalazioni effettuate dagli utenti.</p>
+<br>
 <div class="card mb-3">
   <div class="card-body">
     <h5 class="card-title"><?= $isEditing ? 'Modifica segnalazione' : 'Nuova segnalazione' ?></h5>
