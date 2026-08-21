@@ -26,10 +26,11 @@ Il sistema dispone di tre interfacce web:
 Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le variabili CSS di Bootstrap 5 (`--bs-*`) per personalizzare colori, radius e aspetto generale senza modificare le viste.
 
 ## NOVITA' RECENTI
-- ![changelog](https://github.com/MicheleOlimpi/serBAR/blob/main/doc/changelog.txt)
+Le ultime modifiche effettuate al programma sono consultabili nel file [changelog](https://github.com/MicheleOlimpi/serBAR/blob/main/doc/changelog.txt)
+  
 ## INSTALLAZIONE
 1. Copiare i files nel repository nella directory di installazione (es. /var/www/serBAR)
-2. Installare dipendenze: con composer install
+2. Installare dipendenze con "composer install"
 3. Aprire la pagina del programma (Es. http://localhost/serBAR)
 4. Se il DB non è configurato/disponibile, comparirà l'interfaccia di installazione.
 5. La configurazione DB viene salvata in `config/app.php`.
