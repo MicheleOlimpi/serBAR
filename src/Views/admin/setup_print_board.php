@@ -19,11 +19,11 @@
       value="<?= htmlspecialchars((string) ($settings['print_forcedPageBreak'] ?? '0'), ENT_QUOTES, 'UTF-8') ?>"
       required
     >
-    <div class="form-text">Forza l'intrerruzione di pagina ogni turni stampati (0-100).</div>
+    <div class="form-text">Numero di turni dopo i quali forzare l'interruzione di pagina (0: non forzare mai).</div>
   </div>
 
   <div class="mb-3">
-    <label class="form-label" for="print_tableTitle">Titolo tabella</label>
+    <label class="form-label" for="print_tableTitle">Titolo cartellone</label>
     <input
       class="form-control"
       type="text"
@@ -46,7 +46,7 @@
     <div class="form-text">Stampa le fasi lunari nel cartellone (non attivo)</div>
   </div>
 
-  <div>
+  <div class="d-flex justify-content-center gap-2 mt-3">
     <button class="btn btn-success" type="submit">Ok</button>
     <a class="btn btn-secondary" href="?action=setup_print_board">Annulla</a>
   </div>
