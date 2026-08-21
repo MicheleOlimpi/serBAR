@@ -6,7 +6,7 @@ foreach ($types as $type) {
 ?>
 <h4>CALENDARIO</h4>
 <br>
-<p class="text-muted mb-3">ricorrenze, santi, tipologie giorno e giorni speciali per ogni giorno dell'anno da preimpostare durante la creazione delle tabelle turni.</p>
+<p class="text-muted mb-3">Ricorrenze, santi, tipologie giorno e giorni speciali per ogni giorno dell'anno da preimpostare durante la creazione delle tabelle turni.</p>
 <br>
 <form method="post">
   <div class="table-responsive">
