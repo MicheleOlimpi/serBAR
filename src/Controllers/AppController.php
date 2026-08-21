@@ -679,6 +679,22 @@ class AppController
         ]);
     }
 
+
+    public function setupPrintBoard(): void
+    {
+        $this->guardAdmin();
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->repo->savePrintSettings($_POST);
+            View::redirect('?action=setup_print_board&saved=1');
+        }
+
+        View::render('admin/setup_print_board', [
+            'settings' => $this->repo->printSettings(),
+            'saved' => isset($_GET['saved']),
+        ]);
+    }
+
     public function notifications(): void
     {
         $this->guardAdmin();
