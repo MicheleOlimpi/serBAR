@@ -1,2 +1,3 @@
-*MAIN*
+*V0.20250821*
 + Cartellone: Aggiunto interruzione pagina al raggiunto numero di turni impostato in impostazioni di stampa.
++ Setup: Aggiunto pagina impostazioni di stampa cartellone
