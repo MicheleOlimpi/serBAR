@@ -25,39 +25,8 @@ Il sistema dispone di tre interfacce web:
 ## TEMA
 Il tema dell'applicazione è centralizzato in `public/css/theme.css` e usa le variabili CSS di Bootstrap 5 (`--bs-*`) per personalizzare colori, radius e aspetto generale senza modificare le viste.
 
-## NOVITA' RECENTI (20260812)
-- **EDITING TABELLONE**
-  - Se viene cambiata la tipologia di giorno vengono aggiornati anche gli orari per quel tipo di giorno, viene salvato il cartellone e riportato il focus sul giorno modificato
-  - Se presente il valore alias nei dati del volontario selezionato per il turno viene utilizzato, altrimenti viene generato un testo basato su nome-cognome
-- **DASHBOARD Sia nella sezione pagina admin che consultation**
-  - Migliorato aspetto lista comunicazioni
-- **PAGINA CALENDARIO**
-  - Migliorato testo esplicativo
-  - Adesso il salvataggio può essere effettuato con un unico bottone salva/annulla
-- **PAGINA COMUNICAZIONI in admin**
-  - Migliorato la leggibilità delle comunicazioni
-  - "creato il" diventa "Data"
-- **PAGINA CONFIGURAZIONE TURNI**
-  - Migliorato leggibilità 
-- **AGGIUNTI NEL FILE seed_app_settings.sql:**
-  - print_forcedPageBreak con valore numerico predefinito 0 (per futuro uso)
-  - print_tableTitle con valore testo predefinito "SERVIZIO BAR" (per futuro uso)
-  - print_tableMoonPhases con valore bool predefinito false (per futuro uso)
-  - program_whatsNewSplash con valore bool predefinito false (per futuro uso)
-- **PAGINA GIORNI CHIUSURA**
-  - Aggiunto testo esplicativo
-  - Invertito colonna "chiuso" con colonna "descrizione"
-  - Se il campo "chiuso" non è flaggato, il campo descrizione non è editabile
-  - Se viene tolto il flag del campo chiuso elimina anche il contenuto del campo descrizione
-  - A destra del tasto "Salva" aggiunto un tasto "Annulla", che non salva i valori editati e ricarica la pagina
-- **PAGINA INFORMAZIONI Sia nella sezione pagina admin che consultation**
-  - Modificato testo licenza
-  - Se si preme il bottone licenza, mostra la licenza del programma in una finestra modale bootstrap
-- **STAMPA CARTELLONE**
-  - Celle dei giorni con riga più scura
-- **SETUP**
-  - cambiato colori bottonni per renderli coerenti con quelli del progamma
-
+## NOVITA' RECENTI
+- ![changelog](https://github.com/MicheleOlimpi/serBAR/blob/main/doc/changelog.txt)
 ## INSTALLAZIONE
 1. Copiare i files nel repository nella directory di installazione (es. /var/www/serBAR)
 2. Installare dipendenze: con composer install
