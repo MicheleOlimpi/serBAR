@@ -206,7 +206,7 @@
     >
   </div>
 
-  <div>
+  <div class="d-flex justify-content-center gap-2 mt-3">
     <button class="btn btn-success" type="submit">Salva</button>
     <a class="btn btn-secondary" href="./">Indietro</a>
   </div>
