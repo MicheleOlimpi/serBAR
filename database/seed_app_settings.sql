@@ -12,6 +12,7 @@ INSERT IGNORE INTO app_settings (setting_key, setting_value) VALUES
   ('public_interface_passkey','defaultPasskey'),
   ('public_interface_refresh_seconds','60'),
   ('print_forcedPageBreak','0'),
+  ('print_forcedPageBreakHeader','0'),
   ('print_tableTitle','SERVIZIO BAR'),
   ('print_tableMoonPhases','0'),
   ('email_sending_enabled','0'),
