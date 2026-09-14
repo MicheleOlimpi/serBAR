@@ -23,6 +23,20 @@
   </div>
 
   <div class="mb-3">
+    <label class="form-label" for="print_forcedPageBreakHeader">Spazio intestazione</label>
+    <input
+      class="form-control"
+      type="number"
+      min="0"
+      max="100"
+      id="print_forcedPageBreakHeader"
+      name="print_forcedPageBreakHeader"
+      value="<?= htmlspecialchars((string) ($settings['print_forcedPageBreakHeader'] ?? '0'), ENT_QUOTES, 'UTF-8') ?>"
+      required
+    >
+  </div>
+
+  <div class="mb-3">
     <label class="form-label" for="print_tableTitle">Titolo cartellone</label>
     <input
       class="form-control"
