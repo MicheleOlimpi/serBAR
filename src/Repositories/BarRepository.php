@@ -31,6 +31,26 @@ class BarRepository
     ];
     private const PROGRAM_INFO_KEYS = ['program_name', 'program_author', 'program_version'];
     private const LOGIN_INFO_KEYS = ['login_info1', 'login_info2'];
+    private const SETTING_MEANINGS = [
+        'consultation_interface_enabled' => 'Abilita area consultazione',
+        'consultation_notifications_enabled' => 'Abilita notifiche consultazione',
+        'consultation_directory_enabled' => 'Abilita rubrica consultazione',
+        'public_interface_enabled' => 'Abilita interfaccia pubblica',
+        'email_sending_enabled' => 'Abilita invio email',
+        'smtp_auth_enabled' => 'Abilita autenticazione SMTP',
+        'login_info1' => 'Messaggio login riga 1',
+        'login_info2' => 'Messaggio login riga 2',
+        'public_interface_passkey' => 'Chiave accesso pubblico',
+        'public_interface_refresh_seconds' => 'Aggiornamento pubblico secondi',
+        'smtp_server' => 'Server SMTP',
+        'smtp_port' => 'Porta SMTP',
+        'smtp_username' => 'Nome utente SMTP',
+        'smtp_password' => 'Password SMTP',
+        'smtp_auth_type' => 'Tipo autenticazione SMTP',
+        'print_forcedPageBreak' => 'Interruzione pagina stampa',
+        'print_tableTitle' => 'Titolo tabella stampa',
+        'print_tableMoonPhases' => 'Mostra fasi lunari',
+    ];
     private const USER_ROLES = ['admin', 'user', 'supervisor', 'operator'];
     private const USER_STATUSES = ['attivo', 'inattivo'];
     private const SYSTEM_MAIL_VALUES = ['si', 'no'];
@@ -401,7 +421,7 @@ class BarRepository
 
     public function savePrintSettings(array $data): void
     {
-        $upsert = $this->pdo->prepare('INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value=VALUES(setting_value)');
+        $upsert = $this->pdo->prepare('INSERT INTO app_settings (setting_key, setting_value, setting_meaning) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE setting_value=VALUES(setting_value)');
 
         $forcedPageBreak = (int) ($data['print_forcedPageBreak'] ?? 0);
         if ($forcedPageBreak < 0) {
@@ -417,9 +437,9 @@ class BarRepository
 
         $moonPhases = (string) ($data['print_tableMoonPhases'] ?? '0') === '1' ? '1' : '0';
 
-        $upsert->execute(['print_forcedPageBreak', (string) $forcedPageBreak]);
-        $upsert->execute(['print_tableTitle', $tableTitle]);
-        $upsert->execute(['print_tableMoonPhases', $moonPhases]);
+        $upsert->execute(['print_forcedPageBreak', (string) $forcedPageBreak, self::settingMeaning('print_forcedPageBreak')]);
+        $upsert->execute(['print_tableTitle', $tableTitle, self::settingMeaning('print_tableTitle')]);
+        $upsert->execute(['print_tableMoonPhases', $moonPhases, self::settingMeaning('print_tableMoonPhases')]);
     }
 
     public function programInfoSettings(): array
@@ -469,7 +489,7 @@ class BarRepository
 
     public function saveSetupSettings(array $data): void
     {
-        $upsert = $this->pdo->prepare('INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value=VALUES(setting_value)');
+        $upsert = $this->pdo->prepare('INSERT INTO app_settings (setting_key, setting_value, setting_meaning) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE setting_value=VALUES(setting_value)');
         $currentSettings = $this->setupSettings();
 
         $consultationEnabled = !empty($data['consultation_interface_enabled']);
@@ -482,7 +502,7 @@ class BarRepository
                 && !array_key_exists($settingKey, $data)
             ) {
                 $value = ($currentSettings[$settingKey] ?? '0') === '1' ? '1' : '0';
-                $upsert->execute([$settingKey, $value]);
+                $upsert->execute([$settingKey, $value, self::settingMeaning($settingKey)]);
                 continue;
             }
 
@@ -492,12 +512,12 @@ class BarRepository
                 && !array_key_exists($settingKey, $data)
             ) {
                 $value = ($currentSettings[$settingKey] ?? '0') === '1' ? '1' : '0';
-                $upsert->execute([$settingKey, $value]);
+                $upsert->execute([$settingKey, $value, self::settingMeaning($settingKey)]);
                 continue;
             }
 
             $value = !empty($data[$settingKey]) ? '1' : '0';
-            $upsert->execute([$settingKey, $value]);
+            $upsert->execute([$settingKey, $value, self::settingMeaning($settingKey)]);
         }
 
         $publicInterfaceEnabled = !empty($data['public_interface_enabled']);
@@ -543,8 +563,13 @@ class BarRepository
                 $value = 'none';
             }
 
-            $upsert->execute([$settingKey, $value]);
+            $upsert->execute([$settingKey, $value, self::settingMeaning($settingKey)]);
         }
+    }
+
+    private static function settingMeaning(string $settingKey): string
+    {
+        return self::SETTING_MEANINGS[$settingKey] ?? '';
     }
 
     public function weekdayCloseRules(): array
