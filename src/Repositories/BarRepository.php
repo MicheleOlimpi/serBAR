@@ -48,6 +48,7 @@ class BarRepository
         'smtp_password' => 'Password SMTP',
         'smtp_auth_type' => 'Tipo autenticazione SMTP',
         'print_forcedPageBreak' => 'Interruzione pagina stampa',
+        'print_forcedPageBreakHeader' => 'Interruzione intestazione stampa',
         'print_tableTitle' => 'Titolo tabella stampa',
         'print_tableMoonPhases' => 'Mostra fasi lunari',
     ];
@@ -399,6 +400,7 @@ class BarRepository
     {
         $defaults = [
             'print_forcedPageBreak' => '0',
+            'print_forcedPageBreakHeader' => '0',
             'print_tableTitle' => 'SERVIZIO BAR',
             'print_tableMoonPhases' => '0',
         ];
@@ -431,6 +433,14 @@ class BarRepository
             $forcedPageBreak = 100;
         }
 
+        $forcedPageBreakHeader = (int) ($data['print_forcedPageBreakHeader'] ?? 0);
+        if ($forcedPageBreakHeader < 0) {
+            $forcedPageBreakHeader = 0;
+        }
+        if ($forcedPageBreakHeader > 100) {
+            $forcedPageBreakHeader = 100;
+        }
+
         $tableTitle = trim((string) ($data['print_tableTitle'] ?? ''));
         $tableTitle = preg_replace('/[^[:alnum:] ]/u', '', $tableTitle) ?? '';
         $tableTitle = function_exists('mb_substr') ? mb_substr($tableTitle, 0, 30) : substr($tableTitle, 0, 30);
@@ -438,6 +448,7 @@ class BarRepository
         $moonPhases = (string) ($data['print_tableMoonPhases'] ?? '0') === '1' ? '1' : '0';
 
         $upsert->execute(['print_forcedPageBreak', (string) $forcedPageBreak, self::settingMeaning('print_forcedPageBreak')]);
+        $upsert->execute(['print_forcedPageBreakHeader', (string) $forcedPageBreakHeader, self::settingMeaning('print_forcedPageBreakHeader')]);
         $upsert->execute(['print_tableTitle', $tableTitle, self::settingMeaning('print_tableTitle')]);
         $upsert->execute(['print_tableMoonPhases', $moonPhases, self::settingMeaning('print_tableMoonPhases')]);
     }
