@@ -1,7 +1,7 @@
 INSERT INTO app_settings (setting_key, setting_value, setting_meaning) VALUES
   ('program_name','serBAR','Nome del programma'),
   ('program_author','Michele Olimpi','Autore del programma'),
-  ('program_version','V00.20260913','Versione del programma'),
+  ('program_version','V00.20260915','Versione del programma'),
   ('program_whatsNewSplash','0','Mostra novita al login'),
   ('login_info1','ACLI Grassina','Messaggio login riga 1'),
   ('login_info2','Gestione turni','Messaggio login riga 2'),
