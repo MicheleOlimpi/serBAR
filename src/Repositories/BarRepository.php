@@ -379,6 +379,7 @@ class BarRepository
     {
         $defaults = [
             'print_forcedPageBreak' => '0',
+            'print_forcedPageBreakHeader' => '0',
             'print_tableTitle' => 'SERVIZIO BAR',
             'print_tableMoonPhases' => '0',
         ];
@@ -411,6 +412,14 @@ class BarRepository
             $forcedPageBreak = 100;
         }
 
+        $forcedPageBreakHeader = (int) ($data['print_forcedPageBreakHeader'] ?? 0);
+        if ($forcedPageBreakHeader < 0) {
+            $forcedPageBreakHeader = 0;
+        }
+        if ($forcedPageBreakHeader > 100) {
+            $forcedPageBreakHeader = 100;
+        }
+
         $tableTitle = trim((string) ($data['print_tableTitle'] ?? ''));
         $tableTitle = preg_replace('/[^[:alnum:] ]/u', '', $tableTitle) ?? '';
         $tableTitle = function_exists('mb_substr') ? mb_substr($tableTitle, 0, 30) : substr($tableTitle, 0, 30);
@@ -418,6 +427,7 @@ class BarRepository
         $moonPhases = (string) ($data['print_tableMoonPhases'] ?? '0') === '1' ? '1' : '0';
 
         $upsert->execute(['print_forcedPageBreak', (string) $forcedPageBreak]);
+        $upsert->execute(['print_forcedPageBreakHeader', (string) $forcedPageBreakHeader]);
         $upsert->execute(['print_tableTitle', $tableTitle]);
         $upsert->execute(['print_tableMoonPhases', $moonPhases]);
     }
