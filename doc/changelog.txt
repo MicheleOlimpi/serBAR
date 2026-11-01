@@ -1,3 +1,6 @@
+*V00.20260913*
++ Nuovo menù setup->stampa cartellone, visibile per supervisor e admin, dove è possibile personalizzare l'output del cartellone
+= Amalgamato elementi grafici e revisione testi descrittivi
 *V0.20260821*
 + Cartellone: Aggiunto interruzione pagina al raggiunto numero di turni impostato in impostazioni di stampa.
 + Setup: Aggiunto pagina impostazioni di stampa cartellone
