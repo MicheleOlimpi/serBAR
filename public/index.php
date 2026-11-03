@@ -52,6 +52,7 @@ $routes = [
     'notifications' => 'notifications',
     'setup' => 'setup',
     'setup_print_board' => 'setupPrintBoard',
+    'setup_manutenzione' => 'setupManutenzione',
     'information' => 'information',
     'segnalazione' => 'segnalazione',
     'lista_volontari' => 'listaVolontari',
