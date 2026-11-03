@@ -680,6 +680,12 @@ class AppController
     }
 
 
+    public function setupManutenzione(): void
+    {
+        $this->guardAdmin();
+        View::render('admin/setup_manutenzione');
+    }
+
     public function setupPrintBoard(): void
     {
         $this->guardAdmin();
