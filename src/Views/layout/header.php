@@ -33,6 +33,7 @@ $adminNavItems = [
         'children' => [
             'setup' => ['label' => 'Setup sistema', 'href' => '?action=setup', 'icon' => 'fa-sliders'],
             'setup_print_board' => ['label' => 'Stampa cartellone', 'href' => '?action=setup_print_board', 'icon' => 'fa-print'],
+            'setup_manutenzione' => ['label' => 'Manutenzione', 'href' => '?action=setup_manutenzione', 'icon' => 'fa-screwdriver-wrench'],
         ],
     ],
     'information' => ['label' => 'Informazioni', 'href' => '?action=information', 'icon' => 'fa-circle-info'],
